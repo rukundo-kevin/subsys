@@ -5,6 +5,7 @@ import cors from 'cors';
 import httpStatus from 'http-status';
 
 import routes from './routes/';
+import { errorConverter, errorHandler } from './middlewares/error';
 import ApiError from './utils/ApiError';
 const app = express();
 
@@ -32,4 +33,9 @@ app.use((req, res, next) => {
   next(new ApiError(httpStatus.NOT_FOUND, 'Not found'));
 });
 
+// convert error to ApiError, if needed
+app.use(errorConverter);
+
+// handle error
+app.use(errorHandler);
 export default app;

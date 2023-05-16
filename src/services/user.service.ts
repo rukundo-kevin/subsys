@@ -14,7 +14,6 @@ const getUserByEmail = async <Key extends keyof User>(
     'updatedAt'
   ] as Key[]
 ): Promise<Pick<User, Key> | null> => {
-  console.log(email);
   return prisma.user.findUnique({
     where: { email },
     select: keys.reduce((obj, k) => ({ ...obj, [k]: true }), {})
