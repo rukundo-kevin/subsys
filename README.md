@@ -11,8 +11,15 @@
 To install this API, clone this repository and run the following commands:
 
 ```sh
-yarn
-yarn  dev
+npm install
+npm start # To run the server in production
+npm test # To run the tests
+npm build # To build the project
+npm run  dev # To run the server in development
+npm run lint # To lint the code
+npm run lint:fix # To fix linting errors
+npm run prettier # To check if ther are any prettier errors
+npm run format # To fix prettier errors
 ```
 
 You will also need to create a .env file with values from the .env.example file.

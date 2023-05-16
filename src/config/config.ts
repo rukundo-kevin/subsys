@@ -1,20 +1,18 @@
-import dotenv from "dotenv";
-import path from "path";
-import Joi from "joi";
+import dotenv from 'dotenv';
+import path from 'path';
+import Joi from 'joi';
 
-dotenv.config({ path: path.join(process.cwd(), ".env") });
+dotenv.config({ path: path.join(process.cwd(), '.env') });
 
 const envVarsSchema = Joi.object()
   .keys({
-    NODE_ENV: Joi.string()
-      .valid("production", "development", "test")
-      .required(),
-    PORT: Joi.number().default(3000),
+    NODE_ENV: Joi.string().valid('production', 'development', 'test').required(),
+    PORT: Joi.number().default(3000)
   })
   .unknown();
 
 const { value: envVars, error } = envVarsSchema
-  .prefs({ errors: { label: "key" } })
+  .prefs({ errors: { label: 'key' } })
   .validate(process.env);
 
 if (error) {
@@ -23,5 +21,5 @@ if (error) {
 
 export default {
   env: envVars.NODE_ENV,
-  port: envVars.PORT,
+  port: envVars.PORT
 };
