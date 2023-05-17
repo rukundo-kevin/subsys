@@ -3,7 +3,9 @@ import helmet from 'helmet';
 import compression from 'compression';
 import cors from 'cors';
 import httpStatus from 'http-status';
+import passport from 'passport';
 
+import { jwtStrategy } from './config/passport';
 import routes from './routes/';
 import { errorConverter, errorHandler } from './middlewares/error';
 import ApiError from './utils/ApiError';
@@ -24,6 +26,10 @@ app.use(compression());
 // enable cors
 app.use(cors());
 app.options('*', cors());
+
+// jwt authentication
+app.use(passport.initialize());
+passport.use('jwt', jwtStrategy);
 
 //  api routes
 app.use('/', routes);

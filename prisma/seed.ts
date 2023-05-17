@@ -7,8 +7,10 @@ const prisma = new PrismaClient();
 async function main() {
   await prisma.user.create({
     data: {
-      name: 'Admin',
       email: 'admin@amalitech.com',
+      name: 'Admin',
+      role: 'ADMIN',
+      isEmailVerified: true,
       password: await encryptPassword('admin123')
     }
   });

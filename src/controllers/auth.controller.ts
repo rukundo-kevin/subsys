@@ -9,6 +9,12 @@ const login = catchAsync(async (req, res) => {
   res.status(httpStatus.OK).send({ user, tokens });
 });
 
+const logout = catchAsync(async (req, res) => {
+  console.log('out');
+  res.send('out');
+});
+
 export default {
-  login
+  login,
+  logout
 };
