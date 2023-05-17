@@ -81,7 +81,26 @@ const generateAuthTokens = async (user: { id: number }): Promise<AuthTokensRespo
   };
 };
 
+/**
+ * Verify token and return token doc (or throw an error if it is not valid)
+ * @param {string} token
+ * @param {string} type
+ * @returns {Promise<Token>}
+ */
+const verifyToken = async (token: string, type: TokenType): Promise<Token> => {
+  const payload = jwt.verify(token, config.jwt.secret);
+  const userId = Number(payload.sub);
+  const tokenData = await prisma.token.findFirst({
+    where: { token, type, userId, blacklisted: false }
+  });
+  if (!tokenData) {
+    throw new Error('Token not found');
+  }
+  return tokenData;
+};
+
 export default {
   generateToken,
-  generateAuthTokens
+  generateAuthTokens,
+  verifyToken
 };

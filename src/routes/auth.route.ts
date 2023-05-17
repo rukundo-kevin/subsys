@@ -7,5 +7,9 @@ import auth from '../middlewares/auth';
 const router = express.Router();
 
 router.post('/login', validate(authValidation.login), authController.login);
-router.get('/logout', auth(), authController.logout);
+router.post(
+  '/refresh-tokens',
+  validate(authValidation.refreshTokens),
+  authController.refreshTokens
+);
 export default router;

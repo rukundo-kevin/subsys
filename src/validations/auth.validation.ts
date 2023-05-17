@@ -7,6 +7,13 @@ const login = {
   })
 };
 
+const refreshTokens = {
+  body: Joi.object().keys({
+    refreshToken: Joi.string().required()
+  })
+};
+
 export default {
-  login
+  login,
+  refreshTokens
 };

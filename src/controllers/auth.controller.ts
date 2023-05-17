@@ -9,12 +9,12 @@ const login = catchAsync(async (req, res) => {
   res.status(httpStatus.OK).send({ user, tokens });
 });
 
-const logout = catchAsync(async (req, res) => {
-  console.log('out');
-  res.send('out');
+const refreshTokens = catchAsync(async (req, res) => {
+  const tokens = await authService.refreshAuth(req.body.refreshToken);
+  res.send({ ...tokens });
 });
 
 export default {
   login,
-  logout
+  refreshTokens
 };
