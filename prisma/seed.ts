@@ -12,7 +12,7 @@ async function main() {
       lastname: 'User',
       role: 'ADMIN',
       isInviteAccepted: true,
-      password: await encryptPassword('admin123')
+      password: await encryptPassword('Admin123')
     }
   });
 }
