@@ -8,7 +8,9 @@ components:
         email:
           type: string
           format: email
-        name:
+        firstname:
+          type: string
+        lastname:
           type: string
         role:
           type: string
@@ -16,7 +18,8 @@ components:
       example:
         id: 5ebac534954b54139806c112
         email: user@gmail.com
-        name: fake name
+        firstname: fake fist name
+        lastname: fake last name
         role: USER
 
     Token:

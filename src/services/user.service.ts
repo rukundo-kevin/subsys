@@ -6,10 +6,11 @@ const getUserByEmail = async <Key extends keyof User>(
   keys: Key[] = [
     'id',
     'email',
-    'name',
+    'firstname',
+    'lastname',
     'password',
     'role',
-    'isEmailVerified',
+    'isInviteAccepted',
     'createdAt',
     'updatedAt'
   ] as Key[]

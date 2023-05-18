@@ -24,13 +24,15 @@ describe('Middlewares', () => {
     it('should call next if the request data is valid', () => {
       const schema = {
         body: Joi.object({
-          name: Joi.string().required(),
+          fistname: Joi.string().required(),
+          lastname: Joi.string().required(),
           age: Joi.number().required()
         })
       };
 
       req.body = {
-        name: 'John Doe',
+        fistname: 'John',
+        lastname: 'Doe',
         age: 25
       };
 
@@ -43,13 +45,15 @@ describe('Middlewares', () => {
     it('should return a 400 Bad Request error if the request data is invalid', () => {
       const schema = {
         body: Joi.object({
-          name: Joi.string().required(),
+          firstname: Joi.string().required(),
+          lastname: Joi.string().required(),
           age: Joi.number().required()
         })
       };
 
       req.body = {
-        name: 'John Doe'
+        firstname: 'John',
+        lastname: 'Doe'
         // Missing the required 'age' field
       };
 

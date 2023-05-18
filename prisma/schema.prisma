@@ -13,13 +13,15 @@ datasource db {
 model User {
   id              Int      @id @default(autoincrement())
   email           String   @unique
-  name            String?
+  firstname            String?
+  lastname             String?
   password        String
   role            Role     @default(STUDENT)
-  isEmailVerified Boolean  @default(false)
+  isInviteAccepted Boolean  @default(false)
   createdAt       DateTime @default(now())
   updatedAt       DateTime @updatedAt
   Token           Token[]
+  student         Student?
 }
 
 model Token {
@@ -33,6 +35,14 @@ model Token {
   userId      Int
 }
 
+model Student {
+  id              Int      @id @default(autoincrement())
+  user            User?    @relation(fields: [userId], references: [id])
+  userId          Int? @unique
+  studentId       String   @unique
+
+}
+
 enum Role {
   ADMIN
   STUDENT
@@ -43,3 +53,4 @@ enum TokenType {
   ACCESS
   REFRESH
 }
+

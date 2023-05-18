@@ -8,9 +8,10 @@ async function main() {
   await prisma.user.create({
     data: {
       email: 'admin@amalitech.com',
-      name: 'Admin',
+      firstname: 'Admin',
+      lastname: 'User',
       role: 'ADMIN',
-      isEmailVerified: true,
+      isInviteAccepted: true,
       password: await encryptPassword('admin123')
     }
   });

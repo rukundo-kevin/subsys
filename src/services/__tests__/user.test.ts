@@ -15,10 +15,11 @@ describe('userService', () => {
       const mockUser: User | null = {
         id: 1,
         email: 'test@example.com',
-        name: 'John Doe',
+        firstname: 'John ',
+        lastname: 'Doe',
         password: 'hashed_password',
         role: 'ADMIN',
-        isEmailVerified: true,
+        isInviteAccepted: true,
         createdAt: new Date(),
         updatedAt: new Date()
       };
@@ -26,7 +27,7 @@ describe('userService', () => {
       (prisma.user.findUnique as jest.Mock).mockResolvedValue(mockUser as never);
 
       const email = 'test@example.com';
-      const keys: (keyof User)[] = ['id', 'email', 'name'];
+      const keys: (keyof User)[] = ['id', 'email', 'firstname', 'lastname'];
 
       const result = await userService.getUserByEmail(email, keys);
 
@@ -36,7 +37,8 @@ describe('userService', () => {
         select: {
           id: true,
           email: true,
-          name: true
+          firstname: true,
+          lastname: true
         }
       });
     });

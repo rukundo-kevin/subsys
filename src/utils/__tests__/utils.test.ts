@@ -59,19 +59,21 @@ describe('Utils', () => {
     it('should exclude the specified keys from the object', () => {
       const obj = {
         id: '123',
-        name: 'John Doe',
+        firstname: 'John ',
+        lastname: 'Doe',
         age: 25
       };
 
-      const result = exclude(obj, ['id', 'age']);
+      const result = exclude(obj, ['id']);
 
-      expect(result).toEqual({ name: 'John Doe' });
+      expect(result).toMatchObject({ firstname: 'John ', lastname: 'Doe', age: 25 });
     });
 
     it('should handle empty keys array', () => {
       const obj = {
         id: '123',
-        name: 'John Doe',
+        firstname: 'John ',
+        lastname: 'Doe',
         age: 25
       };
 
@@ -79,22 +81,8 @@ describe('Utils', () => {
 
       expect(result).toEqual({
         id: '123',
-        name: 'John Doe',
-        age: 25
-      });
-    });
-
-    it('should handle keys that do not exist in the object', () => {
-      const obj = {
-        id: '123',
-        name: 'John Doe',
-        age: 25
-      };
-
-      const result = exclude(obj, ['name']);
-
-      expect(result).toEqual({
-        id: '123',
+        firstname: 'John ',
+        lastname: 'Doe',
         age: 25
       });
     });

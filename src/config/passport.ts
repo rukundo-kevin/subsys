@@ -17,7 +17,8 @@ const jwtVerify: VerifyCallback = async (payload, done) => {
       select: {
         id: true,
         email: true,
-        name: true
+        firstname: true,
+        lastname: true
       },
       where: { id: payload.sub }
     });

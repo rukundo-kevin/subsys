@@ -20,10 +20,11 @@ describe('loginUserWithEmailAndPassword', () => {
     const mockUser: User = {
       id: 1,
       email: 'test@example.com',
-      name: 'Test User',
+      firstname: 'Test ',
+      lastname: 'User',
       password: 'hashedpassword',
       role: 'ADMIN',
-      isEmailVerified: true,
+      isInviteAccepted: true,
       createdAt: new Date(),
       updatedAt: new Date()
     };
@@ -38,19 +39,21 @@ describe('loginUserWithEmailAndPassword', () => {
     expect(userService.getUserByEmail).toHaveBeenCalledWith(email, [
       'id',
       'email',
-      'name',
+      'firstname',
+      'lastname',
       'password',
       'role',
-      'isEmailVerified',
+      'isInviteAccepted',
       'createdAt',
       'updatedAt'
     ]);
     expect(result).toEqual({
       id: mockUser.id,
       email: mockUser.email,
-      name: mockUser.name,
+      firstname: mockUser.firstname,
+      lastname: mockUser.lastname,
       role: mockUser.role,
-      isEmailVerified: mockUser.isEmailVerified,
+      isInviteAccepted: mockUser.isInviteAccepted,
       createdAt: mockUser.createdAt,
       updatedAt: mockUser.updatedAt
     });
