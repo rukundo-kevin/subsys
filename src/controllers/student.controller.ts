@@ -32,10 +32,16 @@ const deleteStudent = catchAsync(async (req, res) => {
   res.status(httpStatus.NO_CONTENT).send(student);
 });
 
+const createManyStudents = catchAsync(async (req, res) => {
+  // console.log(req.body);
+  res.send('ok');
+});
+
 export default {
   createStudent,
   getStudents,
   getStudent,
   updateStudent,
-  deleteStudent
+  deleteStudent,
+  createManyStudents
 };

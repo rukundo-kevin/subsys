@@ -1,11 +1,13 @@
 import Joi from 'joi';
 
+const studentSchema = Joi.object({
+  firstname: Joi.string().required(),
+  lastname: Joi.string().required(),
+  email: Joi.string().required()
+});
+
 const createStudent = {
-  body: Joi.object().keys({
-    firstname: Joi.string().required(),
-    lastname: Joi.string().required(),
-    email: Joi.string().required()
-  })
+  body: studentSchema
 };
 
 const getStudents = {
@@ -27,8 +29,13 @@ const updateStudent = {
     .min(1)
 };
 
+export const studentCsv = Joi.object({
+  body: Joi.array().items(studentSchema)
+});
+
 export default {
   createStudent,
   getStudents,
-  updateStudent
+  updateStudent,
+  studentCsv
 };
