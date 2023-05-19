@@ -2,6 +2,7 @@ import express from 'express';
 import config from '../config/config';
 import docsRoute from './docs.route';
 import authRoute from './auth.route';
+import studentRoute from './student.route';
 
 const router = express.Router();
 
@@ -17,6 +18,10 @@ const defaultRoutes = [
   {
     path: '/auth',
     route: authRoute
+  },
+  {
+    path: '/student',
+    route: studentRoute
   }
 ];
 
