@@ -83,7 +83,63 @@ const getStudents = async (): Promise<Student[]> => {
   return students;
 };
 
+const getOneStudent = async (studentId: string): Promise<Student | null> => {
+  const student = prisma.student.findUnique({
+    where: {
+      studentId
+    },
+    include: {
+      user: {
+        select: {
+          firstname: true,
+          lastname: true,
+          email: true
+        }
+      }
+    }
+  });
+  return student;
+};
+
+const updateStudent = async (studentId: string, studentBody: any): Promise<Student | null> => {
+  const updatedStented = prisma.student.update({
+    where: {
+      studentId
+    },
+    data: {
+      user: {
+        update: {
+          ...studentBody
+        }
+      }
+    },
+    include: {
+      user: {
+        select: {
+          firstname: true,
+          lastname: true,
+          email: true
+        }
+      }
+    }
+  });
+
+  return updatedStented;
+};
+
+const deleteStudent = async (studentId: string): Promise<Student | null> => {
+  const deletedStudent = prisma.student.delete({
+    where: {
+      studentId
+    }
+  });
+  return deletedStudent;
+};
+
 export default {
   createStudent,
-  getStudents
+  getStudents,
+  getOneStudent,
+  updateStudent,
+  deleteStudent
 };

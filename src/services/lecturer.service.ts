@@ -86,7 +86,71 @@ const getLecturers = async (): Promise<Lecturer[]> => {
   return lecturers;
 };
 
+const getOneLecturer = async (staffId: string): Promise<Lecturer | null> => {
+  const lecturer = await prisma.lecturer.findUnique({
+    where: {
+      staffId
+    },
+    include: {
+      user: {
+        select: {
+          email: true,
+          firstname: true,
+          lastname: true,
+          role: true,
+          isInviteAccepted: true,
+          createdAt: true,
+          updatedAt: true
+        }
+      }
+    }
+  });
+  return lecturer;
+};
+
+const deleteLecturer = async (staffId: string): Promise<Lecturer | null> => {
+  const lecturer = await prisma.lecturer.delete({
+    where: {
+      staffId
+    }
+  });
+  return lecturer;
+};
+
+const updateLecturer = async (staffId: string, data: any): Promise<Lecturer | null> => {
+  const updatedLecturer = await prisma.lecturer.update({
+    where: {
+      staffId
+    },
+    data: {
+      user: {
+        update: {
+          ...data
+        }
+      }
+    },
+    include: {
+      user: {
+        select: {
+          email: true,
+          firstname: true,
+          lastname: true,
+          role: true,
+          isInviteAccepted: true,
+          createdAt: true,
+          updatedAt: true
+        }
+      }
+    }
+  });
+  
+  return updatedLecturer;
+};
+
 export default {
+  getOneLecturer,
   createLecturer,
-  getLecturers
+  getLecturers,
+  deleteLecturer,
+  updateLecturer
 };

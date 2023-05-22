@@ -8,6 +8,27 @@ const createStudent = {
   })
 };
 
+const getStudents = {
+  params: Joi.object().keys({
+    studentId: Joi.string().required()
+  })
+};
+
+const updateStudent = {
+  params: Joi.object().keys({
+    studentId: Joi.required()
+  }),
+  body: Joi.object()
+    .keys({
+      firstname: Joi.string(),
+      lastname: Joi.string(),
+      email: Joi.string()
+    })
+    .min(1)
+};
+
 export default {
-  createStudent
+  createStudent,
+  getStudents,
+  updateStudent
 };

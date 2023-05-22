@@ -20,7 +20,7 @@ components:
         email: user@gmail.com
         firstname: fake fist name
         lastname: fake last name
-        role: USER
+        role: STUDENT | LECTURER | ADMIN
 
     Token:
       type: object
