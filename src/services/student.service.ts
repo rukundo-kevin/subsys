@@ -4,7 +4,7 @@ import { Role, Student } from '@prisma/client';
 import ApiError from '../utils/ApiError';
 import prisma from '../client';
 import userService from './user.service';
-import { generateRandomPassword, generateStudentId } from '../utils/userHelper';
+import { generateId, generateRandomPassword } from '../utils/userHelper';
 
 /**
  * Create a student
@@ -24,7 +24,7 @@ const createStudent = async (
   let studentIdExists;
 
   do {
-    studentId = generateStudentId();
+    studentId = generateId('student');
     studentIdExists = await prisma.student.findUnique({
       where: {
         studentId

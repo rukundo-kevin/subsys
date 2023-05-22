@@ -3,6 +3,7 @@ import config from '../config/config';
 import docsRoute from './docs.route';
 import authRoute from './auth.route';
 import studentRoute from './student.route';
+import lecturerRoute from './lecturer.route';
 
 const router = express.Router();
 
@@ -22,6 +23,10 @@ const defaultRoutes = [
   {
     path: '/student',
     route: studentRoute
+  },
+  {
+    path: '/lecturer',
+    route: lecturerRoute
   }
 ];
 

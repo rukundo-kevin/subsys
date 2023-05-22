@@ -3,7 +3,7 @@ import { jest, describe, it, expect } from '@jest/globals';
 import { encryptPassword, isPasswordMatch } from '../encryption';
 import ApiError from '../ApiError';
 import exclude from '../exclude';
-import { generateRandomPassword, generateStudentId } from '../userHelper';
+import { generateId, generateRandomPassword } from '../userHelper';
 
 jest.mock('bcryptjs');
 describe('Utils', () => {
@@ -100,7 +100,7 @@ describe('Utils', () => {
 
   describe('generateStudentId', () => {
     it('should generate a random studentId', () => {
-      const studentId = generateStudentId();
+      const studentId = generateId('student');
 
       expect(studentId).toHaveLength(8);
       expect(studentId).toContain('ST');

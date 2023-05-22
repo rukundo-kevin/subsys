@@ -1,8 +1,8 @@
-export const generateStudentId = () => {
+export const generateId = (type: string) => {
   const randomNumber = Math.floor(Math.random() * 1000000);
   const paddedNumber = randomNumber.toString().padStart(6, '0');
 
-  return `ST${paddedNumber}`;
+  return type === 'student' ? `ST${paddedNumber}` : `LC${paddedNumber}`;
 };
 
 export const generateRandomPassword = () => {
