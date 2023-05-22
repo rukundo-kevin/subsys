@@ -41,7 +41,20 @@ components:
           $ref: '#/components/schemas/Token'
         refresh:
           $ref: '#/components/schemas/Token'
-
+    Student:
+      type: object
+      properties:
+        id:
+          type: integer
+          example: 3
+        userId:
+          type: integer
+          example: 6
+        studentId:
+          type: string
+          example: 'ST859025'
+        user:
+          $ref: '#/components/schemas/User'
     Error:
       type: object
       properties:
@@ -57,9 +70,7 @@ components:
         application/json:
           schema:
             $ref: '#/components/schemas/Error'
-          example:
-            code: 400
-            message: '"score" must be a number'
+
     Unauthorized:
       description: Unauthorized
       content:

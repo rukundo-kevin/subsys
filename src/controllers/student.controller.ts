@@ -8,6 +8,12 @@ const createStudent = catchAsync(async (req, res) => {
   res.status(httpStatus.CREATED).send(student);
 });
 
+const getStudents = catchAsync(async (req, res) => {
+  const students = await studentService.getStudents();
+  res.status(httpStatus.OK).send(students);
+});
+
 export default {
-  createStudent
+  createStudent,
+  getStudents
 };

@@ -6,9 +6,10 @@ import auth from '../middlewares/auth';
 
 const router = express.Router();
 
+router.get('/', auth('getStudents'), studentController.getStudents);
 router.post(
   '/',
-  auth('ADMIN'),
+  auth('createStudents'),
   validate(studentValidation.createStudent),
   studentController.createStudent
 );

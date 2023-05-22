@@ -2,6 +2,7 @@ import { User, Role } from '@prisma/client';
 import httpStatus from 'http-status';
 import ApiError from '../utils/ApiError';
 import prisma from '../client';
+import { Prisma } from '@prisma/client';
 import { encryptPassword } from '../utils/encryption';
 
 const getUserByEmail = async <Key extends keyof User>(
@@ -34,20 +35,24 @@ const createUser = async (
   password: string,
   firstname?: string,
   lastname?: string,
-  role: Role = Role.STUDENT
+  role?: Role
 ): Promise<User> => {
-  if (await getUserByEmail(email)) {
-    throw new ApiError(httpStatus.BAD_REQUEST, 'Email already taken');
-  }
-  return prisma.user.create({
-    data: {
-      email,
-      firstname,
-      lastname,
-      password: await encryptPassword(password),
-      role
+  try {
+    return prisma.user.create({
+      data: {
+        email,
+        firstname,
+        lastname,
+        password: await encryptPassword(password),
+        role
+      }
+    });
+  } catch (error) {
+    if ((error as Prisma.PrismaClientKnownRequestError).code === 'P2002') {
+      throw new ApiError(httpStatus.BAD_REQUEST, 'Email already exists');
     }
-  });
+    throw error;
+  }
 };
 
 export default {

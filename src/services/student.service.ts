@@ -8,7 +8,7 @@ import { generateRandomPassword, generateStudentId } from '../utils/userHelper';
 
 /**
  * Create a student
- * @param {Object} studentBody
+ * @param { Object } studentBody
  * @returns {Promise<Student>}
  */
 const createStudent = async (
@@ -40,15 +40,6 @@ const createStudent = async (
           id: studentUser.id
         }
       }
-    }
-  });
-  if (!student) {
-    throw new ApiError(httpStatus.BAD_REQUEST, 'Student could not be created');
-  }
-
-  return prisma.student.findUnique({
-    where: {
-      id: student.id
     },
     include: {
       user: {
@@ -64,8 +55,35 @@ const createStudent = async (
       }
     }
   });
+
+  if (!student) {
+    throw new ApiError(httpStatus.BAD_REQUEST, 'Student could not be created');
+  }
+
+  return student;
+};
+
+/**
+ * Get students
+ * @description Fetch all students
+ * @returns {Promise<Student[]>}
+ */
+const getStudents = async (): Promise<Student[]> => {
+  const students = prisma.student.findMany({
+    include: {
+      user: {
+        select: {
+          firstname: true,
+          lastname: true,
+          email: true
+        }
+      }
+    }
+  });
+  return students;
 };
 
 export default {
-  createStudent
+  createStudent,
+  getStudents
 };

@@ -40,13 +40,12 @@ model Student {
   user            User?    @relation(fields: [userId], references: [id])
   userId          Int? @unique
   studentId       String   @unique
-
 }
 
 enum Role {
   ADMIN
   STUDENT
-  TEACHER
+  LECTURER
 }
 
 enum TokenType {
