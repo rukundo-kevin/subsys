@@ -38,7 +38,7 @@ const createUser = async (
   role?: Role
 ): Promise<User> => {
   try {
-    return prisma.user.create({
+    const createdUser = await prisma.user.create({
       data: {
         email,
         firstname,
@@ -47,6 +47,7 @@ const createUser = async (
         role
       }
     });
+    return createdUser;
   } catch (error) {
     if ((error as Prisma.PrismaClientKnownRequestError).code === 'P2002') {
       throw new ApiError(httpStatus.BAD_REQUEST, 'Email already exists');

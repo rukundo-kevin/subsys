@@ -41,6 +41,20 @@ components:
           $ref: '#/components/schemas/Token'
         refresh:
           $ref: '#/components/schemas/Token'
+    Lecturer:
+      type: object
+      properties:
+        id:
+          type: integer
+          example: 3
+        userId:
+          type: integer
+          example: 6
+        staffId:
+          type: string
+          example: 'LT859025'
+        user:
+          $ref: '#/components/schemas/User'
     Student:
       type: object
       properties:
