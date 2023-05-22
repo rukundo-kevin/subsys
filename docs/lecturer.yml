@@ -69,7 +69,7 @@ tags:
                   example: 6
                 lecturerId:
                   type: string
-                  example: 'ST859025'
+                  example: 'LC859025'
                 user:
                   $ref: '#/components/schemas/User'
       '400':
@@ -81,6 +81,133 @@ tags:
             example:
               code: 400
               message: Email already exists
+      '401':
+        description:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Error'
+            example:
+              code: 401
+              message: Please authenticate
+
+/lecturer/{staffId}:
+  get:
+    summary: Get a lecturer
+    tags: [Lecturer]
+    security:
+      - bearerAuth: []
+    parameters:
+      - in: path
+        name: staffId
+        schema:
+          type: string
+        required: true
+        description: Staff ID
+    responses:
+      '200':
+        description: OK
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Lecturer'
+      '401':
+        description:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Error'
+            example:
+              code: 401
+              message: Please authenticate
+  put:
+    summary: Update a lecturer
+    tags: [Lecturer]
+    security:
+      - bearerAuth: []
+    parameters:
+      - in: path
+        name: staffId
+        schema:
+          type: string
+        required: true
+        description: Staff ID
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            type: object
+            required:
+              - firstname
+              - lastname
+              - email
+            properties:
+              firstname:
+                type: string
+              lastname:
+                type: string
+              email:
+                type: string
+                format: email
+            example:
+              firstname: yohana
+              lastname: doe
+              email:
+                type: string
+                format: email
+    responses:
+      '200':
+        description: OK
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                id:
+                  type: integer
+                  example: 3
+                userId:
+                  type: integer
+                  example: 6
+                staffId:
+                  type: string
+                  example: 'LC859025'
+                user:
+                  $ref: '#/components/schemas/User'
+      '400':
+        description:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Error'
+            example:
+              code: 400
+              message: Email already exists
+      '401':
+        description:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Error'
+            example:
+              code: 401
+              message: Please authenticate
+  delete:
+    summary: Delete a lecturer
+    tags: [Lecturer]
+    security:
+      - bearerAuth: []
+    parameters:
+      - in: path
+        name: staffId
+        schema:
+          type: string
+        required: true
+        description: Staff ID
+    responses:
+      '204':
+        description: No Content
       '401':
         description:
         content:

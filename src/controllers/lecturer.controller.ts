@@ -1,6 +1,7 @@
 import catchAsync from '../utils/catchAsync';
 import { lecturerService } from '../services';
 import httpStatus from 'http-status';
+import ApiError from '../utils/ApiError';
 
 const createLecturer = catchAsync(async (req, res) => {
   const { firstname, lastname, email } = req.body;
@@ -13,7 +14,27 @@ const getLecturers = catchAsync(async (req, res) => {
   res.status(httpStatus.OK).send(lecturers);
 });
 
+const getLecturer = catchAsync(async (req, res) => {
+  const lecturer = await lecturerService.getOneLecturer(req.params.lecturerId);
+  if (!lecturer) {
+    throw new ApiError(httpStatus.NOT_FOUND, 'Lecturer not found');
+  }
+  res.status(httpStatus.OK).send(lecturer);
+});
+
+const deleteLecturer = catchAsync(async (req, res) => {
+  const lecturer = await lecturerService.deleteLecturer(req.params.lecturerId);
+  res.status(httpStatus.OK).send(lecturer);
+});
+
+const updateLecturer = catchAsync(async (req, res) => {
+  const lecturer = await lecturerService.updateLecturer(req.params.lecturerId, req.body);
+  res.status(httpStatus.NO_CONTENT).send(lecturer);
+});
 export default {
   createLecturer,
-  getLecturers
+  getLecturers,
+  getLecturer,
+  deleteLecturer,
+  updateLecturer
 };
