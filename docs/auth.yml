@@ -73,3 +73,43 @@ tags:
               $ref: '#/components/schemas/AuthTokens'
       '401':
         $ref: '#/components/responses/Unauthorized'
+
+/auth/logout:
+  post:
+    summary: Logout
+    tags: [Auth]
+    security:
+      - bearerAuth: []
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            type: object
+            required:
+              - refreshToken
+            properties:
+              refreshToken:
+                type: string
+            example:
+              refreshToken: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjEsImlhdCI6MTY4NDMxOTU3NSwiZXhwIjoxNjg2OTExNTc1LCJ0eXBlIjoiUkVGUkVTSCJ9.v5Btor0c57USA_E5z-0WolYTEIsxj5zUnIK_Hi4HsHQ
+    responses:
+      '200':
+        description: Logged out successfully
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Error'
+            example:
+              code: 200
+              message: Logged out successfully
+
+      '401':
+        description: Not found
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Error'
+            example:
+              code: 401
+              message: Not found

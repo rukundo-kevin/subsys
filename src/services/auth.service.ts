@@ -54,7 +54,22 @@ const refreshAuth = async (refreshToken: string): Promise<AuthTokensResponse> =>
   }
 };
 
+const logout = async (refreshToken: string): Promise<void> => {
+  const refreshTokenData = await prisma.token.findFirst({
+    where: {
+      token: refreshToken,
+      type: 'REFRESH',
+      blacklisted: false
+    }
+  });
+  if (!refreshTokenData) {
+    throw new ApiError(httpStatus.NOT_FOUND, 'User Not found');
+  }
+  await prisma.token.delete({ where: { id: refreshTokenData.id } });
+};
+
 export default {
   loginUserWithEmailAndPassword,
-  refreshAuth
+  refreshAuth,
+  logout
 };

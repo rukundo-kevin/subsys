@@ -13,7 +13,14 @@ const refreshTokens = {
   })
 };
 
+const logout = {
+  body: Joi.object().keys({
+    refreshToken: Joi.string().required()
+  })
+};
+
 export default {
   login,
-  refreshTokens
+  refreshTokens,
+  logout
 };

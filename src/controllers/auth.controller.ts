@@ -14,7 +14,13 @@ const refreshTokens = catchAsync(async (req, res) => {
   res.send({ ...tokens });
 });
 
+const logout=catchAsync(async(req,res)=>{
+  await authService.logout(req.body.refreshToken);
+  res.status(httpStatus.OK).send({message:'Logged out successfully'})
+})
+
 export default {
   login,
-  refreshTokens
+  refreshTokens,
+  logout
 };
