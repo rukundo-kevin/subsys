@@ -3,6 +3,7 @@ import { jest, describe, it, expect } from '@jest/globals';
 import { encryptPassword, isPasswordMatch } from '../encryption';
 import ApiError from '../ApiError';
 import exclude from '../exclude';
+import { generateRandomPassword, generateStudentId } from '../userHelper';
 
 jest.mock('bcryptjs');
 describe('Utils', () => {
@@ -85,6 +86,24 @@ describe('Utils', () => {
         lastname: 'Doe',
         age: 25
       });
+    });
+  });
+
+  describe('generatePassword', () => {
+    it('should generate a random password', () => {
+      const password = generateRandomPassword();
+
+      expect(password).toHaveLength(8);
+      expect(password).toMatch(/[A-Z]/);
+    });
+  });
+
+  describe('generateStudentId', () => {
+    it('should generate a random studentId', () => {
+      const studentId = generateStudentId();
+
+      expect(studentId).toHaveLength(8);
+      expect(studentId).toContain('ST');
     });
   });
 });
