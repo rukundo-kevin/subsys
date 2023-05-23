@@ -2,7 +2,7 @@ tags:
   name: Auth
   description: Authentication
 
-/auth/login:
+/api/auth/login:
   post:
     summary: Login
     tags: [Auth]
@@ -47,7 +47,7 @@ tags:
               code: 401
               message: Invalid email or password
 
-/auth/refresh-tokens:
+/api/auth/refresh-tokens:
   post:
     summary: Refresh auth tokens
     tags: [Auth]
@@ -74,7 +74,7 @@ tags:
       '401':
         $ref: '#/components/responses/Unauthorized'
 
-/auth/logout:
+/api/auth/logout:
   post:
     summary: Logout
     tags: [Auth]

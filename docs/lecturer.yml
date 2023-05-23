@@ -2,7 +2,7 @@ tags:
   name: Lecturer
   description: Lecturer Management
 
-/lecturer:
+/api/lecturer:
   get:
     summary: Get all lecturers
     tags: [Lecturer]
@@ -91,7 +91,7 @@ tags:
               code: 401
               message: Please authenticate
 
-/lecturer/{staffId}:
+/api/lecturer/{staffId}:
   get:
     summary: Get a lecturer
     tags: [Lecturer]

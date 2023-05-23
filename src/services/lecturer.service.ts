@@ -143,7 +143,7 @@ const updateLecturer = async (staffId: string, data: any): Promise<Lecturer | nu
       }
     }
   });
-  
+
   return updatedLecturer;
 };
 

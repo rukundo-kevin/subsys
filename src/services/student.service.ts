@@ -83,6 +83,13 @@ const getStudents = async (): Promise<Student[]> => {
   return students;
 };
 
+/**
+ * Get one student
+ * @description Fetch one student
+ * @returns {Promise<Student>}
+ * @param {string} studentId
+ * @returns {Promise<Student | null>}
+ */
 const getOneStudent = async (studentId: string): Promise<Student | null> => {
   const student = prisma.student.findUnique({
     where: {
@@ -101,6 +108,12 @@ const getOneStudent = async (studentId: string): Promise<Student | null> => {
   return student;
 };
 
+/**
+ *
+ * @param studentId
+ * @param studentBody
+ * @returns  {Promise<Student | null>}
+ */
 const updateStudent = async (studentId: string, studentBody: any): Promise<Student | null> => {
   const updatedStented = prisma.student.update({
     where: {
@@ -127,6 +140,10 @@ const updateStudent = async (studentId: string, studentBody: any): Promise<Stude
   return updatedStented;
 };
 
+/**
+ *
+ * @param studentId
+ */
 const deleteStudent = async (studentId: string): Promise<Student | null> => {
   const deletedStudent = prisma.student.delete({
     where: {

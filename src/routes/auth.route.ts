@@ -7,7 +7,7 @@ import auth from '../middlewares/auth';
 const router = express.Router();
 
 router.post('/login', validate(authValidation.login), authController.login);
-router.post('/logout',auth(),validate(authValidation.logout), authController.logout);
+router.post('/logout', auth(), validate(authValidation.logout), authController.logout);
 router.post(
   '/refresh-tokens',
   validate(authValidation.refreshTokens),
