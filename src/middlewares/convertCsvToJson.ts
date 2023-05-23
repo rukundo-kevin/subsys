@@ -5,6 +5,7 @@ import httpStatus from 'http-status';
 import ApiError from '../utils/ApiError';
 
 export const convertCsvToJson = async (req: Request, res: Response, next: NextFunction) => {
+  //eslint-disable-next-line @typescript-eslint/no-non-null-assertion
   const file = req.file!;
   try {
     const data = await csv().fromString(file.buffer.toString());

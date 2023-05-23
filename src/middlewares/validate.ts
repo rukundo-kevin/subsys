@@ -7,8 +7,7 @@ import Joi from 'joi';
 const validate = (schema: object) => (req: Request, res: Response, next: NextFunction) => {
   const validSchema = pick(schema, ['params', 'query', 'body']);
   const obj = pick(req, Object.keys(validSchema));
-  console.log('vs', validSchema);
-  console.log('obj', schema);
+
   const { value, error } = Joi.compile(validSchema)
     .prefs({ errors: { label: 'key' }, abortEarly: false })
     .validate(obj);

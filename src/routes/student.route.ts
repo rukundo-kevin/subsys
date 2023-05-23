@@ -44,8 +44,15 @@ router.post(
   '/csv',
   upload.single('students'),
   validateFiletype('text/csv'),
-  convertCsvToJson,
-  validate(studentValidation.studentCsv),
+  async (req, res, next) => {
+    await convertCsvToJson(req, res, async () => {
+      try {
+        validate(studentValidation.studentCsv)(req, res, next);
+      } catch (error) {
+        next(error);
+      }
+    });
+  },
   studentController.createManyStudents
 );
 

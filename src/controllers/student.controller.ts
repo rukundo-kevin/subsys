@@ -33,7 +33,7 @@ const deleteStudent = catchAsync(async (req, res) => {
 });
 
 const createManyStudents = catchAsync(async (req, res) => {
-  // console.log(req.body);
+  console.log(req.body);
   res.send('ok');
 });
 

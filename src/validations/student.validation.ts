@@ -29,9 +29,9 @@ const updateStudent = {
     .min(1)
 };
 
-export const studentCsv = Joi.object({
+const studentCsv = {
   body: Joi.array().items(studentSchema)
-});
+};
 
 export default {
   createStudent,

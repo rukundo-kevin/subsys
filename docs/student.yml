@@ -217,3 +217,49 @@ tags:
             example:
               code: 401
               message: Please authenticate
+
+/student/csv:
+  post:
+    summary: Upload a CSV file of students
+    tags: [Student]
+    security:
+      - bearerAuth: []
+    requestBody:
+      required: true
+      content:
+        multipart/form-data:
+          schema:
+            type: object
+            properties:
+              students:
+                type: string
+                format: binary
+    responses:
+      '201':
+        description: CREATED
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                message:
+                  type: string
+                  example: Students uploaded successfully
+      '400':
+        description: Bad Request
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Error'
+            example:
+              code: 400
+              message: Please upload a CSV file
+      '401':
+        description: Unauthorized
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Error'
+            example:
+              code: 401
+              message: Please authenticate
