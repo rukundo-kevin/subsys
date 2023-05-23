@@ -30,7 +30,9 @@ const updateStudent = {
 };
 
 const studentCsv = {
-  body: Joi.array().items(studentSchema)
+  body: Joi.object().keys({
+    students: Joi.array().items(studentSchema)
+  })
 };
 
 export default {
