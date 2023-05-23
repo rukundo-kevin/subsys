@@ -42,6 +42,7 @@ router.delete(
 
 router.post(
   '/csv',
+  auth('createStudents'),
   upload.single('students'),
   validateFiletype('text/csv'),
   async (req, res, next) => {
