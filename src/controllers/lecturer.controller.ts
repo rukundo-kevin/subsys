@@ -31,6 +31,7 @@ const updateLecturer = catchAsync(async (req, res) => {
   const lecturer = await lecturerService.updateLecturer(req.params.lecturerId, req.body);
   res.status(httpStatus.NO_CONTENT).send(lecturer);
 });
+
 export default {
   createLecturer,
   getLecturers,

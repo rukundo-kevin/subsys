@@ -4,7 +4,13 @@ import ApiError from '../utils/ApiError';
 import prisma from '../client';
 import { Prisma } from '@prisma/client';
 import { encryptPassword } from '../utils/encryption';
-
+/**
+ * Get user by email
+ * @param {string} email
+ * @returns {Promise<User>}
+ * @throws {ApiError}
+ * @returns {Promise<User>}
+ */
 const getUserByEmail = async <Key extends keyof User>(
   email: string,
   keys: Key[] = [
@@ -50,7 +56,7 @@ const createUser = async (
     return createdUser;
   } catch (error) {
     if ((error as Prisma.PrismaClientKnownRequestError).code === 'P2002') {
-      throw new ApiError(httpStatus.BAD_REQUEST, 'Email already exists');
+      throw new ApiError(httpStatus.BAD_REQUEST, `Email "${email}" already exists`);
     }
     throw error;
   }

@@ -2,7 +2,7 @@ tags:
   name: Student
   description: Student Management
 
-/student:
+/api/student:
   get:
     summary: Get all students
     tags: [Student]
@@ -91,7 +91,7 @@ tags:
               code: 401
               message: Please authenticate
 
-/student/{studentId}:
+/api/student/{studentId}:
   get:
     summary: Get a student
     tags: [Student]
@@ -218,7 +218,7 @@ tags:
               code: 401
               message: Please authenticate
 
-/student/csv:
+/api/student/csv:
   post:
     summary: Upload a CSV file of students
     tags: [Student]

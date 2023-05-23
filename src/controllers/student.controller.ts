@@ -33,8 +33,13 @@ const deleteStudent = catchAsync(async (req, res) => {
 });
 
 const createManyStudents = catchAsync(async (req, res) => {
-  console.log(req.body);
-  res.send('ok');
+  const { body: students } = req;
+
+  for (let i = 0; i < students.length; i++) {
+    const { firstname, lastname, email } = req.body[i];
+    await studentService.createStudent(email, firstname, lastname);
+  }
+  res.status(httpStatus.CREATED).send({ message: 'Students created' });
 });
 
 export default {
