@@ -13,10 +13,10 @@ const swaggerDef = {
   },
   servers: [
     {
-      url: `http://localhost:${config.port}/`
+      url: `${config.appUrl}`
     },
     {
-      url: `https://gitinspired-rw-api.amalitech-dev.net/`
+      url: `http://localhost:${config.port}/`
     }
   ]
 };

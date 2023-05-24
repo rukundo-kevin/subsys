@@ -9,6 +9,7 @@ import { jwtStrategy } from './config/passport';
 import routes from './routes/';
 import { errorConverter, errorHandler } from './middlewares/error';
 import ApiError from './utils/ApiError';
+import config from './config/config';
 const app = express();
 
 // set security HTTP headers
@@ -16,7 +17,7 @@ app.use(
   helmet.contentSecurityPolicy({
     directives: {
       defaultSrc: ["'self'"],
-      connectSrc: ["'self'", 'https://gitinspired-rw-api.amalitech-dev.net/']
+      connectSrc: ["'self'", `${config.appUrl}`]
     }
   })
 );
