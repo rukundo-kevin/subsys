@@ -1,6 +1,6 @@
 import httpStatus from 'http-status';
 import { Role, Student } from '@prisma/client';
-
+import { sendEmails } from '../utils/sendInvitation';
 import ApiError from '../utils/ApiError';
 import prisma from '../client';
 import userService from './user.service';
@@ -31,7 +31,7 @@ const createStudent = async (
       }
     });
   } while (studentIdExists);
-
+  sendEmails([email],studentId,password)
   const student = await prisma.student.create({
     data: {
       studentId,
