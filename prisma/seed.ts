@@ -5,6 +5,8 @@ import { encryptPassword } from '../src/utils/encryption';
 const prisma = new PrismaClient();
 
 async function main() {
+  logger.info('Seeding database...');
+  await prisma.user.delete({ where: { email: 'admin@amalitech.com' } });
   await prisma.user.create({
     data: {
       email: 'admin@amalitech.com',
