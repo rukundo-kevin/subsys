@@ -1,0 +1,11 @@
+version: "3"
+services:
+  gitinpired-rw-backend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: gitinpired-rw-backend
+    container_name: gitinpired-rw-backend
+    ports:
+      - "7001:7001"
+    restart: on-failure
