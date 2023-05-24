@@ -1,13 +1,8 @@
 import Joi from 'joi';
-
-const studentSchema = Joi.object({
-  firstname: Joi.string().required(),
-  lastname: Joi.string().required(),
-  email: Joi.string().required()
-});
+import userSchema from '.';
 
 const createStudent = {
-  body: studentSchema
+  body: userSchema
 };
 
 const getStudents = {
@@ -31,7 +26,7 @@ const updateStudent = {
 
 const studentCsv = {
   body: Joi.object().keys({
-    students: Joi.array().items(studentSchema)
+    students: Joi.array().items(userSchema)
   })
 };
 

@@ -14,7 +14,8 @@ const envVarsSchema = Joi.object()
       .description('minutes after which access tokens expire'),
     JWT_REFRESH_EXPIRATION_DAYS: Joi.number()
       .default(30)
-      .description('days after which refresh tokens expire')
+      .description('days after which refresh tokens expire'),
+    APP_URL: Joi.string().required().description('App url')
   })
   .unknown();
 
@@ -33,5 +34,6 @@ export default {
     secret: envVars.JWT_SECRET,
     accessExpirationMinutes: envVars.JWT_ACCESS_EXPIRATION_MINUTES,
     refreshExpirationDays: envVars.JWT_REFRESH_EXPIRATION_DAYS
-  }
+  },
+  appUrl: envVars.APP_URL
 };

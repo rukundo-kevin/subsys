@@ -1,11 +1,8 @@
 import Joi from 'joi';
+import userSchema from '.';
 
 const createLecturer = {
-  body: Joi.object().keys({
-    firstname: Joi.string().required(),
-    lastname: Joi.string().required(),
-    email: Joi.string().required()
-  })
+  body: userSchema
 };
 
 const getLecturer = {
@@ -29,7 +26,7 @@ const updateLecturer = {
 
 const lecturerCsv = {
   body: Joi.object().keys({
-    lecturers: Joi.array().items(createLecturer)
+    lecturers: Joi.array().items(userSchema)
   })
 };
 
