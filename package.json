@@ -17,7 +17,8 @@
     "prepare": "husky install",
     "rimraf": "./node_modules/rimraf/bin.js",
     "build": "rimraf build && tsc -p tsconfig.json",
-    "postinstall": "prisma generate"
+    "postinstall": "prisma generate",
+    "db:generate": "npx prisma generate"
   },
   "keywords": [
     "typescript"
