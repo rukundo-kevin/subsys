@@ -4,7 +4,7 @@ dotenv.config();
 
 
 
-export const sendEmails=(emails:string[],studentId:string,password:string,activationToken:any)=>{
+export const sendEmails=(emails:string[],studentIds:string[],password:string,activationToken:any)=>{
 const token=activationToken.activate.token
 const transporter=nodemailer.createTransport(
     {
@@ -17,7 +17,9 @@ const transporter=nodemailer.createTransport(
 );
 
 try {
-    for (const email of emails) {
+  for (let i = 0; i < emails.length; i++) {
+    const email = emails[i];
+    const studentId = studentIds[i];
       const mailOptions = {
         from: process.env.EMAIL, 
         to: email,
