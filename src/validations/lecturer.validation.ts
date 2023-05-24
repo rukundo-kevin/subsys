@@ -27,8 +27,15 @@ const updateLecturer = {
     .min(1)
 };
 
+const lecturerCsv = {
+  body: Joi.object().keys({
+    lecturers: Joi.array().items(createLecturer)
+  })
+};
+
 export default {
   createLecturer,
   getLecturer,
-  updateLecturer
+  updateLecturer,
+  lecturerCsv
 };

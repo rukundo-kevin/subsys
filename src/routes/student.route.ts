@@ -45,7 +45,7 @@ router.post(
   auth('createStudents'),
   upload.single('students'),
   validateFiletype('text/csv'),
-  convertCsvToJson,
+  convertCsvToJson('students'),
   studentController.createManyStudents
 );
 

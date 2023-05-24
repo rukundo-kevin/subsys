@@ -32,10 +32,21 @@ const updateLecturer = catchAsync(async (req, res) => {
   res.status(httpStatus.NO_CONTENT).send(lecturer);
 });
 
+const createManyLecturers = catchAsync(async (req, res) => {
+  const { lecturers } = req.body;
+
+  for (let i = 0; i < lecturers.length; i++) {
+    const { firstname, lastname, email } = lecturers[i];
+    await lecturerService.createLecturer(email, firstname, lastname);
+  }
+  res.status(httpStatus.CREATED).send({ message: 'Lecturers created' });
+});
+
 export default {
   createLecturer,
   getLecturers,
   getLecturer,
   deleteLecturer,
-  updateLecturer
+  updateLecturer,
+  createManyLecturers
 };
