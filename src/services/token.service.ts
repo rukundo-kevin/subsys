@@ -69,6 +69,9 @@ const generateAuthTokens = async (user: { id: number }): Promise<AuthTokensRespo
   const refreshToken = generateToken(user.id, refreshTokenExpires, TokenType.REFRESH);
   await saveToken(refreshToken, user.id, refreshTokenExpires, TokenType.REFRESH);
 
+  const activateTokenExpires = moment().add(config.jwt.activationExpirationMinutes, 'minutes');
+  const activateToken = generateToken(user.id, activateTokenExpires, TokenType.ACCESS);
+
   return {
     access: {
       token: accessToken,
@@ -77,22 +80,14 @@ const generateAuthTokens = async (user: { id: number }): Promise<AuthTokensRespo
     refresh: {
       token: refreshToken,
       expires: refreshTokenExpires.toDate()
-    }
-  };
-};
-
-const generateActivationToken=async (user: { id: number }): Promise<AuthTokensResponse> =>{
-  const activateTokenExpires = moment().add(config.jwt.activationExpirationMinutes, 'minutes');
-  const activateToken = generateToken(user.id, activateTokenExpires, TokenType.ACTIVATION);
-  await saveToken(activateToken, user.id, activateTokenExpires, TokenType.ACTIVATION);
-
-  return {
+    },
     activate: {
       token: activateToken,
       expires: activateTokenExpires.toDate()
-    }
-  }; 
-}
+    },
+  };
+};
+
 
 /**
  * Verify token and return token doc (or throw an error if it is not valid)
@@ -112,9 +107,18 @@ const verifyToken = async (token: string, type: TokenType): Promise<Token> => {
   return tokenData;
 };
 
+const verifyActivationLink=async (token: string): Promise<number> =>{
+  const payload = jwt.verify(token, config.jwt.secret);
+  const userId = Number(payload.sub);
+  if (!userId) {
+    throw new Error('User not found');
+  }
+  return userId;
+}
+
 export default {
   generateToken,
   generateAuthTokens,
   verifyToken,
-  generateActivationToken
+  verifyActivationLink
 };

@@ -75,24 +75,11 @@ const resetPassword = async (userId: number, newPassword: string): Promise<void>
   }
   await userService.updateUserById(userId, { password: await encryptPassword(newPassword) });
 };
-const activateAccount=async(token:string): Promise<void> => {
-  const activatedToken=await prisma.token.findFirst({
-    where: {
-      token: token,
-      type: 'ACTIVATION',
-      blacklisted: false
-    }
-  });
-  if (!activatedToken) {
-    throw new ApiError(httpStatus.NOT_FOUND, 'User Not found');
-  }
-  await prisma.token.delete({ where: { id: activatedToken.id } });
-}
+
 
 export default {
   loginUserWithEmailAndPassword,
   refreshAuth,
   logout,
-  resetPassword,
-  activateAccount
+  resetPassword
 };
