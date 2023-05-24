@@ -60,5 +60,6 @@ enum Role {
 enum TokenType {
   ACCESS
   REFRESH
+  ACTIVATION
 }
 

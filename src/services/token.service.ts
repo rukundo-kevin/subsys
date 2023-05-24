@@ -81,6 +81,19 @@ const generateAuthTokens = async (user: { id: number }): Promise<AuthTokensRespo
   };
 };
 
+const generateActivationToken=async (user: { id: number }): Promise<AuthTokensResponse> =>{
+  const activateTokenExpires = moment().add(config.jwt.activationExpirationMinutes, 'minutes');
+  const activateToken = generateToken(user.id, activateTokenExpires, TokenType.ACTIVATION);
+  await saveToken(activateToken, user.id, activateTokenExpires, TokenType.ACTIVATION);
+
+  return {
+    activate: {
+      token: activateToken,
+      expires: activateTokenExpires.toDate()
+    }
+  }; 
+}
+
 /**
  * Verify token and return token doc (or throw an error if it is not valid)
  * @param {string} token
@@ -102,5 +115,6 @@ const verifyToken = async (token: string, type: TokenType): Promise<Token> => {
 export default {
   generateToken,
   generateAuthTokens,
-  verifyToken
+  verifyToken,
+  generateActivationToken
 };

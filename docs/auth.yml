@@ -153,3 +153,36 @@ tags:
             example:
               code: 401
               message: Please authenticate
+
+/api/auth/activate/{activationToken}:
+  post:
+    summary: Activate account
+    tags: [Auth]
+    parameters:
+      - in: path
+        name: activationToken
+        schema:
+          type: string
+        required: true
+        description: Activation Token
+    responses:
+      '200':
+        description: Account activated successfully
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Error'
+            example:
+              code: 200
+              message: Account activated successfully
+
+      '404':
+        description: Not found
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Error'
+            example:
+              code: 404
+              message: Not found
+

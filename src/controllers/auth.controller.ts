@@ -25,11 +25,20 @@ const resetPassword = catchAsync(async (req, res) => {
   const { id: userId } = req.user as User;
   await authService.resetPassword(userId, newPassword);
   res.status(httpStatus.OK).send({ message: 'Password reset successfully' });
+}
+
+const activateAccount=catchAsync(async (req, res) => {
+  const { activationToken } = req.params;
+  const tokenData=await tokenService.verifyToken(activationToken,'ACTIVATION')
+  await authService.activateAccount(activationToken)
+  await userService.updateUser(tokenData.id,{isInviteAccepted:true})
+  res.status(httpStatus.OK).send({ message: 'Account activated successfully' });
 });
 
 export default {
   login,
   refreshTokens,
   logout,
-  resetPassword
+  resetPassword,
+  activateAccount
 };
