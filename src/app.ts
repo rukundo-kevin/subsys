@@ -12,7 +12,14 @@ import ApiError from './utils/ApiError';
 const app = express();
 
 // set security HTTP headers
-app.use(helmet());
+app.use(
+  helmet.contentSecurityPolicy({
+    directives: {
+      defaultSrc: ["'self'"],
+      connectSrc: ["'self'", 'https://gitinspired-rw-api.amalitech-dev.net/']
+    }
+  })
+);
 
 // parse json request body
 app.use(express.json());
