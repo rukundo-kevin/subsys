@@ -7,5 +7,5 @@ services:
     image: gitinpired-rw-backend
     container_name: gitinpired-rw-backend
     ports:
-      - "7001:7001"
+      - "4501:4501"
     restart: on-failure
