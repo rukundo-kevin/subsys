@@ -86,6 +86,11 @@ const getLecturers = async (): Promise<Lecturer[]> => {
   return lecturers;
 };
 
+/**
+ * @description Fetch one lecturer
+ * @param staffId
+ * @returns {Promise<Lecturer | null>}
+ */
 const getOneLecturer = async (staffId: string): Promise<Lecturer | null> => {
   const lecturer = await prisma.lecturer.findUnique({
     where: {
@@ -108,6 +113,12 @@ const getOneLecturer = async (staffId: string): Promise<Lecturer | null> => {
   return lecturer;
 };
 
+/**
+ * @description Delete a lecturer
+ * @param {string} staffId
+ * @returns {Promise<Lecturer | null>}
+ *
+ */
 const deleteLecturer = async (staffId: string): Promise<Lecturer | null> => {
   const lecturer = await prisma.lecturer.delete({
     where: {
@@ -116,6 +127,12 @@ const deleteLecturer = async (staffId: string): Promise<Lecturer | null> => {
   });
   return lecturer;
 };
+
+/**
+ * @description Update a lecturer
+ * @param {string} staffId
+ * @returns {Promise<Lecturer | null>}
+ */
 
 const updateLecturer = async (staffId: string, data: any): Promise<Lecturer | null> => {
   const updatedLecturer = await prisma.lecturer.update({

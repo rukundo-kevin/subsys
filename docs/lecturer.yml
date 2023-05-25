@@ -153,9 +153,7 @@ tags:
             example:
               firstname: yohana
               lastname: doe
-              email:
-                type: string
-                format: email
+              email: john@gmail.com
     responses:
       '200':
         description: OK

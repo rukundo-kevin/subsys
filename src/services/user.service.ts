@@ -62,7 +62,59 @@ const createUser = async (
   }
 };
 
+/**
+ * Get user by id
+ * @param {ObjectId} id
+ * @param {Array<Key>} keys
+ * @returns {Promise<Pick<User, Key> | null>}
+ */
+const getUserById = async <Key extends keyof User>(
+  id: number,
+  keys: Key[] = [
+    'id',
+    'email',
+    'firstname',
+    'lastname',
+    'password',
+    'role',
+    'isInviteAccepted',
+    'createdAt',
+    'updatedAt'
+  ] as Key[]
+): Promise<Pick<User, Key> | null> => {
+  return prisma.user.findUnique({
+    where: { id },
+    select: keys.reduce((obj, k) => ({ ...obj, [k]: true }), {})
+  }) as Promise<Pick<User, Key> | null>;
+};
+
+/**
+ * Update user by id
+ * @param {ObjectId} userId
+ * @param {Object} updateBody
+ * @returns {Promise<User>}
+ */
+const updateUserById = async <Key extends keyof User>(
+  userId: number,
+  updateBody: Prisma.UserUpdateInput,
+  keys: Key[] = ['id', 'email', 'firstname', 'lastname', 'role'] as Key[]
+): Promise<Pick<User, Key> | null> => {
+  const user = await getUserById(userId, ['id', 'email', 'firstname', 'lastname', 'role']);
+  if (!user) {
+    throw new ApiError(httpStatus.NOT_FOUND, 'User not found');
+  }
+
+  const updatedUser = await prisma.user.update({
+    where: { id: user.id },
+    data: updateBody,
+    select: keys.reduce((obj, k) => ({ ...obj, [k]: true }), {})
+  });
+  return updatedUser as Pick<User, Key> | null;
+};
+
 export default {
   getUserByEmail,
-  createUser
+  createUser,
+  getUserById,
+  updateUserById
 };
