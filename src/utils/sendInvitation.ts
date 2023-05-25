@@ -1,5 +1,7 @@
 import nodemailer from 'nodemailer'
 import dotenv from 'dotenv';
+import ApiError from './ApiError';
+import httpStatus from 'http-status';
 dotenv.config();
 
 
@@ -46,7 +48,6 @@ try {
       transporter.sendMail(mailOptions)
     }
   } catch (error) {
-    return error
+    throw new ApiError(httpStatus.INTERNAL_SERVER_ERROR,'Error while sending email, contact for support')
   }
-
 }
