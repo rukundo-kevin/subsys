@@ -1,8 +1,10 @@
-import httpStatus from 'http-status';
-import ApiError from '../utils/ApiError';
-import { NextFunction, Request, Response } from 'express';
-import pick from '../utils/pick';
 import Joi from 'joi';
+import httpStatus from 'http-status';
+import { NextFunction, Request, Response } from 'express';
+import markdownlint, { LintResults, LintError } from 'markdownlint';
+
+import ApiError from '../utils/ApiError';
+import pick from '../utils/pick';
 
 const validate = (schema: object) => (req: Request, res: Response, next: NextFunction) => {
   const validSchema = pick(schema, ['params', 'query', 'body']);
@@ -34,4 +36,42 @@ export const validateFiletype =
     }
     next();
   };
+
+export const validateMarkdown = (req: Request, res: Response, next: NextFunction) => {
+  const markdown = req.body.description;
+  if (!markdown) {
+    return res.status(400).json({ error: 'Markdown content is required' });
+  }
+
+  const options = {
+    strings: {
+      content: markdown
+    }
+  };
+
+  markdownlint(options, (err: Error | null, result: LintResults | undefined) => {
+    if (err) {
+      throw new ApiError(httpStatus.INTERNAL_SERVER_ERROR, 'Internal server error');
+    } else {
+      const lintErrors: LintError[][] = [];
+
+      if (result) {
+        lintErrors.push(...Object.values(result));
+      }
+
+      if (lintErrors.length > 0) {
+        const errorMessages = lintErrors
+          .flat()
+          .map((error: LintError) => `${error.ruleNames}: ${error.ruleDescription}`);
+        throw new ApiError(
+          httpStatus.BAD_REQUEST,
+          `Markdown validation failed - ${errorMessages.join(', ')}`
+        );
+      } else {
+        next();
+      }
+    }
+  });
+};
+
 export default validate;
