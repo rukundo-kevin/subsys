@@ -1,9 +1,10 @@
 import httpStatus from 'http-status';
 import { Role, Student } from '@prisma/client';
-
+import { sendEmails } from '../utils/sendInvitation';
 import ApiError from '../utils/ApiError';
 import prisma from '../client';
 import userService from './user.service';
+import tokenService from './token.service';
 import { generateId, generateRandomPassword } from '../utils/userHelper';
 
 /**
@@ -11,6 +12,8 @@ import { generateId, generateRandomPassword } from '../utils/userHelper';
  * @param { Object } studentBody
  * @returns {Promise<Student>}
  */
+
+
 const createStudent = async (
   email: string,
   firstname: string,
@@ -31,7 +34,8 @@ const createStudent = async (
       }
     });
   } while (studentIdExists);
-
+   const activationToken: any=await tokenService.generateAuthTokens(studentUser)
+  sendEmails([email],[studentId],password,activationToken)
   const student = await prisma.student.create({
     data: {
       studentId,

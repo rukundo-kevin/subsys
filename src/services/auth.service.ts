@@ -76,6 +76,7 @@ const resetPassword = async (userId: number, newPassword: string): Promise<void>
   await userService.updateUserById(userId, { password: await encryptPassword(newPassword) });
 };
 
+
 export default {
   loginUserWithEmailAndPassword,
   refreshAuth,
