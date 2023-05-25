@@ -1,6 +1,7 @@
 import httpStatus from 'http-status';
 import catchAsync from '../utils/catchAsync';
 import { authService, tokenService } from '../services';
+import { User } from '@prisma/client';
 
 const login = catchAsync(async (req, res) => {
   const { email, password } = req.body;
@@ -19,8 +20,16 @@ const logout = catchAsync(async (req, res) => {
   res.status(httpStatus.OK).send({ message: 'Logged out successfully' });
 });
 
+const resetPassword = catchAsync(async (req, res) => {
+  const { newPassword } = req.body;
+  const { id: userId } = req.user as User;
+  await authService.resetPassword(userId, newPassword);
+  res.status(httpStatus.OK).send({ message: 'Password reset successfully' });
+});
+
 export default {
   login,
   refreshTokens,
-  logout
+  logout,
+  resetPassword
 };

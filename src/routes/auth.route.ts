@@ -13,4 +13,12 @@ router.post(
   validate(authValidation.refreshTokens),
   authController.refreshTokens
 );
+
+router.patch(
+  '/reset-password',
+  auth(),
+  validate(authValidation.resetPassword),
+  authController.resetPassword
+);
+
 export default router;

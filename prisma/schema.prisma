@@ -38,15 +38,15 @@ model Token {
 
 model Student {
   id              Int      @id @default(autoincrement())
-  user            User?    @relation(fields: [userId], references: [id])
-  userId          Int? @unique
+  user            User    @relation(fields: [userId], references: [id])
+  userId          Int @unique
   studentId       String   @unique
 }
 
 model Lecturer {
   id              Int      @id @default(autoincrement())
-  user            User?    @relation(fields: [userId], references: [id])
-  userId          Int? @unique
+  user            User    @relation(fields: [userId], references: [id])
+  userId          Int @unique
   staffId       String   @unique
 }
 

@@ -145,11 +145,20 @@ const updateStudent = async (studentId: string, studentBody: any): Promise<Stude
  * @param studentId
  */
 const deleteStudent = async (studentId: string): Promise<Student | null> => {
-  const deletedStudent = prisma.student.delete({
+  const deletedStudent = await prisma.student.delete({
     where: {
       studentId
     }
   });
+
+  if (deletedStudent) {
+    await prisma.user.delete({
+      where: {
+        id: deletedStudent.userId
+      }
+    });
+  }
+
   return deletedStudent;
 };
 

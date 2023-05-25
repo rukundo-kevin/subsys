@@ -17,6 +17,7 @@ async function main() {
       password: await encryptPassword('Admin123')
     }
   });
+  logger.info('Seeding completed!');
 }
 
 main()

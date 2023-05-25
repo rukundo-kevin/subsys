@@ -5,7 +5,7 @@ import prisma from '../client';
 import userService from './user.service';
 import ApiError from '../utils/ApiError';
 import exclude from '../utils/exclude';
-import { isPasswordMatch } from '../utils/encryption';
+import { encryptPassword, isPasswordMatch } from '../utils/encryption';
 import tokenService from './token.service';
 import { AuthTokensResponse } from '../types/response';
 
@@ -68,8 +68,17 @@ const logout = async (refreshToken: string): Promise<void> => {
   await prisma.token.delete({ where: { id: refreshTokenData.id } });
 };
 
+const resetPassword = async (userId: number, newPassword: string): Promise<void> => {
+  const user = await prisma.user.findFirst({ where: { id: userId } });
+  if (!user) {
+    throw new ApiError(httpStatus.NOT_FOUND, 'User not found');
+  }
+  await userService.updateUserById(userId, { password: await encryptPassword(newPassword) });
+};
+
 export default {
   loginUserWithEmailAndPassword,
   refreshAuth,
-  logout
+  logout,
+  resetPassword
 };
