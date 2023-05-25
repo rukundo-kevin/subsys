@@ -105,7 +105,7 @@ tags:
               message: Logged out successfully
 
       '401':
-        description: Unauthorized
+        description: Not found
         content:
           application/json:
             schema:
