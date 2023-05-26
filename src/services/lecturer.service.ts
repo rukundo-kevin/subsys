@@ -122,7 +122,7 @@ const getOneLecturer = async (staffId: string): Promise<Lecturer | null> => {
  * @returns {Promise<User | null>}
  *
  */
-const deleteLecturer = async (staffId: string): Promise<User | null> => {
+const deleteLecturer = async (staffId: string): Promise<void> => {
   const lecturer = await prisma.lecturer.findUnique({
     where: { staffId },
     include: { user: true }
@@ -134,8 +134,7 @@ const deleteLecturer = async (staffId: string): Promise<User | null> => {
 
   const userId = lecturer.user.id;
 
-  const deletedUser = await prisma.user.delete({ where: { id: userId } });
-  return deletedUser;
+  await prisma.user.delete({ where: { id: userId } });
 };
 
 /**

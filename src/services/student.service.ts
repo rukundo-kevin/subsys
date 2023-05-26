@@ -147,7 +147,7 @@ const updateStudent = async (studentId: string, studentBody: any): Promise<Stude
  *
  * @param studentId
  */
-const deleteStudent = async (studentId: string): Promise<User | null> => {
+const deleteStudent = async (studentId: string): Promise<void> => {
   const student = await prisma.student.findUnique({
     where: { studentId },
     include: { user: true }
@@ -159,8 +159,7 @@ const deleteStudent = async (studentId: string): Promise<User | null> => {
 
   const userId = student.user.id;
 
-  const deletedUser = await prisma.user.delete({ where: { id: userId } });
-  return deletedUser;
+  await prisma.user.delete({ where: { id: userId } });
 };
 
 export default {
