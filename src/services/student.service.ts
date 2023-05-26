@@ -1,5 +1,5 @@
 import httpStatus from 'http-status';
-import { Role, Student } from '@prisma/client';
+import { Role, Student, User } from '@prisma/client';
 import { sendEmails } from '../utils/sendInvitation';
 import ApiError from '../utils/ApiError';
 import prisma from '../client';
@@ -12,7 +12,6 @@ import { generateId, generateRandomPassword } from '../utils/userHelper';
  * @param { Object } studentBody
  * @returns {Promise<Student>}
  */
-
 
 const createStudent = async (
   email: string,
@@ -34,8 +33,8 @@ const createStudent = async (
       }
     });
   } while (studentIdExists);
-   const activationToken: any=await tokenService.generateAuthTokens(studentUser)
-  sendEmails(email,studentId,'Student',password,activationToken)
+  const activationToken: any = await tokenService.generateAuthTokens(studentUser);
+  sendEmails(email, studentId, 'Student', password, activationToken);
   const student = await prisma.student.create({
     data: {
       studentId,
@@ -148,22 +147,20 @@ const updateStudent = async (studentId: string, studentBody: any): Promise<Stude
  *
  * @param studentId
  */
-const deleteStudent = async (studentId: string): Promise<Student | null> => {
-  const deletedStudent = await prisma.student.delete({
-    where: {
-      studentId
-    }
+const deleteStudent = async (studentId: string): Promise<User | null> => {
+  const student = await prisma.student.findUnique({
+    where: { studentId },
+    include: { user: true }
   });
 
-  if (deletedStudent) {
-    await prisma.user.delete({
-      where: {
-        id: deletedStudent.userId
-      }
-    });
+  if (!student) {
+    throw new Error(`Student with studentId ${studentId} not found`);
   }
 
-  return deletedStudent;
+  const userId = student.user.id;
+
+  const deletedUser = await prisma.user.delete({ where: { id: userId } });
+  return deletedUser;
 };
 
 export default {

@@ -1,4 +1,4 @@
-import { Lecturer, Role } from '@prisma/client';
+import { Lecturer, Role, User } from '@prisma/client';
 import prisma from '../client';
 import userService from './user.service';
 import { generateId, generateRandomPassword } from '../utils/userHelper';
@@ -34,8 +34,8 @@ const createLecturer = async (
       }
     });
   } while (lecturerIdExists);
-  const activationToken:any=await tokenService.generateAuthTokens(lecturerUser)
-  sendEmails(email,staffId,'Staff',password,activationToken)
+  const activationToken: any = await tokenService.generateAuthTokens(lecturerUser);
+  sendEmails(email, staffId, 'Staff', password, activationToken);
   const lecturer = await prisma.lecturer.create({
     data: {
       staffId,
@@ -119,16 +119,23 @@ const getOneLecturer = async (staffId: string): Promise<Lecturer | null> => {
 /**
  * @description Delete a lecturer
  * @param {string} staffId
- * @returns {Promise<Lecturer | null>}
+ * @returns {Promise<User | null>}
  *
  */
-const deleteLecturer = async (staffId: string): Promise<Lecturer | null> => {
-  const lecturer = await prisma.lecturer.delete({
-    where: {
-      staffId
-    }
+const deleteLecturer = async (staffId: string): Promise<User | null> => {
+  const lecturer = await prisma.lecturer.findUnique({
+    where: { staffId },
+    include: { user: true }
   });
-  return lecturer;
+
+  if (!lecturer) {
+    throw new Error(`Lecturer with staffId ${staffId} not found`);
+  }
+
+  const userId = lecturer.user.id;
+
+  const deletedUser = await prisma.user.delete({ where: { id: userId } });
+  return deletedUser;
 };
 
 /**
