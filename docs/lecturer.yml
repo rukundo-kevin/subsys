@@ -155,24 +155,8 @@ tags:
               lastname: doe
               email: john@gmail.com
     responses:
-      '200':
-        description: OK
-        content:
-          application/json:
-            schema:
-              type: object
-              properties:
-                id:
-                  type: integer
-                  example: 3
-                userId:
-                  type: integer
-                  example: 6
-                staffId:
-                  type: string
-                  example: 'LC859025'
-                user:
-                  $ref: '#/components/schemas/User'
+      '204':
+        description: No Content
       '400':
         description:
         content:
@@ -238,9 +222,11 @@ tags:
         content:
           application/json:
             schema:
-              type: array
-              items:
-                $ref: '#/components/schemas/Lecturer'
+              type: object
+              properties:
+                message:
+                  type: string
+                  example: Students uploaded successfully
       '400':
         description: Bad Request
       '401':
