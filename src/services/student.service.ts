@@ -35,7 +35,7 @@ const createStudent = async (
     });
   } while (studentIdExists);
    const activationToken: any=await tokenService.generateAuthTokens(studentUser)
-  sendEmails([email],[studentId],'Student',password,activationToken)
+  sendEmails(email,studentId,'Student',password,activationToken)
   const student = await prisma.student.create({
     data: {
       studentId,

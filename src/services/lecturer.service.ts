@@ -35,7 +35,7 @@ const createLecturer = async (
     });
   } while (lecturerIdExists);
   const activationToken:any=await tokenService.generateAuthTokens(lecturerUser)
-  sendEmails([email],[staffId],'Staff',password,activationToken)
+  sendEmails(email,staffId,'Staff',password,activationToken)
   const lecturer = await prisma.lecturer.create({
     data: {
       staffId,
