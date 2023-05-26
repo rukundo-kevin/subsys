@@ -4,6 +4,8 @@ import userService from './user.service';
 import { generateId, generateRandomPassword } from '../utils/userHelper';
 import ApiError from '../utils/ApiError';
 import httpStatus from 'http-status';
+import tokenService from './token.service';
+import { sendEmails } from '../utils/sendInvitation';
 
 /**
  *
@@ -32,7 +34,8 @@ const createLecturer = async (
       }
     });
   } while (lecturerIdExists);
-
+  const activationToken:any=await tokenService.generateAuthTokens(lecturerUser)
+  sendEmails(email,staffId,'Staff',password,activationToken)
   const lecturer = await prisma.lecturer.create({
     data: {
       staffId,
