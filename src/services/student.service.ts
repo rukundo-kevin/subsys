@@ -1,5 +1,5 @@
 import httpStatus from 'http-status';
-import { Role, Student, User } from '@prisma/client';
+import { Role, Student } from '@prisma/client';
 import { sendEmails } from '../utils/sendInvitation';
 import ApiError from '../utils/ApiError';
 import prisma from '../client';
@@ -143,29 +143,9 @@ const updateStudent = async (studentId: string, studentBody: any): Promise<Stude
   return updatedStented;
 };
 
-/**
- *
- * @param studentId
- */
-const deleteStudent = async (studentId: string): Promise<void> => {
-  const student = await prisma.student.findUnique({
-    where: { studentId },
-    include: { user: true }
-  });
-
-  if (!student) {
-    throw new Error(`Student with studentId ${studentId} not found`);
-  }
-
-  const userId = student.user.id;
-
-  await prisma.user.delete({ where: { id: userId } });
-};
-
 export default {
   createStudent,
   getStudents,
   getOneStudent,
-  updateStudent,
-  deleteStudent
+  updateStudent
 };

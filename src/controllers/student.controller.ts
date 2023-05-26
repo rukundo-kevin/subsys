@@ -2,6 +2,7 @@ import httpStatus from 'http-status';
 import catchAsync from '../utils/catchAsync';
 import studentService from '../services/student.service';
 import ApiError from '../utils/ApiError';
+import { userService } from '../services';
 
 const createStudent = catchAsync(async (req, res) => {
   const { firstname, lastname, email } = req.body;
@@ -28,7 +29,7 @@ const updateStudent = catchAsync(async (req, res) => {
 });
 
 const deleteStudent = catchAsync(async (req, res) => {
-  const student = await studentService.deleteStudent(req.params.studentId);
+  const student = await userService.deleteUser(req.params.userId);
   res.status(httpStatus.NO_CONTENT).send(student);
 });
 

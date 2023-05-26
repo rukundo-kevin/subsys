@@ -1,4 +1,4 @@
-import { Lecturer, Role, User } from '@prisma/client';
+import { Lecturer, Role } from '@prisma/client';
 import prisma from '../client';
 import userService from './user.service';
 import { generateId, generateRandomPassword } from '../utils/userHelper';
@@ -117,27 +117,6 @@ const getOneLecturer = async (staffId: string): Promise<Lecturer | null> => {
 };
 
 /**
- * @description Delete a lecturer
- * @param {string} staffId
- * @returns {Promise<User | null>}
- *
- */
-const deleteLecturer = async (staffId: string): Promise<void> => {
-  const lecturer = await prisma.lecturer.findUnique({
-    where: { staffId },
-    include: { user: true }
-  });
-
-  if (!lecturer) {
-    throw new Error(`Lecturer with staffId ${staffId} not found`);
-  }
-
-  const userId = lecturer.user.id;
-
-  await prisma.user.delete({ where: { id: userId } });
-};
-
-/**
  * @description Update a lecturer
  * @param {string} staffId
  * @returns {Promise<Lecturer | null>}
@@ -177,6 +156,5 @@ export default {
   getOneLecturer,
   createLecturer,
   getLecturers,
-  deleteLecturer,
   updateLecturer
 };

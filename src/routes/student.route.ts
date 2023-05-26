@@ -6,6 +6,7 @@ import studentValidation from '../validations/student.validation';
 import { studentController } from '../controllers';
 import auth from '../middlewares/auth';
 import { convertCsvToJson } from '../middlewares';
+import { deleteUser } from '../validations';
 
 const router = express.Router();
 const upload = multer();
@@ -34,9 +35,9 @@ router.put(
 );
 
 router.delete(
-  '/:studentId',
+  '/:userId',
   auth('deleteStudents'),
-  validate(studentValidation.getStudents),
+  validate(deleteUser),
   studentController.deleteStudent
 );
 

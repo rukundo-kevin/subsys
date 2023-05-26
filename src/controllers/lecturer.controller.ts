@@ -1,5 +1,5 @@
 import catchAsync from '../utils/catchAsync';
-import { lecturerService } from '../services';
+import { lecturerService, userService } from '../services';
 import httpStatus from 'http-status';
 import ApiError from '../utils/ApiError';
 
@@ -23,7 +23,7 @@ const getLecturer = catchAsync(async (req, res) => {
 });
 
 const deleteLecturer = catchAsync(async (req, res) => {
-  const lecturer = await lecturerService.deleteLecturer(req.params.lecturerId);
+  const lecturer = await userService.deleteUser(req.params.userId);
   res.status(httpStatus.NO_CONTENT).send(lecturer);
 });
 

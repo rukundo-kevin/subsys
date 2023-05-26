@@ -1,6 +1,6 @@
 import httpStatus from 'http-status';
 import catchAsync from '../utils/catchAsync';
-import { authService, tokenService,userService } from '../services';
+import { authService, tokenService, userService } from '../services';
 import { User } from '@prisma/client';
 
 const login = catchAsync(async (req, res) => {
@@ -27,10 +27,10 @@ const resetPassword = catchAsync(async (req, res) => {
   res.status(httpStatus.OK).send({ message: 'Password reset successfully' });
 });
 
-const activateAccount=catchAsync(async (req, res) => {
+const activateAccount = catchAsync(async (req, res) => {
   const { activationToken } = req.params;
-  const userId=await tokenService.verifyActivationLink(activationToken)
-  await userService.updateUserById(userId,{isInviteAccepted:true})
+  const userId = await tokenService.verifyActivationLink(activationToken);
+  await userService.updateUserById(userId, { isInviteAccepted: true });
   res.status(httpStatus.OK).send({ message: 'Account activated successfully' });
 });
 

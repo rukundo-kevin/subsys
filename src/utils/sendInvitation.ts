@@ -1,29 +1,31 @@
-import nodemailer from 'nodemailer'
+import nodemailer from 'nodemailer';
 import dotenv from 'dotenv';
 import ApiError from './ApiError';
 import httpStatus from 'http-status';
 dotenv.config();
 
-
-
-export const sendEmails=(email:string,studentId:string,type:string,password:string,activationToken:any)=>{
-const token=activationToken.activate.token
-const transporter=nodemailer.createTransport(
-    {
+export const sendEmails = (
+  email: string,
+  studentId: string,
+  type: string,
+  password: string,
+  activationToken: any
+) => {
+  const token = activationToken.activate.token;
+  const transporter = nodemailer.createTransport({
     service: 'gmail',
     auth: {
-      user: process.env.ADMIN_EMAIL, 
-      pass: process.env.ADMIN_EMAIL_TOKEN, 
-    },
+      user: process.env.ADMIN_EMAIL,
+      pass: process.env.ADMIN_EMAIL_TOKEN
     }
-);
+  });
 
-try {
-  const mailOptions = {
-    from: process.env.EMAIL, 
-    to: email,
-    subject:'Invitation to Assign IT',
-    html: `<div>
+  try {
+    const mailOptions = {
+      from: process.env.EMAIL,
+      to: email,
+      subject: 'Invitation to Assign IT',
+      html: `<div>
               <div style="background-color:#363143;text-align:center;">
               <img slt="logo" src="https://res.cloudinary.com/duhetxdbs/image/upload/v1684855276/Black_and_White_Collection_15_o6fcr8.png"/>
               <h2 style="color:#FFFFFF;">Assign IT</h2>
@@ -41,9 +43,12 @@ try {
               </div>
           </div>
         `
-  };
-  transporter.sendMail(mailOptions)
+    };
+    transporter.sendMail(mailOptions);
   } catch (error) {
-    throw new ApiError(httpStatus.INTERNAL_SERVER_ERROR,'Error while sending email, contact for support')
+    throw new ApiError(
+      httpStatus.INTERNAL_SERVER_ERROR,
+      'Error while sending email, contact for support'
+    );
   }
-}
+};

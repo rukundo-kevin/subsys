@@ -175,6 +175,8 @@ tags:
             example:
               code: 401
               message: Please authenticate
+
+/api/student/{userId}: 
   delete:
     summary: Delete a student
     tags: [Student]
@@ -182,11 +184,11 @@ tags:
       - bearerAuth: []
     parameters:
       - in: path
-        name: studentId
+        name: userId
         schema:
-          type: string
+          type: number
         required: true
-        description: Student ID
+        description: User Id
     responses:
       '204':
         description: No Content
