@@ -46,30 +46,30 @@ export const validateMarkdown = (req: Request, res: Response, next: NextFunction
   const options = {
     strings: {
       content: markdown
+    },
+    config: {
+      default: false,
+      MD028: true
     }
   };
 
   markdownlint(options, (err: Error | null, result: LintResults | undefined) => {
-    if (err) {
-      throw new ApiError(httpStatus.INTERNAL_SERVER_ERROR, 'Internal server error');
+    const lintErrors: LintError[][] = [];
+
+    if (result) {
+      lintErrors.push(...Object.values(result));
+    }
+
+    if (lintErrors.length > 0) {
+      const errorMessages = lintErrors
+        .flat()
+        .map((error: LintError) => `${error.ruleNames}: ${error.ruleDescription}`);
+      throw new ApiError(
+        httpStatus.BAD_REQUEST,
+        `Markdown validation failed - ${errorMessages.join(', ')}`
+      );
     } else {
-      const lintErrors: LintError[][] = [];
-
-      if (result) {
-        lintErrors.push(...Object.values(result));
-      }
-
-      if (lintErrors.length > 0) {
-        const errorMessages = lintErrors
-          .flat()
-          .map((error: LintError) => `${error.ruleNames}: ${error.ruleDescription}`);
-        throw new ApiError(
-          httpStatus.BAD_REQUEST,
-          `Markdown validation failed - ${errorMessages.join(', ')}`
-        );
-      } else {
-        next();
-      }
+      next();
     }
   });
 };

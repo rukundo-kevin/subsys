@@ -69,6 +69,27 @@ components:
           example: 'ST859025'
         user:
           $ref: '#/components/schemas/User'
+    AssignmentDraft:
+      type: object
+      required:
+        - title
+        - description
+        - deadline
+      properties:
+        title:
+          type: string
+          example: 'Assignment 1'
+        description:
+          type: string
+          description: |
+            A brief description of the field using **Markdown** syntax.
+      
+            You can use **bold**, *italic*, [links](https://example.com),
+            and other Markdown formatting options here.
+        deadline:
+          type: string
+          format: date-time
+          example: '2021-01-01T00:00:00Z'
     Error:
       type: object
       properties:
