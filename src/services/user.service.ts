@@ -111,10 +111,22 @@ const updateUserById = async <Key extends keyof User>(
   });
   return updatedUser as Pick<User, Key> | null;
 };
+/**
+ *
+ * @param userId
+ */
+const deleteUser = async (userId: number): Promise<void> => {
+  const user = await prisma.user.findFirst({ where: { id: userId } });
+  if (!user) {
+    throw new ApiError(httpStatus.NOT_FOUND, 'User not found');
+  }
+  await prisma.user.delete({ where: { id: userId } });
+};
 
 export default {
   getUserByEmail,
   createUser,
   getUserById,
-  updateUserById
+  updateUserById,
+  deleteUser
 };

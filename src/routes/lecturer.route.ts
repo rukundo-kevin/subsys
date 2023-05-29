@@ -6,6 +6,7 @@ import auth from '../middlewares/auth';
 import validate, { validateFiletype } from '../middlewares/validate';
 import lecturerValidaton from '../validations/lecturer.validation';
 import { convertCsvToJson } from '../middlewares';
+import { deleteUser } from '../validations';
 
 const router = express.Router();
 const upload = multer();
@@ -40,9 +41,9 @@ router.put(
 );
 
 router.delete(
-  '/:lecturerId',
+  '/:userId',
   auth('manageLecturers'),
-  validate(lecturerValidaton.getLecturer),
+  validate(deleteUser),
   lecturerController.deleteLecturer
 );
 export default router;

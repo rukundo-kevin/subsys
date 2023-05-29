@@ -6,4 +6,10 @@ const userSchema = Joi.object({
   email: Joi.string().required()
 });
 
+export const deleteUser = {
+  params: Joi.object().keys({
+    userId: Joi.number().required()
+  })
+};
+
 export default userSchema;

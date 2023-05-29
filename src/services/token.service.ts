@@ -84,10 +84,9 @@ const generateAuthTokens = async (user: { id: number }): Promise<AuthTokensRespo
     activate: {
       token: activateToken,
       expires: activateTokenExpires.toDate()
-    },
+    }
   };
 };
-
 
 /**
  * Verify token and return token doc (or throw an error if it is not valid)
@@ -107,14 +106,14 @@ const verifyToken = async (token: string, type: TokenType): Promise<Token> => {
   return tokenData;
 };
 
-const verifyActivationLink=async (token: string): Promise<number> =>{
+const verifyActivationLink = async (token: string): Promise<number> => {
   const payload = jwt.verify(token, config.jwt.secret);
   const userId = Number(payload.sub);
   if (!userId) {
     throw new Error('User not found');
   }
   return userId;
-}
+};
 
 export default {
   generateToken,

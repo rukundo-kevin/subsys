@@ -34,8 +34,8 @@ const createLecturer = async (
       }
     });
   } while (lecturerIdExists);
-  const activationToken:any=await tokenService.generateAuthTokens(lecturerUser)
-  sendEmails(email,staffId,'Staff',password,activationToken)
+  const activationToken: any = await tokenService.generateAuthTokens(lecturerUser);
+  sendEmails(email, staffId, 'Staff', password, activationToken);
   const lecturer = await prisma.lecturer.create({
     data: {
       staffId,
@@ -117,21 +117,6 @@ const getOneLecturer = async (staffId: string): Promise<Lecturer | null> => {
 };
 
 /**
- * @description Delete a lecturer
- * @param {string} staffId
- * @returns {Promise<Lecturer | null>}
- *
- */
-const deleteLecturer = async (staffId: string): Promise<Lecturer | null> => {
-  const lecturer = await prisma.lecturer.delete({
-    where: {
-      staffId
-    }
-  });
-  return lecturer;
-};
-
-/**
  * @description Update a lecturer
  * @param {string} staffId
  * @returns {Promise<Lecturer | null>}
@@ -171,6 +156,5 @@ export default {
   getOneLecturer,
   createLecturer,
   getLecturers,
-  deleteLecturer,
   updateLecturer
 };

@@ -155,24 +155,8 @@ tags:
               lastname: doe
               email: john@gmail.com
     responses:
-      '200':
-        description: OK
-        content:
-          application/json:
-            schema:
-              type: object
-              properties:
-                id:
-                  type: integer
-                  example: 3
-                userId:
-                  type: integer
-                  example: 6
-                studentId:
-                  type: string
-                  example: 'ST859025'
-                user:
-                  $ref: '#/components/schemas/User'
+      '204':
+        description: No Content
       '400':
         description:
         content:
@@ -191,6 +175,8 @@ tags:
             example:
               code: 401
               message: Please authenticate
+
+/api/student/{userId}: 
   delete:
     summary: Delete a student
     tags: [Student]
@@ -198,11 +184,11 @@ tags:
       - bearerAuth: []
     parameters:
       - in: path
-        name: studentId
+        name: userId
         schema:
-          type: string
+          type: number
         required: true
-        description: Student ID
+        description: User Id
     responses:
       '204':
         description: No Content

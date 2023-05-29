@@ -54,6 +54,10 @@ const refreshAuth = async (refreshToken: string): Promise<AuthTokensResponse> =>
   }
 };
 
+/**
+ *
+ * @param refreshToken
+ */
 const logout = async (refreshToken: string): Promise<void> => {
   const refreshTokenData = await prisma.token.findFirst({
     where: {
@@ -68,6 +72,11 @@ const logout = async (refreshToken: string): Promise<void> => {
   await prisma.token.delete({ where: { id: refreshTokenData.id } });
 };
 
+/**
+ *
+ * @param userId
+ * @param newPassword
+ */
 const resetPassword = async (userId: number, newPassword: string): Promise<void> => {
   const user = await prisma.user.findFirst({ where: { id: userId } });
   if (!user) {
@@ -75,7 +84,6 @@ const resetPassword = async (userId: number, newPassword: string): Promise<void>
   }
   await userService.updateUserById(userId, { password: await encryptPassword(newPassword) });
 };
-
 
 export default {
   loginUserWithEmailAndPassword,

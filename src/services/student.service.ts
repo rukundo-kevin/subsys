@@ -13,7 +13,6 @@ import { generateId, generateRandomPassword } from '../utils/userHelper';
  * @returns {Promise<Student>}
  */
 
-
 const createStudent = async (
   email: string,
   firstname: string,
@@ -34,8 +33,8 @@ const createStudent = async (
       }
     });
   } while (studentIdExists);
-   const activationToken: any=await tokenService.generateAuthTokens(studentUser)
-  sendEmails(email,studentId,'Student',password,activationToken)
+  const activationToken: any = await tokenService.generateAuthTokens(studentUser);
+  sendEmails(email, studentId, 'Student', password, activationToken);
   const student = await prisma.student.create({
     data: {
       studentId,
@@ -144,32 +143,9 @@ const updateStudent = async (studentId: string, studentBody: any): Promise<Stude
   return updatedStented;
 };
 
-/**
- *
- * @param studentId
- */
-const deleteStudent = async (studentId: string): Promise<Student | null> => {
-  const deletedStudent = await prisma.student.delete({
-    where: {
-      studentId
-    }
-  });
-
-  if (deletedStudent) {
-    await prisma.user.delete({
-      where: {
-        id: deletedStudent.userId
-      }
-    });
-  }
-
-  return deletedStudent;
-};
-
 export default {
   createStudent,
   getStudents,
   getOneStudent,
-  updateStudent,
-  deleteStudent
+  updateStudent
 };
