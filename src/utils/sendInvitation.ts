@@ -11,7 +11,8 @@ export const sendEmails = (
   password: string,
   activationToken: any
 ) => {
-  const token = activationToken.activate.token;
+  try {
+    const token = activationToken.activate.token;
   const transporter = nodemailer.createTransport({
     service: 'gmail',
     auth: {
@@ -19,10 +20,8 @@ export const sendEmails = (
       pass: process.env.ADMIN_EMAIL_TOKEN
     }
   });
-
-  try {
     const mailOptions = {
-      from: process.env.EMAIL,
+      from: process.env.ADMIN_EMAIL,
       to: email,
       subject: 'Invitation to Assign IT',
       html: `<div>
