@@ -21,7 +21,7 @@ export const sendEmails = (
     }
   });
     const mailOptions = {
-      from: process.env.EMAIL,
+      from: process.env.ADMIN_EMAIL,
       to: email,
       subject: 'Invitation to Assign IT',
       html: `<div>
