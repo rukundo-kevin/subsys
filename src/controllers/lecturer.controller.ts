@@ -29,7 +29,7 @@ const deleteLecturer = catchAsync(async (req, res) => {
 
 const updateLecturer = catchAsync(async (req, res) => {
   const lecturer = await lecturerService.updateLecturer(req.params.lecturerId, req.body);
-  res.status(httpStatus.NO_CONTENT).send(lecturer);
+  res.status(httpStatus.OK).send(lecturer);
 });
 
 const createManyLecturers = catchAsync(async (req, res) => {

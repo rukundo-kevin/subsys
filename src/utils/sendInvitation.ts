@@ -4,6 +4,7 @@ import ApiError from './ApiError';
 import httpStatus from 'http-status';
 dotenv.config();
 
+<<<<<<< HEAD
 export const sendEmails = (
   email: string,
   studentId: string,
@@ -13,11 +14,21 @@ export const sendEmails = (
 ) => {
   const token = activationToken.activate.token;
   const transporter = nodemailer.createTransport({
+=======
+
+
+export const sendEmails=(email:string,studentId:string,type:string,password:string,activationToken:any)=>{
+try {
+  const token=activationToken.activate.token
+const transporter=nodemailer.createTransport(
+    {
+>>>>>>> b8a41b2 (fix sending invitation)
     service: 'gmail',
     auth: {
       user: process.env.ADMIN_EMAIL,
       pass: process.env.ADMIN_EMAIL_TOKEN
     }
+<<<<<<< HEAD
   });
 
   try {
@@ -26,6 +37,14 @@ export const sendEmails = (
       to: email,
       subject: 'Invitation to Assign IT',
       html: `<div>
+=======
+);
+  const mailOptions = {
+    from: process.env.EMAIL, 
+    to: email,
+    subject:'Invitation to Assign IT',
+    html: `<div>
+>>>>>>> b8a41b2 (fix sending invitation)
               <div style="background-color:#363143;text-align:center;">
               <img slt="logo" src="https://res.cloudinary.com/duhetxdbs/image/upload/v1684855276/Black_and_White_Collection_15_o6fcr8.png"/>
               <h2 style="color:#FFFFFF;">Assign IT</h2>
