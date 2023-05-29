@@ -92,9 +92,10 @@ describe('Utils', () => {
   describe('generatePassword', () => {
     it('should generate a random password', () => {
       const password = generateRandomPassword();
+      const regex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*()\-_=+[{\]};:<>|./?]).{8,}$/;
 
       expect(password).toHaveLength(8);
-      expect(password).toMatch(/[A-Z]/);
+      expect(password).toMatch(regex);
     });
   });
 

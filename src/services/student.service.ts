@@ -118,7 +118,7 @@ const getOneStudent = async (studentId: string): Promise<Student | null> => {
  * @returns  {Promise<Student | null>}
  */
 const updateStudent = async (studentId: string, studentBody: any): Promise<Student | null> => {
-  const updatedStented = prisma.student.update({
+  const updatedStudent = prisma.student.update({
     where: {
       studentId
     },
@@ -140,7 +140,7 @@ const updateStudent = async (studentId: string, studentBody: any): Promise<Stude
     }
   });
 
-  return updatedStented;
+  return updatedStudent;
 };
 
 export default {
