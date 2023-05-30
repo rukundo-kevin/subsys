@@ -16,6 +16,6 @@ router.post(
   assignmentController.createAssignmentDraft
 );
 
-router.patch('/publish/:id',auth('manageAssignments'),validate(assignmentValidation.publish),assignmentController.publishAssignment)
+router.patch('/publish/:id',auth('manageAssignments'),validate(assignmentValidation.createDraft),assignmentController.publishAssignment)
 
 export default router;

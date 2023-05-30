@@ -62,14 +62,7 @@ paths:
         content:
           application/json:
             schema:
-              type: object
-              required:
-                - deadline
-              properties:
-                deadline:
-                  type: string
-              example:
-                deadline: 2021-01-01T00:00:00Z  
+              $ref: '#/components/schemas/AssignmentDraft' 
       responses:
         '201':
           description: Publish

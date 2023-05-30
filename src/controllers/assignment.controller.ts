@@ -18,10 +18,12 @@ const createAssignmentDraft = catchAsync(async (req, res) => {
 
 const publishAssignment=catchAsync(async(req,res)=>{
   const {id}=req.params
-  const {deadline}=req.body
+  const {deadline,title,description}=req.body
   const assignmentCode=generateAssignmentCode()
   const assignmentBody={
     deadline,
+    title,
+    description,
     isDraft:false,
     assignmentCode
   }

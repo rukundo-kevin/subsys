@@ -7,13 +7,7 @@ const createDraft = {
   })
 };
 
-const publish={
-  body:Joi.object().keys({
-    deadline: Joi.date().required()
-  })
-}
 
 export default {
-  createDraft,
-  publish
+  createDraft
 };
