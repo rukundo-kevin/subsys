@@ -48,8 +48,20 @@ model Lecturer {
   user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
   userId          Int @unique
   staffId       String   @unique
+  assignments     Assignment[]
 }
 
+model Assignment{
+  id              Int      @id @default(autoincrement())
+  title           String
+  description  String  @db.Text 
+  deadline         DateTime
+  isDraft         Boolean @default(true)
+  lecturer        Lecturer? @relation(fields: [lecturerId], references: [id])
+  lecturerId      Int?
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+}
 
 enum Role {
   ADMIN

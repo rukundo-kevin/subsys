@@ -2,7 +2,7 @@ import { Role } from '@prisma/client';
 
 const allRoles = {
   [Role.STUDENT]: ['getStudents'],
-  [Role.LECTURER]: ['getStudents'],
+  [Role.LECTURER]: ['getStudents', 'manageAssignments'],
   [Role.ADMIN]: [
     'createStudents',
     'deleteStudents',
