@@ -32,7 +32,7 @@ const loginUserWithEmailAndPassword = async (
     'updatedAt'
   ]);
 
-  if (!user || !(await isPasswordMatch(password, user.password))) {
+  if (!user || !(await isPasswordMatch(password, user.password)) || !user.isInviteAccepted) {
     throw new ApiError(httpStatus.UNAUTHORIZED, 'Incorrect email or password');
   }
   return exclude(user, ['password']);

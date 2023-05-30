@@ -42,3 +42,46 @@ paths:
           $ref: '#/components/responses/Forbidden'
         '404':
           $ref: '#/components/responses/NotFound'
+  
+  /api/assignment/publish/{id}:
+    patch:
+      summary: Publish assignment
+      tags:
+        - Assignment
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: id
+          schema:
+            type: number
+          required: true
+          description: assignment id    
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - deadline
+              properties:
+                deadline:
+                  type: string
+              example:
+                deadline: 2021-01-01T00:00:00Z  
+      responses:
+        '201':
+          description: Publish
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AssignmentDraft'
+        '400':
+          $ref: '#/components/responses/ValidationError'        
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'  
+        '404':
+          $ref: '#/components/responses/NotFound'
