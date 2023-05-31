@@ -7,6 +7,7 @@ import auth from '../middlewares/auth';
 
 const router = Router();
 
+router.get('/', auth(), assignmentController.getAssignments);
 router.post(
   '/draft',
   auth('manageAssignments'),

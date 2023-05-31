@@ -6,17 +6,23 @@ const prisma = new PrismaClient();
 
 async function main() {
   logger.info('Seeding database...');
-  await prisma.user.delete({ where: { email: 'admin@amalitech.com' } });
-  await prisma.user.create({
-    data: {
-      email: 'admin@amalitech.com',
-      firstname: 'Admin',
-      lastname: 'User',
-      role: 'ADMIN',
-      isInviteAccepted: true,
-      password: await encryptPassword('Admin123')
+  const userExists = await prisma.user.findFirst({
+    where: {
+      email: 'admin@amalitech.com'
     }
   });
+  if (!userExists) {
+    await prisma.user.create({
+      data: {
+        email: 'admin@amalitech.com',
+        firstname: 'Admin',
+        lastname: 'User',
+        role: 'ADMIN',
+        isInviteAccepted: true,
+        password: await encryptPassword('Admin123')
+      }
+    });
+  }
   logger.info('Seeding completed!');
 }
 
