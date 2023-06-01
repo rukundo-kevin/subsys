@@ -72,7 +72,7 @@ const updateAssignment=async(id:number,assignmentBody:any): Promise<Assignment |
         throw new ApiError(httpStatus.BAD_REQUEST, 'Assignment does not exist');
       }
     }
-    throw new ApiError(httpStatus.BAD_REQUEST,`Error hile updating assignment ${(e as Error).message}`)
+    throw new ApiError(httpStatus.BAD_REQUEST,`Error while updating assignment ${(e as Error).message}`)
   }
 }
 
