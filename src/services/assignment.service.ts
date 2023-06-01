@@ -1,4 +1,4 @@
-import { Assignment } from '@prisma/client';
+import { Assignment,Prisma } from '@prisma/client';
 import prisma from '../client';
 import ApiError from '../utils/ApiError';
 import httpStatus from 'http-status';
@@ -30,6 +30,7 @@ const createAssignmentDraft = async (
       title,
       description,
       deadline,
+      assignmentCode:'',
       lecturer: {
         connect: {
           staffId: lecturer.staffId
@@ -54,6 +55,28 @@ const createAssignmentDraft = async (
   return assignmentDraft;
 };
 
+
+
+const updateAssignment=async(id:number,assignmentBody:any): Promise<Assignment | null>=>{
+  try{
+    const updatedAssignment=await prisma.assignment.update({
+      where:{
+        id:Number(id)
+      },
+      data:assignmentBody
+    });
+    return updatedAssignment;
+  }catch(e:any){
+    if (e instanceof Prisma.PrismaClientKnownRequestError) {
+      if (e.code === 'P2025') {
+        throw new ApiError(httpStatus.BAD_REQUEST, 'Assignment does not exist');
+      }
+    }
+    throw new ApiError(httpStatus.BAD_REQUEST,`Error while updating assignment ${(e as Error).message}`)
+  }
+}
+
 export default {
-  createAssignmentDraft
+  createAssignmentDraft,
+  updateAssignment
 };
