@@ -66,13 +66,13 @@ const updateAssignment=async(id:number,assignmentBody:any): Promise<Assignment |
       data:assignmentBody
     });
     return updatedAssignment;
-  }catch(e){
+  }catch(e:any){
     if (e instanceof Prisma.PrismaClientKnownRequestError) {
       if (e.code === 'P2025') {
         throw new ApiError(httpStatus.BAD_REQUEST, 'Assignment does not exist');
       }
     }
-    throw e
+    throw new ApiError(httpStatus.BAD_REQUEST,`Error hile updating assignment ${(e as Error).message}`)
   }
 }
 
