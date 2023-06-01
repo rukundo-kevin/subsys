@@ -58,18 +58,15 @@ const createAssignmentDraft = async (
 
 
 const updateAssignment=async(id:number,assignmentBody:any): Promise<Assignment | null>=>{
-  const assignment = await prisma.assignment.findUnique({
-    where: { id:Number(id) },
-  });
-  if (!assignment) {
-    throw new ApiError(httpStatus.BAD_REQUEST, 'Assignment does not exist');
-  }
   const updatedAssignment=await prisma.assignment.update({
     where:{
       id:Number(id)
     },
     data:assignmentBody
   });
+  if(!updatedAssignment){
+    throw new ApiError(httpStatus.BAD_REQUEST, 'Assignment does not exist');
+  }
   return updatedAssignment;
 }
 
