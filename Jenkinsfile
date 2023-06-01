@@ -36,22 +36,6 @@ pipeline {
   agent any
   tools {nodejs "nodejs"}
   stages {
-        stage('Install Dependencies') {
-            steps {
-            sh 'yarn install'
-            }
-        }
-        stage('Build') {
-            when {
-                anyOf {
-                    branch 'develop';
-                    branch 'staging';
-                }
-            }
-            steps {
-                sh 'yarn build'
-            }
-        }
      stage('Prepare to Deploy') {
          when {
              anyOf {
