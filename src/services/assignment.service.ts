@@ -113,8 +113,33 @@ const getAssignments = async (userId: number, role: Role): Promise<Assignment[] 
   }
 };
 
+const getAssignmentById = async (assignmentId: number): Promise<Assignment | null> => {
+  const assignment = await prisma.assignment.findUnique({
+    where: {
+      id: assignmentId
+    },
+    include: {
+      lecturer: {
+        select: {
+          id: true,
+          staffId: true,
+          user: {
+            select: {
+              firstname: true,
+              lastname: true
+            }
+          }
+        }
+      }
+    }
+  });
+
+  return assignment;
+};
+
 export default {
   createAssignmentDraft,
   getAssignments,
-  updateAssignment
+  updateAssignment,
+  getAssignmentById
 };
