@@ -59,6 +59,7 @@ async function main() {
       }
     }
   });
+
   logger.info('Seeding Up completed!');
 }
 

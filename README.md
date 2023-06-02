@@ -29,7 +29,7 @@ You will also need to create a .env file with values from the .env.example file.
 API documentation is available at the following URL when the application is running:
 
 ```
-http://localhost:{port}/docs/
+https://gitinspired-rw-api.amalitech-dev.net/api/docs/
 ```
 
 ## License
