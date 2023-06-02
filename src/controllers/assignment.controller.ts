@@ -34,6 +34,7 @@ const publishAssignment = catchAsync(async (req, res) => {
 const getAssignments = catchAsync(async (req, res) => {
   const { id: userId, role } = req.user as User;
   const assignments = await assignmentService.getAssignments(userId, role);
+  res.status(httpStatus.OK).send(assignments);
 });
 
 const getAssignmentById = catchAsync(async (req, res) => {

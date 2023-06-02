@@ -57,7 +57,7 @@ model Assignment{
   description  String  @db.Text 
   deadline         DateTime
   isDraft         Boolean @default(true)
-  assignmentCode  String 
+  assignmentCode  String? @unique 
   lecturer        Lecturer? @relation(fields: [lecturerId], references: [id])
   lecturerId      Int?
   createdAt       DateTime @default(now())

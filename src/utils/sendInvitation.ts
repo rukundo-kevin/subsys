@@ -13,13 +13,13 @@ export const sendEmails = (
 ) => {
   try {
     const token = activationToken.activate.token;
-  const transporter = nodemailer.createTransport({
-    service: 'gmail',
-    auth: {
-      user: process.env.ADMIN_EMAIL,
-      pass: process.env.ADMIN_EMAIL_TOKEN
-    }
-  });
+    const transporter = nodemailer.createTransport({
+      service: 'gmail',
+      auth: {
+        user: process.env.ADMIN_EMAIL,
+        pass: process.env.ADMIN_EMAIL_TOKEN
+      }
+    });
     const mailOptions = {
       from: process.env.ADMIN_EMAIL,
       to: email,

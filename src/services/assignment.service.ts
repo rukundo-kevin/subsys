@@ -1,4 +1,4 @@
-import { Assignment, Role, User, Prisma } from '@prisma/client';
+import { Assignment, Role, Prisma } from '@prisma/client';
 import prisma from '../client';
 import ApiError from '../utils/ApiError';
 import httpStatus from 'http-status';
@@ -84,6 +84,25 @@ const updateAssignment = async (id: number, assignmentBody: any): Promise<Assign
  * @returns {Promise<Assignment[] | void>} List of Assignments
  */
 const getAssignments = async (userId: number, role: Role): Promise<Assignment[] | void> => {
+  if (role === 'ADMIN') {
+    const assignments = await prisma.assignment.findMany({
+      include: {
+        lecturer: {
+          select: {
+            id: true,
+            staffId: true,
+            user: {
+              select: {
+                firstname: true,
+                lastname: true
+              }
+            }
+          }
+        }
+      }
+    });
+    return assignments;
+  }
   if (role === 'LECTURER') {
     const lecturer = await prisma.lecturer.findUnique({
       where: {
@@ -116,7 +135,7 @@ const getAssignments = async (userId: number, role: Role): Promise<Assignment[] 
 const getAssignmentById = async (assignmentId: number): Promise<Assignment | null> => {
   const assignment = await prisma.assignment.findUnique({
     where: {
-      id: assignmentId
+      id: parseInt(assignmentId.toString())
     },
     include: {
       lecturer: {
@@ -133,6 +152,9 @@ const getAssignmentById = async (assignmentId: number): Promise<Assignment | nul
       }
     }
   });
+  if (!assignment) {
+    throw new ApiError(httpStatus.BAD_REQUEST, 'Assignment does not exist');
+  }
 
   return assignment;
 };
