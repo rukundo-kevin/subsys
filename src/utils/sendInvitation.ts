@@ -13,13 +13,13 @@ export const sendEmails = (
 ) => {
   try {
     const token = activationToken.activate.token;
-  const transporter = nodemailer.createTransport({
-    service: 'gmail',
-    auth: {
-      user: process.env.ADMIN_EMAIL,
-      pass: process.env.ADMIN_EMAIL_TOKEN
-    }
-  });
+    const transporter = nodemailer.createTransport({
+      service: 'gmail',
+      auth: {
+        user: process.env.ADMIN_EMAIL,
+        pass: process.env.ADMIN_EMAIL_TOKEN
+      }
+    });
     const mailOptions = {
       from: process.env.ADMIN_EMAIL,
       to: email,
@@ -38,7 +38,7 @@ export const sendEmails = (
               </ul>
               <h4>Best regards,</h4>
               <div style="border-radius: 10px;width:200px;height:40px;background-color:#5D34EC;text-align: center;">
-              <a href='${process.env.BASE_URL}/api/auth/activate/:${token}' style="color:#FFFFFF;text-decoration: none; font-size: 20px;">Claim Account</a>
+              <a href='${process.env.frontendUrl}/api/auth/activate/:${token}' style="color:#FFFFFF;text-decoration: none; font-size: 20px;">Claim Account</a>
               </div>
           </div>
         `

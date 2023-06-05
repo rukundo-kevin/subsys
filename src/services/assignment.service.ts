@@ -1,4 +1,4 @@
-import { Assignment,Prisma } from '@prisma/client';
+import { Assignment, Role, Prisma } from '@prisma/client';
 import prisma from '../client';
 import ApiError from '../utils/ApiError';
 import httpStatus from 'http-status';
@@ -30,7 +30,7 @@ const createAssignmentDraft = async (
       title,
       description,
       deadline,
-      assignmentCode:'',
+      assignmentCode: '',
       lecturer: {
         connect: {
           staffId: lecturer.staffId
@@ -55,28 +55,113 @@ const createAssignmentDraft = async (
   return assignmentDraft;
 };
 
-
-
-const updateAssignment=async(id:number,assignmentBody:any): Promise<Assignment | null>=>{
-  try{
-    const updatedAssignment=await prisma.assignment.update({
-      where:{
-        id:Number(id)
+const updateAssignment = async (id: number, assignmentBody: any): Promise<Assignment | null> => {
+  try {
+    const updatedAssignment = await prisma.assignment.update({
+      where: {
+        id: Number(id)
       },
-      data:assignmentBody
+      data: assignmentBody
     });
     return updatedAssignment;
-  }catch(e:any){
+  } catch (e: any) {
     if (e instanceof Prisma.PrismaClientKnownRequestError) {
       if (e.code === 'P2025') {
         throw new ApiError(httpStatus.BAD_REQUEST, 'Assignment does not exist');
       }
     }
-    throw new ApiError(httpStatus.BAD_REQUEST,`Error while updating assignment ${(e as Error).message}`)
+    throw new ApiError(
+      httpStatus.BAD_REQUEST,
+      `Error while updating assignment ${(e as Error).message}`
+    );
   }
-}
+};
+
+/**
+ *
+ * @param userId
+ * @param role
+ * @returns {Promise<Assignment[] | void>} List of Assignments
+ */
+const getAssignments = async (userId: number, role: Role): Promise<Assignment[] | void> => {
+  if (role === 'ADMIN') {
+    const assignments = await prisma.assignment.findMany({
+      include: {
+        lecturer: {
+          select: {
+            id: true,
+            staffId: true,
+            user: {
+              select: {
+                firstname: true,
+                lastname: true
+              }
+            }
+          }
+        }
+      }
+    });
+    return assignments;
+  }
+  if (role === 'LECTURER') {
+    const lecturer = await prisma.lecturer.findUnique({
+      where: {
+        userId
+      }
+    });
+
+    if (!lecturer) {
+      throw new ApiError(httpStatus.BAD_REQUEST, 'Lecturer does not exist');
+    }
+
+    const assignments = await prisma.assignment.findMany({
+      where: {
+        lecturerId: lecturer.id
+      },
+      include: {
+        lecturer: {
+          select: {
+            id: true,
+            staffId: true
+          }
+        }
+      }
+    });
+
+    return assignments;
+  }
+};
+
+const getAssignmentById = async (assignmentId: number): Promise<Assignment | null> => {
+  const assignment = await prisma.assignment.findUnique({
+    where: {
+      id: parseInt(assignmentId.toString())
+    },
+    include: {
+      lecturer: {
+        select: {
+          id: true,
+          staffId: true,
+          user: {
+            select: {
+              firstname: true,
+              lastname: true
+            }
+          }
+        }
+      }
+    }
+  });
+  if (!assignment) {
+    throw new ApiError(httpStatus.BAD_REQUEST, 'Assignment does not exist');
+  }
+
+  return assignment;
+};
 
 export default {
   createAssignmentDraft,
-  updateAssignment
+  getAssignments,
+  updateAssignment,
+  getAssignmentById
 };
