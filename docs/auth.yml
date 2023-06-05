@@ -13,18 +13,19 @@ tags:
           schema:
             type: object
             required:
-              - email
+              - username
               - password
             properties:
-              email:
+              username:
                 type: string
-                format: email
+                description: email or staff id
               password:
                 type: string
                 format: password
             example:
-              email: email@example.com
-              password: password1
+              username: username@gmail.com or ST000122
+              password: Password1! 
+
     responses:
       '200':
         description: OK

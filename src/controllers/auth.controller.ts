@@ -2,10 +2,17 @@ import httpStatus from 'http-status';
 import catchAsync from '../utils/catchAsync';
 import { authService, tokenService, userService } from '../services';
 import { User } from '@prisma/client';
+import { getRole } from '../utils/userHelper';
 
 const login = catchAsync(async (req, res) => {
-  const { email, password } = req.body;
-  const user = await authService.loginUserWithEmailAndPassword(email, password);
+  const { username, password } = req.body;
+  const role = getRole(username);
+
+  const user =
+    role == 'USER'
+      ? await authService.loginUserWithEmailAndPassword(username, password)
+      : await authService.loginWithStaffId(username, password, role);
+
   const tokens = await tokenService.generateAuthTokens(user);
   res.status(httpStatus.OK).send({ user, tokens });
 });

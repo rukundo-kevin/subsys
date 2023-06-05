@@ -1,3 +1,5 @@
+import { Role } from '@prisma/client';
+
 export const generateId = (type: string) => {
   const randomNumber = Math.floor(Math.random() * 1000000);
   const paddedNumber = randomNumber.toString().padStart(6, '0');
@@ -22,4 +24,14 @@ export const generateRandomPassword = () => {
   }
 
   return password;
+};
+
+export const getRole = (username: string): Role | 'USER' => {
+  if (username.includes('@') && username.indexOf('@') < username.lastIndexOf('.')) {
+    return 'USER';
+  } else if (username.startsWith('LC')) {
+    return Role.LECTURER;
+  } else {
+    return Role.STUDENT;
+  }
 };
