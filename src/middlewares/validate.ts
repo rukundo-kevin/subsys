@@ -14,7 +14,6 @@ const validate = (schema: object) => (req: Request, res: Response, next: NextFun
     .prefs({ errors: { label: 'key' }, abortEarly: false })
     .validate(obj);
   if (error) {
-    console.log(error.details);
     const errorMessage = error.details.map((details) => details.message).join(', ');
     return next(new ApiError(httpStatus.BAD_REQUEST, errorMessage));
   }

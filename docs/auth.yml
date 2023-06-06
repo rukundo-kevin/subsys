@@ -23,7 +23,7 @@ tags:
                 type: string
                 format: password
             example:
-              username: username@gmail.com or ST000122
+              username: username@gmail.com
               password: Password1! 
 
     responses:
