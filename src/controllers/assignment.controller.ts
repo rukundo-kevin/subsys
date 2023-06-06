@@ -3,6 +3,8 @@ import catchAsync from '../utils/catchAsync';
 import assignmentService from '../services/assignment.service';
 import { User } from '@prisma/client';
 import { generateAssignmentCode } from '../utils/assignmentHelper';
+import { studentService } from '../services';
+import { sendAssignmentInvitation } from '../utils/assignmentInvitation';
 
 const createAssignmentDraft = catchAsync(async (req, res) => {
   const { title, description, deadline } = req.body;
@@ -43,9 +45,23 @@ const getAssignmentById = catchAsync(async (req, res) => {
   res.send(assignment);
 });
 
+const inviteToAssignment=catchAsync(async(req,res)=>{
+  let assignedAssignemnt;
+  const studentIds:number[]=req.body.studentIds
+  const students=await studentService.getManyStudents(studentIds)
+  const assignment= await assignmentService.getOneAssignment(req.params.id)
+  if(assignment !==null){
+    const studentIDs=students.map((student)=>student.id)
+    assignedAssignemnt=await assignmentService.assignStudentToAssignment(assignment.id,studentIDs)
+  }
+  await sendAssignmentInvitation(students,assignment)
+  res.status(httpStatus.OK).send(assignedAssignemnt)
+})
+
 export default {
   createAssignmentDraft,
   getAssignments,
   publishAssignment,
-  getAssignmentById
+  getAssignmentById,
+  inviteToAssignment
 };

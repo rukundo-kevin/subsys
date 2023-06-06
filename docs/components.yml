@@ -123,6 +123,14 @@ components:
           type: string
           format: date-time
           example: '2021-01-01T00:00:00Z'
+    StudentId:
+      type: object
+      properties:
+        studentIds:
+         type: array
+         studentIds:
+           type: integer
+         example: [1,2,3,4]  
     Error:
       type: object
       properties:
