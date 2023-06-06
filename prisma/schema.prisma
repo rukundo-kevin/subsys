@@ -41,6 +41,7 @@ model Student {
   user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
   userId          Int @unique
   studentId       String   @unique
+  assignment      Assignment[]  @relation("AssignmentStudents")
 }
 
 model Lecturer {
@@ -59,6 +60,7 @@ model Assignment{
   isDraft         Boolean @default(true)
   assignmentCode  String? @unique 
   lecturer        Lecturer? @relation(fields: [lecturerId], references: [id])
+  students        Student[] @relation("AssignmentStudents")
   lecturerId      Int?
   createdAt       DateTime @default(now())
   updatedAt       DateTime @updatedAt

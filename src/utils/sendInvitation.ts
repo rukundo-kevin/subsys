@@ -47,7 +47,7 @@ export const sendEmails = (
   } catch (error) {
     throw new ApiError(
       httpStatus.INTERNAL_SERVER_ERROR,
-      'Error while sending email, contact for support'
+      'Error while sending email, contact admin for support'
     );
   }
 };

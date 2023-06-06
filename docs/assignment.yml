@@ -171,3 +171,29 @@ paths:
           $ref: '#/components/responses/Forbidden'  
         '404':
           $ref: '#/components/responses/NotFound'
+
+  /api/assignment/invite/{id}:
+    post:
+      summary: Invite students to assignment
+      tags:
+        - Assignment
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: id
+          schema:
+            type: number
+          required: true
+          description: assignment id     
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/StudentId' 
+      responses:
+        '200':
+          description: Invitation sent successfully
+        '404':
+          $ref: '#/components/responses/NotFound'        
