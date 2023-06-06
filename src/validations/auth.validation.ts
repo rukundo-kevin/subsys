@@ -1,8 +1,16 @@
 import Joi from 'joi';
 
+const usernameRegex = /^(LC|ST)\d{6}$/;
+
 const login = {
   body: Joi.object().keys({
-    email: Joi.string().required(),
+    username: Joi.alternatives()
+      .try(Joi.string().email(), Joi.string().regex(usernameRegex))
+      .required()
+      .messages({
+        'any.required': 'Email or Staff ID is required',
+        'alternatives.match': 'Invalid email or staff id format'
+      }),
     password: Joi.string().required()
   })
 };

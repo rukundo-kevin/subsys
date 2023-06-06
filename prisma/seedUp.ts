@@ -40,7 +40,7 @@ async function main() {
 
   await prisma.lecturer.create({
     data: {
-      staffId: 'LC00112',
+      staffId: 'LC000112',
       user: {
         connect: {
           email: 'lecturer@amalitech.org'
@@ -51,7 +51,7 @@ async function main() {
 
   await prisma.student.create({
     data: {
-      studentId: 'ST00112',
+      studentId: 'ST000112',
       user: {
         connect: {
           email: 'student@amalitech.org'
