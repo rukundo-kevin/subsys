@@ -25,7 +25,12 @@ router.patch(
   validate(assignmentValidation.createDraft),
   assignmentController.publishAssignment
 );
-router.patch('/publish/:id',auth('manageAssignments'),validate(assignmentValidation.createDraft),assignmentController.publishAssignment);
-router.post('/invite/:id',auth('manageAssignments'),assignmentController.inviteToAssignment)
+router.patch(
+  '/publish/:id',
+  auth('manageAssignments'),
+  validate(assignmentValidation.createDraft),
+  assignmentController.publishAssignment
+);
+router.post('/invite/:id', auth('manageAssignments'), assignmentController.inviteToAssignment);
 
 export default router;

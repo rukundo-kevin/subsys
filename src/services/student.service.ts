@@ -143,11 +143,11 @@ const updateStudent = async (studentId: string, studentBody: any): Promise<Stude
   return updatedStudent;
 };
 
-const getManyStudents=async(ids:number[]):Promise<Student[]>=>{
-  const students=await prisma.student.findMany({
-    where:{
-      id:{
-        in:ids,
+const getManyStudents = async (ids: number[]): Promise<Student[]> => {
+  const students = await prisma.student.findMany({
+    where: {
+      id: {
+        in: ids
       }
     },
     include: {
@@ -160,12 +160,11 @@ const getManyStudents=async(ids:number[]):Promise<Student[]>=>{
       }
     }
   });
-  if(students.length == 0){
+  if (students.length == 0) {
     throw new ApiError(httpStatus.BAD_REQUEST, 'Students does not exist');
   }
-  return students
-}
-
+  return students;
+};
 
 export default {
   createStudent,

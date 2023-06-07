@@ -30,7 +30,7 @@ const publishAssignment = catchAsync(async (req, res) => {
     assignmentCode
   };
   const assignment = await assignmentService.updateAssignment(id, assignmentBody);
-  res.status(httpStatus.OK).send(assignment);
+  res.status(httpStatus.CREATED).send(assignment);
 });
 
 const getAssignments = catchAsync(async (req, res) => {
@@ -45,18 +45,21 @@ const getAssignmentById = catchAsync(async (req, res) => {
   res.send(assignment);
 });
 
-const inviteToAssignment=catchAsync(async(req,res)=>{
+const inviteToAssignment = catchAsync(async (req, res) => {
   let assignedAssignemnt;
-  const studentIds:number[]=req.body.studentIds
-  const students=await studentService.getManyStudents(studentIds)
-  const assignment= await assignmentService.getOneAssignment(req.params.id)
-  if(assignment !==null){
-    const studentIDs=students.map((student)=>student.id)
-    assignedAssignemnt=await assignmentService.assignStudentToAssignment(assignment.id,studentIDs)
+  const studentIds: number[] = req.body.studentIds;
+  const students = await studentService.getManyStudents(studentIds);
+  const assignment = await assignmentService.getOneAssignment(req.params.id);
+  if (assignment !== null) {
+    const studentIDs = students.map((student) => student.id);
+    assignedAssignemnt = await assignmentService.assignStudentToAssignment(
+      assignment.id,
+      studentIDs
+    );
   }
-  await sendAssignmentInvitation(students,assignment)
-  res.status(httpStatus.OK).send(assignedAssignemnt)
-})
+  await sendAssignmentInvitation(students, assignment);
+  res.status(httpStatus.OK).send(assignedAssignemnt);
+});
 
 export default {
   createAssignmentDraft,
