@@ -38,7 +38,7 @@ export const sendEmails = (
               </ul>
               <h4>Best regards,</h4>
               <div style="border-radius: 10px;width:200px;height:40px;background-color:#5D34EC;text-align: center;">
-              <a href='${process.env.frontendUrl}/activate/:${token}' style="color:#FFFFFF;text-decoration: none; font-size: 20px;">Claim Account</a>
+              <a href='${process.env.frontendUrl}/activate/${token}' style="color:#FFFFFF;text-decoration: none; font-size: 20px;">Claim Account</a>
               </div>
           </div>
         `
