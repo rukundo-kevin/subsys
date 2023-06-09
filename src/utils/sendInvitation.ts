@@ -33,12 +33,12 @@ export const sendEmails = (
               <p style="color:#000000;">We are excited to welcome you to our online platform! You have been added as a ${type}.
               Below is your password and ${type} id. Click on the claim button to get started.</p>
               <ul>
-              <li style="color:#363143;">Generated password: ${password} <a href='${process.env.BASE_URL}/api/auth/activate/:${token}' style="color:##5D34EC;text-decoration: none; font-size: 20px;">Login</a></li>
+              <li style="color:#363143;">Generated password: ${password} <a href='${process.env.FRONTEND_URL}/login' style="color:##5D34EC;text-decoration: none; font-size: 20px;">Login</a></li>
               <li style="color:#363143;"> ${type} ID is ${studentId}.</li>
               </ul>
               <h4>Best regards,</h4>
               <div style="border-radius: 10px;width:200px;height:40px;background-color:#5D34EC;text-align: center;">
-              <a href='${process.env.frontendUrl}/api/auth/activate/:${token}' style="color:#FFFFFF;text-decoration: none; font-size: 20px;">Claim Account</a>
+              <a href='${process.env.frontendUrl}/activate/${token}' style="color:#FFFFFF;text-decoration: none; font-size: 20px;">Claim Account</a>
               </div>
           </div>
         `
