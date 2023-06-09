@@ -146,7 +146,6 @@ const getAssignments = async (userId: number, role: Role): Promise<Assignment[] 
   }
 };
 
-
 const getAssignmentById = async (assignmentId: number): Promise<Assignment | null> => {
   const assignment = await prisma.assignment.findUnique({
     where: {

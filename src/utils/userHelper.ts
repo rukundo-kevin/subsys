@@ -14,13 +14,21 @@ export const generateRandomPassword = () => {
   const numbers = '0123456789';
   const symbols = '!@#$%^&*()_-+=~`[]{}|:;<>,.?/';
 
-  const allCharacters = uppercaseLetters + lowercaseLetters + numbers + symbols;
+  const getRandomCharacter = (characters: string): string =>
+    characters[Math.floor(Math.random() * characters.length)];
 
   let password = '';
 
+  password += getRandomCharacter(lowercaseLetters); // Add one lowercase letter
+  password += getRandomCharacter(uppercaseLetters); // Add one uppercase letter
+  password += getRandomCharacter(numbers); // Add one number
+  password += getRandomCharacter(symbols); // Add one symbol
+
   while (password.length < length) {
-    const randomIndex = Math.floor(Math.random() * allCharacters.length);
-    password += allCharacters[randomIndex];
+    const characterGroup: string = getRandomCharacter(
+      lowercaseLetters + uppercaseLetters + numbers + symbols
+    );
+    password += getRandomCharacter(characterGroup);
   }
 
   return password;
