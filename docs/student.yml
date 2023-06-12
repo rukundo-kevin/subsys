@@ -5,6 +5,27 @@ tags:
 /api/student:
   get:
     summary: Get all students
+    parameters:
+      - in: query
+        name: id 
+        description: search by student id
+        schema:
+          type: integer
+      - in: query
+        name: firstname 
+        description: search by firstname
+        schema:
+          type: string
+      - in: query
+        name: lastname  
+        description: search by lastname
+        schema:
+          type: string
+      - in: query
+        name: email
+        description: search by email
+        schema:
+          type: string            
     tags: [Student]
     security:
       - bearerAuth: []
@@ -247,3 +268,5 @@ tags:
             example:
               code: 401
               message: Please authenticate
+
+
