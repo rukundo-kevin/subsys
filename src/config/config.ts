@@ -19,7 +19,9 @@ const envVarsSchema = Joi.object()
     FRONTEND_URL: Joi.string().required().description('Frontend url'),
     JWT_ACTIVATION_EXPIRATION_MINUTES: Joi.number()
       .default(20)
-      .description('minutes after which refresh tokens expire')
+      .description('minutes after which refresh tokens expire'),
+    ADMIN_EMAIL: Joi.string().required().description('Admin email'),
+    ADMIN_EMAIL_TOKEN: Joi.string().required().description('Admin email token')
   })
   .unknown();
 
@@ -39,6 +41,10 @@ export default {
     accessExpirationMinutes: envVars.JWT_ACCESS_EXPIRATION_MINUTES,
     refreshExpirationDays: envVars.JWT_REFRESH_EXPIRATION_DAYS,
     activationExpirationMinutes: envVars.JWT_ACTIVATION_EXPIRATION_MINUTES
+  },
+  email: {
+    adminEmail: envVars.ADMIN_EMAIL,
+    adminEmailToken: envVars.ADMIN_EMAIL_TOKEN
   },
   appUrl: envVars.APP_URL,
   frontendUrl: envVars.FRONTEND_URL

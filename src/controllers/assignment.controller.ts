@@ -5,6 +5,7 @@ import { User } from '@prisma/client';
 import { generateAssignmentCode } from '../utils/assignmentHelper';
 import { studentService } from '../services';
 import { sendAssignmentInvitation } from '../utils/assignmentInvitation';
+import pick from '../utils/pick';
 
 const createAssignmentDraft = catchAsync(async (req, res) => {
   const { title, description, deadline } = req.body;
@@ -35,7 +36,9 @@ const publishAssignment = catchAsync(async (req, res) => {
 
 const getAssignments = catchAsync(async (req, res) => {
   const { id: userId, role } = req.user as User;
-  const assignments = await assignmentService.getAssignments(userId, role);
+  const filter = pick(req.query, ['isDraft']);
+  const options = pick(req.query, ['sortBy', 'sortOrder']);
+  const assignments = await assignmentService.getAssignments(userId, role, filter, options);
   res.status(httpStatus.OK).send(assignments);
 });
 
