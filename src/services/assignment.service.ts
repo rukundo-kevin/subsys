@@ -78,8 +78,12 @@ const updateAssignment = async (id: number, assignmentBody: any): Promise<Assign
 
 /**
  *
- * @param userId
- * @param role
+ * @param userId - Id of the user
+ * @param role - Role of the user
+ * @param {Object} filter - Mongo filter
+ * @param {Object} options - Query options
+ * @param {string} [options.sortBy] - Sort option 
+ * @param {string} [options.sortOrder] - Sort order
  * @returns {Promise<Assignment[] | void>} List of Assignments
  */
 const getAssignments = async (
