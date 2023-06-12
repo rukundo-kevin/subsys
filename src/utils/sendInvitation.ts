@@ -2,6 +2,7 @@ import nodemailer from 'nodemailer';
 import dotenv from 'dotenv';
 import ApiError from './ApiError';
 import httpStatus from 'http-status';
+import config from '../config/config';
 dotenv.config();
 
 export const sendEmails = (
@@ -33,12 +34,12 @@ export const sendEmails = (
               <p style="color:#000000;">We are excited to welcome you to our online platform! You have been added as a ${type}.
               Below is your password and ${type} id. Click on the claim button to get started.</p>
               <ul>
-              <li style="color:#363143;">Generated password: ${password} <a href='${process.env.FRONTEND_URL}/login' style="color:##5D34EC;text-decoration: none; font-size: 20px;">Login</a></li>
+              <li style="color:#363143;">Generated password: ${password} <a href='${config.frontendUrl} login' style="color:##5D34EC;text-decoration: none; font-size: 20px;">Login</a></li>
               <li style="color:#363143;"> ${type} ID is ${studentId}.</li>
               </ul>
               <h4>Best regards,</h4>
               <div style="border-radius: 10px;width:200px;height:40px;background-color:#5D34EC;text-align: center;">
-              <a href='${process.env.frontendUrl}/activate/${token}' style="color:#FFFFFF;text-decoration: none; font-size: 20px;">Claim Account</a>
+              <a href='${config.frontendUrl}activate/${token}' style="color:#FFFFFF;text-decoration: none; font-size: 20px;">Claim Account</a>
               </div>
           </div>
         `

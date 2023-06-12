@@ -4,6 +4,7 @@ import ApiError from './ApiError';
 import httpStatus from 'http-status';
 import { Student } from '@prisma/client';
 import prisma from '../client';
+import config from '../config/config';
 dotenv.config();
 
 export const sendAssignmentInvitation = async (students: Student[], assignment: any) => {
@@ -33,7 +34,7 @@ export const sendAssignmentInvitation = async (students: Student[], assignment: 
           <h4 style="margin-bottom:8px;color:#000000;">Hi there ${user.firstname} ${user.lastname}!</h4>
           <p style="color:#000000;">You have been invited to partake in this assignment, ${assignment.title} before ${assignment.deadline}. Use this ${assignment.assignmentCode} to submit your assignment.</p>
           <div style="border-radius: 10px;width:200px;height:40px;background-color:#5D34EC;text-align: center;">
-            <a href='${process.env.FRONTEND_URL}/student/dashboard' style="color:#FFFFFF;text-decoration: none; font-size: 20px;">View Assignment</a>
+            <a href='${config.frontendUrl}student/dashboard' style="color:#FFFFFF;text-decoration: none; font-size: 20px;">View Assignment</a>
           </div>
         </div>`
         };
