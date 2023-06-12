@@ -166,6 +166,8 @@ const getManyStudents = async (ids: number[]): Promise<Student[]> => {
   return students;
 };
 
+
+
 export default {
   createStudent,
   getStudents,
