@@ -12,7 +12,7 @@ const createStudent = catchAsync(async (req, res) => {
 
 const getStudents = catchAsync(async (req, res) => {
   let students;
-  if(req.query){
+  if(Object.keys(req.query).length !==0){
     students=await userService.searchUsers(req.query,'STUDENT')
   }
   else{

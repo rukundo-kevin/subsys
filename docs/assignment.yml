@@ -219,6 +219,27 @@ paths:
               $ref: '#/components/schemas/StudentId' 
       responses:
         '200':
-          description: Invitation sent successfully
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Assignment'
+              example:
+                id: 1
+                title: Assignment 1
+                description: |
+                  A brief description of the field using **Markdown** syntax.
+                  
+                  You can use **bold**, *italic*, [links](https://example.com),
+                  and other Markdown formatting options here.
+                deadline: 2021-01-01T00:00:00Z
+                isDraft: false
+                student:
+                  id: 1
+                  studentId: ST00123
+                created_at: 2021-01-01T00:00:00Z
+                updated_at: 2021-01-01T00:00:00Z
+        '401':
+          $ref: '#/components/responses/Unauthorized'        
         '404':
           $ref: '#/components/responses/NotFound'        
