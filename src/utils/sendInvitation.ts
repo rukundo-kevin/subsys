@@ -17,12 +17,12 @@ export const sendEmails = (
     const transporter = nodemailer.createTransport({
       service: 'gmail',
       auth: {
-        user: process.env.ADMIN_EMAIL,
-        pass: process.env.ADMIN_EMAIL_TOKEN
+        user: config.email.adminEmail,
+        pass: config.email.adminEmailToken
       }
     });
     const mailOptions = {
-      from: process.env.ADMIN_EMAIL,
+      from: config.email.adminEmail,
       to: email,
       subject: 'Invitation to Assign IT',
       html: `<div>
