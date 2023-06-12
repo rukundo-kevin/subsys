@@ -8,6 +8,31 @@ paths:
       summary: Get all assignments
       tags:
         - Assignment
+      parameters:
+        - in: query
+          name: isDraft
+          schema:
+            type: boolean
+            description: isDraft query
+        - in: query
+          name: sortBy
+          schema:
+            type: string
+            enum:
+              - title
+              - deadline
+              - createdAt
+            description: sort by query in the form of field:desc/asc (ex. title)
+        - in: query
+          name: sortOrder
+          schema:
+            type: string
+            enum:
+              - asc
+              - desc
+            description: sort order query (ex. desc/asc)
+            x-display: 
+              type: select
       security:
         - bearerAuth: []
       responses:

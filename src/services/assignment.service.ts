@@ -82,9 +82,20 @@ const updateAssignment = async (id: number, assignmentBody: any): Promise<Assign
  * @param role
  * @returns {Promise<Assignment[] | void>} List of Assignments
  */
-const getAssignments = async (userId: number, role: Role): Promise<Assignment[] | void> => {
+const getAssignments = async (
+  userId: number,
+  role: Role,
+  filter: object,
+  options: {
+    sortBy?: string;
+    sortOrder?: 'asc' | 'desc';
+  }
+): Promise<Assignment[] | void> => {
+  const sortBy = options.sortBy;
+  const sortOrder = options.sortOrder ?? 'desc';
   if (role === 'ADMIN') {
     const assignments = await prisma.assignment.findMany({
+      where: filter,
       include: {
         lecturer: {
           select: {
@@ -98,7 +109,8 @@ const getAssignments = async (userId: number, role: Role): Promise<Assignment[] 
             }
           }
         }
-      }
+      },
+      orderBy: sortBy ? { [sortBy]: sortOrder } : undefined
     });
     return assignments;
   }
@@ -115,7 +127,8 @@ const getAssignments = async (userId: number, role: Role): Promise<Assignment[] 
 
     const assignments = await prisma.assignment.findMany({
       where: {
-        lecturerId: lecturer.id
+        lecturerId: lecturer.id,
+        ...filter
       },
       include: {
         lecturer: {
@@ -124,7 +137,8 @@ const getAssignments = async (userId: number, role: Role): Promise<Assignment[] 
             staffId: true
           }
         }
-      }
+      },
+      orderBy: sortBy ? { [sortBy]: sortOrder } : undefined
     });
 
     return assignments;
@@ -135,7 +149,11 @@ const getAssignments = async (userId: number, role: Role): Promise<Assignment[] 
         userId
       },
       include: {
-        assignment: true
+        assignment: {
+          orderBy: {
+            deadline: sortOrder
+          }
+        }
       }
     });
 
