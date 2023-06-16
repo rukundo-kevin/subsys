@@ -12,10 +12,9 @@ const createStudent = catchAsync(async (req, res) => {
 
 const getStudents = catchAsync(async (req, res) => {
   let students;
-  if(Object.keys(req.query).length !==0){
-    students=await userService.searchUsers(req.query,'STUDENT')
-  }
-  else{
+  if (Object.keys(req.query).length !== 0) {
+    students = await userService.searchUsers(req.query, 'STUDENT');
+  } else {
     students = await studentService.getStudents();
   }
   res.status(httpStatus.OK).send(students);
@@ -48,7 +47,6 @@ const createManyStudents = catchAsync(async (req, res) => {
   }
   res.status(httpStatus.CREATED).send({ message: 'Students created' });
 });
-
 
 export default {
   createStudent,

@@ -82,7 +82,7 @@ const updateAssignment = async (id: number, assignmentBody: any): Promise<Assign
  * @param role - Role of the user
  * @param {Object} filter - Mongo filter
  * @param {Object} options - Query options
- * @param {string} [options.sortBy] - Sort option 
+ * @param {string} [options.sortBy] - Sort option
  * @param {string} [options.sortOrder] - Sort order
  * @returns {Promise<Assignment[] | void>} List of Assignments
  */
@@ -139,6 +139,20 @@ const getAssignments = async (
           select: {
             id: true,
             staffId: true
+          }
+        },
+        students: {
+          select: {
+            id: true,
+            studentId: true,
+            user: {
+              select: {
+                id: true,
+                firstname: true,
+                lastname: true,
+                isInviteAccepted: true
+              }
+            }
           }
         }
       },
