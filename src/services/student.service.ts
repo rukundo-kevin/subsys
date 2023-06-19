@@ -78,13 +78,41 @@ const getStudents = async (): Promise<Student[]> => {
         select: {
           firstname: true,
           lastname: true,
-          email: true
+          email: true,
+          id:true
         }
       }
     }
   });
   return students;
 };
+
+const searchStudents=async(search: any):Promise<Student[]>=>{
+  const id = search.id ? Number(search.id) : null;
+  const students=prisma.student.findMany({
+    include: {
+      user: {
+        select: {
+          firstname: true,
+          lastname: true,
+          email: true,
+          id: true
+        },
+      }
+    },
+    where:{
+      user:{
+        OR: [
+          { id: id !== null ? { equals: id } : undefined },
+          { email: search.email ? { contains: search.email as string } : undefined },
+          { firstname: search.firstname ? { contains: search.firstname as string } : undefined },
+          { lastname: search.lastname ? { contains: search.lastname as string } : undefined }
+        ]
+      }
+    }
+  })
+  return students;
+}
 
 /**
  * Get one student
@@ -171,5 +199,6 @@ export default {
   getStudents,
   getOneStudent,
   updateStudent,
-  getManyStudents
+  getManyStudents,
+  searchStudents
 };

@@ -2,7 +2,7 @@ import httpStatus from 'http-status';
 import catchAsync from '../utils/catchAsync';
 import studentService from '../services/student.service';
 import ApiError from '../utils/ApiError';
-import { userService } from '../services';
+import { userService} from '../services';
 
 const createStudent = catchAsync(async (req, res) => {
   const { firstname, lastname, email } = req.body;
@@ -13,7 +13,7 @@ const createStudent = catchAsync(async (req, res) => {
 const getStudents = catchAsync(async (req, res) => {
   let students;
   if (Object.keys(req.query).length !== 0) {
-    students = await userService.searchUsers(req.query, 'STUDENT');
+    students = await studentService.searchStudents(req.query);
   } else {
     students = await studentService.getStudents();
   }
