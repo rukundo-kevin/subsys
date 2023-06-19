@@ -122,28 +122,11 @@ const deleteUser = async (userId: number): Promise<void> => {
   await prisma.user.delete({ where: { id: userId } });
 };
 
-const searchUsers = async (search: any, role: string) => {
-  const id = search.id ? Number(search.id) : null;
-  const userRole = role as Role;
-  const users: User[] = await prisma.user.findMany({
-    where: {
-      role: { equals: userRole },
-      OR: [
-        { id: id !== null ? { equals: id } : undefined },
-        { email: search.email ? { contains: search.email as string } : undefined },
-        { firstname: search.firstname ? { contains: search.firstname as string } : undefined },
-        { lastname: search.lastname ? { contains: search.lastname as string } : undefined }
-      ]
-    }
-  });
-  return users;
-};
 
 export default {
   getUserByEmail,
   createUser,
   getUserById,
   updateUserById,
-  deleteUser,
-  searchUsers
+  deleteUser
 };
