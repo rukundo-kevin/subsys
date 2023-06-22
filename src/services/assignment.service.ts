@@ -60,25 +60,32 @@ const createAssignmentDraft = async (
  * @returns
  * @throws Error if assignment is not found
  */
-interface AssignmentBody extends Partial<Assignment> {}
+type AssignmentBody = Partial<Assignment>;
 const updateAssignment = async (
   id: number,
   assignmentBody: AssignmentBody,
   user: User
 ): Promise<Assignment | null> => {
   try {
-    const lecturerAssignement = await prisma.assignment.findFirst({
+    const lecturerAssignement = await prisma.lecturer.findFirst({
       where: {
-        lecturerId: Number(user.id),
-        id: Number(id)
+        userId: Number(user.id)
+      },
+      select: {
+        assignments: {
+          where: {
+            id: Number(id)
+          }
+        }
       }
     });
-    if (!lecturerAssignement)
+
+    if (!lecturerAssignement) {
       throw new ApiError(
         httpStatus.BAD_REQUEST,
         "Assignment does not exist or you't have enough permission to edit assignement"
       );
-
+    }
     const updatedAssignment = await prisma.assignment.update({
       where: {
         id: Number(id)

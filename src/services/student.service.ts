@@ -79,7 +79,7 @@ const getStudents = async (): Promise<Student[]> => {
           firstname: true,
           lastname: true,
           email: true,
-          id:true
+          id: true
         }
       }
     }
@@ -87,9 +87,9 @@ const getStudents = async (): Promise<Student[]> => {
   return students;
 };
 
-const searchStudents=async(search: any):Promise<Student[]>=>{
+const searchStudents = async (search: any): Promise<Student[]> => {
   const id = search.id ? Number(search.id) : null;
-  const students=prisma.student.findMany({
+  const students = prisma.student.findMany({
     include: {
       user: {
         select: {
@@ -97,11 +97,11 @@ const searchStudents=async(search: any):Promise<Student[]>=>{
           lastname: true,
           email: true,
           id: true
-        },
+        }
       }
     },
-    where:{
-      user:{
+    where: {
+      user: {
         OR: [
           { id: id !== null ? { equals: id } : undefined },
           { email: search.email ? { contains: search.email as string } : undefined },
@@ -110,9 +110,9 @@ const searchStudents=async(search: any):Promise<Student[]>=>{
         ]
       }
     }
-  })
+  });
   return students;
-}
+};
 
 /**
  * Get one student

@@ -6,7 +6,7 @@ export const createDraft = {
     deadline: Joi.date().required()
   })
 };
-export const editAssignmentValidation = {
+const editAssignment = {
   body: Joi.object().keys({
     title: Joi.string().optional(),
     description: Joi.string().optional(),
@@ -27,5 +27,6 @@ const getAssignments = {
 
 export default {
   createDraft,
-  getAssignments
+  getAssignments,
+  editAssignment
 };

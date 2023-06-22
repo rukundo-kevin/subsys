@@ -67,7 +67,7 @@ const inviteToAssignment = catchAsync(async (req, res) => {
 const editAssignment = catchAsync(async (req, res) => {
   const user = req.user as User;
   const { title, description, deadline } = req.body;
-  const updatedAssignment = assignmentService.updateAssignment(
+  const updatedAssignment = await assignmentService.updateAssignment(
     req.params.assignmentId,
     {
       title,
@@ -76,7 +76,7 @@ const editAssignment = catchAsync(async (req, res) => {
     },
     user
   );
-  res.status(httpStatus.OK).send(updatedAssignment);
+  res.status(httpStatus.OK).send({ message: 'Assignment updated successfully', updatedAssignment });
 });
 export default {
   createAssignmentDraft,
