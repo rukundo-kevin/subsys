@@ -7,6 +7,13 @@ const createDraft = {
     deadline: Joi.date().required()
   })
 };
+export const editAssignmentValidation = {
+  body: Joi.object().keys({
+    title: Joi.string().optional(),
+    description: Joi.string().required(),
+    deadline: Joi.date().optional()
+  })
+};
 
 const getAssignments = {
   query: Joi.object({

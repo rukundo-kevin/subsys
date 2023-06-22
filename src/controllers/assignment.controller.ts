@@ -63,11 +63,21 @@ const inviteToAssignment = catchAsync(async (req, res) => {
   await sendAssignmentInvitation(students, assignment);
   res.status(httpStatus.OK).send(assignedAssignemnt);
 });
-
+const editAssignment = catchAsync(async (req, res) => {
+  const { title, description, deadline } = req.body;
+  const assignment = await assignmentService.getOneAssignment(req.params.id);
+  const updatedAssignment = assignmentService.updateAssignment(assignment?.id!, {
+    title,
+    description,
+    deadline
+  });
+  res.status(httpStatus.OK).send(updatedAssignment);
+});
 export default {
   createAssignmentDraft,
   getAssignments,
   publishAssignment,
   getAssignmentById,
-  inviteToAssignment
+  inviteToAssignment,
+  editAssignment
 };

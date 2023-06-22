@@ -1,6 +1,8 @@
 import { Router } from 'express';
 
-import assignmentValidation from '../validations/assignment.validation';
+import assignmentValidation, {
+  editAssignmentValidation
+} from '../validations/assignment.validation';
 import validate, { validateMarkdown } from '../middlewares/validate';
 import { assignmentController } from '../controllers';
 import sanitizeMarkdown from '../middlewares/sanitize';
@@ -15,6 +17,12 @@ router.get(
   assignmentController.getAssignments
 );
 router.get('/:assignmentId', auth(), assignmentController.getAssignmentById);
+router.get(
+  '/:assignmentId',
+  auth(),
+  validate(editAssignmentValidation),
+  assignmentController.getAssignmentById
+);
 router.post(
   '/draft',
   auth('manageAssignments'),
