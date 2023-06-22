@@ -38,9 +38,9 @@ export const sendEmails = (
          <body>
          <div>
               <div style="background-color:#363143;text-align:center;">
-              <img slt="logo" src="https://res.cloudinary.com/dmxs2lcjz/image/upload/v1686732405/logo_aeer02.png"/>
+              <img slt="logo" style="width:15%;height:35%;objectFit:contain;margin-top: 20px; margin-bottom: 20px;" src="https://res.cloudinary.com/dmxs2lcjz/image/upload/v1686732405/logo_aeer02.png"/>
               </div>
-              <div style="text-align:center;margin-top:5rem;margin-bottom:5rem;">
+              <div style="text-align:center;margin-top:5rem;margin-bottom:10rem;">
               <img slt="logo" src="https://res.cloudinary.com/dmxs2lcjz/image/upload/v1686732387/cuate_jz9wxp.png"/>
               </div>
               <div style="margin-left:5rem;margin-bottom:5rem">
