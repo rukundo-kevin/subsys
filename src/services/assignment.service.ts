@@ -1,4 +1,4 @@
-import { Assignment, Role, Prisma } from '@prisma/client';
+import { Assignment, Role, Prisma, User } from '@prisma/client';
 import prisma from '../client';
 import ApiError from '../utils/ApiError';
 import httpStatus from 'http-status';
@@ -53,9 +53,32 @@ const createAssignmentDraft = async (
 
   return assignmentDraft;
 };
-
-const updateAssignment = async (id: number, assignmentBody: any): Promise<Assignment | null> => {
+/**
+ *
+ * @param id
+ * @param assignmentBody
+ * @returns
+ * @throws Error if assignment is not found
+ */
+interface AssignmentBody extends Partial<Assignment> {}
+const updateAssignment = async (
+  id: number,
+  assignmentBody: AssignmentBody,
+  user: User
+): Promise<Assignment | null> => {
   try {
+    const lecturerAssignement = await prisma.assignment.findFirst({
+      where: {
+        lecturerId: Number(user.id),
+        id: Number(id)
+      }
+    });
+    if (!lecturerAssignement)
+      throw new ApiError(
+        httpStatus.BAD_REQUEST,
+        "Assignment does not exist or you't have enough permission to edit assignement"
+      );
+
     const updatedAssignment = await prisma.assignment.update({
       where: {
         id: Number(id)

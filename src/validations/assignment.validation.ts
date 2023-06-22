@@ -1,6 +1,5 @@
 import Joi from 'joi';
-
-const createDraft = {
+export const createDraft = {
   body: Joi.object().keys({
     title: Joi.string().required(),
     description: Joi.string().required(),
@@ -10,8 +9,11 @@ const createDraft = {
 export const editAssignmentValidation = {
   body: Joi.object().keys({
     title: Joi.string().optional(),
-    description: Joi.string().required(),
+    description: Joi.string().optional(),
     deadline: Joi.date().optional()
+  }),
+  params: Joi.object().keys({
+    assignmentId: Joi.string().required()
   })
 };
 

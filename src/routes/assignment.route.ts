@@ -17,11 +17,11 @@ router.get(
   assignmentController.getAssignments
 );
 router.get('/:assignmentId', auth(), assignmentController.getAssignmentById);
-router.get(
+router.patch(
   '/:assignmentId',
-  auth(),
+  auth('manageAssignements'),
   validate(editAssignmentValidation),
-  assignmentController.getAssignmentById
+  assignmentController.editAssignment
 );
 router.post(
   '/draft',
