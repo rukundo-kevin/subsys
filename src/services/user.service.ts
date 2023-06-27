@@ -122,7 +122,6 @@ const deleteUser = async (userId: number): Promise<void> => {
   await prisma.user.delete({ where: { id: userId } });
 };
 
-
 export default {
   getUserByEmail,
   createUser,

@@ -2,7 +2,7 @@ import httpStatus from 'http-status';
 import catchAsync from '../utils/catchAsync';
 import studentService from '../services/student.service';
 import ApiError from '../utils/ApiError';
-import { userService} from '../services';
+import { userService } from '../services';
 
 const createStudent = catchAsync(async (req, res) => {
   const { firstname, lastname, email } = req.body;

@@ -20,6 +20,7 @@ const createAssignmentDraft = catchAsync(async (req, res) => {
 });
 
 const publishAssignment = catchAsync(async (req, res) => {
+  const user = req.user as User;
   const { id } = req.params;
   const { deadline, title, description } = req.body;
   const assignmentCode = generateAssignmentCode();
@@ -30,7 +31,7 @@ const publishAssignment = catchAsync(async (req, res) => {
     isDraft: false,
     assignmentCode
   };
-  const assignment = await assignmentService.updateAssignment(id, assignmentBody);
+  const assignment = await assignmentService.updateAssignment(id, assignmentBody, user);
   res.status(httpStatus.CREATED).send(assignment);
 });
 
@@ -63,11 +64,25 @@ const inviteToAssignment = catchAsync(async (req, res) => {
   await sendAssignmentInvitation(students, assignment);
   res.status(httpStatus.OK).send(assignedAssignemnt);
 });
-
+const editAssignment = catchAsync(async (req, res) => {
+  const user = req.user as User;
+  const { title, description, deadline } = req.body;
+  const updatedAssignment = await assignmentService.updateAssignment(
+    req.params.assignmentId,
+    {
+      title,
+      description,
+      deadline
+    },
+    user
+  );
+  res.status(httpStatus.OK).send({ message: 'Assignment updated successfully', updatedAssignment });
+});
 export default {
   createAssignmentDraft,
   getAssignments,
   publishAssignment,
   getAssignmentById,
-  inviteToAssignment
+  inviteToAssignment,
+  editAssignment
 };

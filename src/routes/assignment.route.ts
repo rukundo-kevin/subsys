@@ -15,6 +15,12 @@ router.get(
   assignmentController.getAssignments
 );
 router.get('/:assignmentId', auth(), assignmentController.getAssignmentById);
+router.patch(
+  '/:assignmentId',
+  auth('manageAssignments'),
+  validate(assignmentValidation.editAssignment),
+  assignmentController.editAssignment
+);
 router.post(
   '/draft',
   auth('manageAssignments'),

@@ -83,13 +83,31 @@ components:
           type: string
           description: |
             A brief description of the field using **Markdown** syntax.
-      
+
             You can use **bold**, *italic*, [links](https://example.com),
             and other Markdown formatting options here.
         deadline:
           type: string
           format: date-time
           example: '2021-01-01T00:00:00Z'
+    EditableAssignement:
+      type: object
+      properties:
+        title:
+          type: string
+          example: 'Assignment 1'
+        description:
+          type: string
+          description: |
+            A brief description of the field using **Markdown** syntax.
+
+            You can use **bold**, *italic*, [links](https://example.com),
+            and other Markdown formatting options here.
+        deadline:
+          type: string
+          format: date-time
+          example: '2021-01-01T00:00:00Z'
+
     Assignment:
       type: object
       properties:
@@ -103,7 +121,7 @@ components:
           type: string
           description: |
             A brief description of the field using **Markdown** syntax.
-      
+
             You can use **bold**, *italic*, [links](https://example.com),
             and other Markdown formatting options here.
         deadline:
@@ -127,10 +145,10 @@ components:
       type: object
       properties:
         studentIds:
-         type: array
-         studentIds:
-           type: integer
-         example: [1,2,3,4]  
+          type: array
+          studentIds:
+            type: integer
+          example: [1, 2, 3, 4]
     Error:
       type: object
       properties:

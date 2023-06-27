@@ -1,5 +1,6 @@
 import { PrismaClient } from '@prisma/client';
 import logger from '../src/config/logger';
+
 import { encryptPassword } from '../src/utils/encryption';
 import { seedDown } from './seedDown';
 

@@ -4,7 +4,7 @@ tags:
 
 paths:
   /api/assignment:
-    get:  
+    get:
       summary: Get all assignments
       tags:
         - Assignment
@@ -31,7 +31,7 @@ paths:
               - asc
               - desc
             description: sort order query (ex. desc/asc)
-            x-display: 
+            x-display:
               type: select
       security:
         - bearerAuth: []
@@ -49,7 +49,7 @@ paths:
                   title: Assignment 1
                   description: |
                     A brief description of the field using **Markdown** syntax.
-                    
+
                     You can use **bold**, *italic*, [links](https://example.com),
                     and other Markdown formatting options here.
                   isDraft: false
@@ -63,7 +63,7 @@ paths:
                   title: Assignment 2
                   description: |
                     A brief description of the field using **Markdown** syntax.
-                    
+
                     You can use **bold**, *italic*, [links](https://example.com),
                     and other Markdown formatting options here.
                   deadline: 2021-01-01T00:00:00Z
@@ -80,7 +80,56 @@ paths:
         '404':
           $ref: '#/components/responses/NotFound'
 
-  /api/assignment/{assignmentId}: 
+  /api/assignment/{assignmentId}:
+    patch:
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/EditableAssignement'
+      summary: Update the assignment
+      tags:
+        - Assignment
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: assignmentId
+          schema:
+            type: string
+            description: Assignment Id
+
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                $ref: '#/components/schemas/Assignment'
+              example:
+                id: 1
+                title: Assignment 1
+                description: |
+                  A brief description of the field using **Markdown** syntax.
+
+                  You can use **bold**, *italic*, [links](https://example.com),
+                  and other Markdown formatting options here.
+                isDraft: false
+                lecturer:
+                  id: 1
+                  staffId: LEC00123
+                deadline: 2021-01-01T00:00:00Z
+                created_at: 2021-01-01T00:00:00Z
+                updated_at: 2021-01-01T00:00:00Z
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
     get:
       summary: Get assignment by id
       tags:
@@ -106,7 +155,7 @@ paths:
                 title: Assignment 1
                 description: |
                   A brief description of the field using **Markdown** syntax.
-                  
+
                   You can use **bold**, *italic*, [links](https://example.com),
                   and other Markdown formatting options here.
                 deadline: 2021-01-01T00:00:00Z
@@ -120,7 +169,7 @@ paths:
           $ref: '#/components/responses/Unauthorized'
         '403':
           $ref: '#/components/responses/Forbidden'
-          
+
   /api/assignment/draft:
     post:
       summary: Create a new assignment Draft
@@ -146,7 +195,7 @@ paths:
                 title: Assignment 1
                 description: |
                   A brief description of the field using **Markdown** syntax.
-                  
+
                   You can use **bold**, *italic*, [links](https://example.com),
                   and other Markdown formatting options here.
                 deadline: 2021-01-01T00:00:00Z
@@ -160,7 +209,7 @@ paths:
           $ref: '#/components/responses/Forbidden'
         '404':
           $ref: '#/components/responses/NotFound'
-  
+
   /api/assignment/publish/{id}:
     patch:
       summary: Publish assignment
@@ -174,13 +223,13 @@ paths:
           schema:
             type: number
           required: true
-          description: assignment id    
+          description: assignment id
       requestBody:
         required: true
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/AssignmentDraft' 
+              $ref: '#/components/schemas/AssignmentDraft'
       responses:
         '201':
           description: Publish
@@ -189,11 +238,11 @@ paths:
               schema:
                 $ref: '#/components/schemas/AssignmentDraft'
         '400':
-          $ref: '#/components/responses/ValidationError'        
+          $ref: '#/components/responses/ValidationError'
         '401':
           $ref: '#/components/responses/Unauthorized'
         '403':
-          $ref: '#/components/responses/Forbidden'  
+          $ref: '#/components/responses/Forbidden'
         '404':
           $ref: '#/components/responses/NotFound'
 
@@ -210,13 +259,13 @@ paths:
           schema:
             type: number
           required: true
-          description: assignment id     
+          description: assignment id
       requestBody:
         required: true
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/StudentId' 
+              $ref: '#/components/schemas/StudentId'
       responses:
         '200':
           description: OK
@@ -229,7 +278,7 @@ paths:
                 title: Assignment 1
                 description: |
                   A brief description of the field using **Markdown** syntax.
-                  
+
                   You can use **bold**, *italic*, [links](https://example.com),
                   and other Markdown formatting options here.
                 deadline: 2021-01-01T00:00:00Z
@@ -240,6 +289,6 @@ paths:
                 created_at: 2021-01-01T00:00:00Z
                 updated_at: 2021-01-01T00:00:00Z
         '401':
-          $ref: '#/components/responses/Unauthorized'        
+          $ref: '#/components/responses/Unauthorized'
         '404':
-          $ref: '#/components/responses/NotFound'        
+          $ref: '#/components/responses/NotFound'
