@@ -26,7 +26,7 @@ const createStudent = async (
   let studentIdExists;
 
   do {
-    studentId = generateId('student');
+    studentId = generateId('ST');
     studentIdExists = await prisma.student.findUnique({
       where: {
         studentId

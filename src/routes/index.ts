@@ -5,6 +5,7 @@ import authRoute from './auth.route';
 import studentRoute from './student.route';
 import lecturerRoute from './lecturer.route';
 import assignmentRoute from './assignment.route';
+import submissionRoute from './submission.route';
 
 const router = express.Router();
 
@@ -32,6 +33,10 @@ const defaultRoutes = [
   {
     path: '/assignment',
     route: assignmentRoute
+  },
+  {
+    path: '/submission',
+    route: submissionRoute
   }
 ];
 

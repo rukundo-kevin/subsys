@@ -20,6 +20,14 @@ async function main() {
         password: await encryptPassword('Admin123')
       },
       {
+        email: 'admintest@amalitech.org',
+        firstname: 'Admin',
+        lastname: 'Test',
+        role: 'ADMIN',
+        isInviteAccepted: true,
+        password: await encryptPassword('Admin@123')
+      },
+      {
         email: 'lecturer@amalitech.org',
         firstname: 'Lecturer',
         lastname: 'User',

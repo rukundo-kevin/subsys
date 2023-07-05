@@ -1,10 +1,10 @@
 import { Role } from '@prisma/client';
 
-export const generateId = (type: string) => {
+export const generateId = (prefix: string) => {
   const randomNumber = Math.floor(Math.random() * 1000000);
   const paddedNumber = randomNumber.toString().padStart(6, '0');
 
-  return type === 'student' ? `ST${paddedNumber}` : `LC${paddedNumber}`;
+  return `${prefix}${paddedNumber}`;
 };
 
 export const generateRandomPassword = () => {
