@@ -152,7 +152,48 @@ components:
           snapshotFile:
             type: string
             format: binary
-            
+    Submission:
+      type: object
+      properties:
+        id:
+          type: integer
+          example: 1
+        assignmentId:
+          type: integer
+          example: 1
+        studentId:
+          type: integer
+          example: 1
+        student:
+          type: object
+          properties:
+            id: 
+              type: integer
+              example: 1
+            studentCode: 
+              type: string
+              example: ST123030          
+        assignment:
+          type: object
+          properties:
+            id: 
+              type: integer
+              example: 3
+            assignmentCode: 
+              type: string
+              example: ASS123030
+        snapshots:
+          type: array
+          items:
+            $ref: '#/components/schemas/Snapshot'
+        created_at:
+          type: string
+          format: date-time
+          example: '2021-01-01T00:00:00Z'
+        updated_at:
+          type: string
+          format: date-time
+          example: '2021-01-01T00:00:00Z'       
     StudentId:
       type: object
       properties:

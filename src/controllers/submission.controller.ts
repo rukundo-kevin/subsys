@@ -17,7 +17,12 @@ const makeSubmission = catchAsync(async (req, res) => {
   const { assignmentCode } = req.body;
   const submission = await submissionService.makeSubmission(userId, assignmentCode);
 
-  res.status(httpStatus.CREATED).send(submission);
+  res.status(httpStatus.CREATED).send({
+    message: 'Submission created successfully',
+    data: {
+      submission
+    }
+  });
 });
 
 const getSubmissions = catchAsync(async (req, res) => {

@@ -11,20 +11,45 @@ import httpStatus from 'http-status';
  * @returns {Promise<Submission>}
  */
 const makeSubmission = async (userId: number, assignmentCode: string): Promise<Submission> => {
-  const student = await prisma.student.findUnique({ where: { userId } });
+  const student = await prisma.student.findUnique({
+    where: { userId },
+    include: {
+      assignment: {
+        select: {
+          id: true,
+          assignmentCode: true
+        },
+        where: {
+          assignmentCode
+        }
+      }
+    }
+  });
+
   if (!student) {
-    throw new Error('Student does not exist');
+    throw new ApiError(httpStatus.BAD_REQUEST, 'Assignment does not exist ');
   }
-  const assignment = await prisma.assignment.findUnique({ where: { assignmentCode } });
-  if (!assignment) {
-    throw new Error('Assignment does not exist');
-  }
+
   const submissionCode = generateId('SUB');
   const submission = await prisma.submission.create({
     data: {
-      assignmentId: assignment.id,
+      assignmentId: student.assignment[0].id,
       studentId: student.id,
       submissionCode
+    },
+    include: {
+      assignment: {
+        select: {
+          id: true,
+          assignmentCode: true
+        }
+      },
+      student: {
+        select: {
+          id: true,
+          studentId: true
+        }
+      }
     }
   });
   return submission;
@@ -45,11 +70,11 @@ const getSubmissions = async (
   if (role === Role.STUDENT) {
     const student = await prisma.student.findUnique({ where: { userId } });
     if (!student) {
-      throw new Error('Student does not exist');
+      throw new ApiError(httpStatus.NOT_FOUND, 'Student does not exist');
     }
     const assignment = await prisma.assignment.findUnique({ where: { assignmentCode } });
     if (!assignment) {
-      throw new Error('Assignment does not exist');
+      throw new ApiError(httpStatus.NOT_FOUND, "Assignment doesn't exist ");
     }
 
     const submission = await prisma.submission.findMany({
@@ -63,7 +88,14 @@ const getSubmissions = async (
             id: true,
             assignmentCode: true
           }
-        }
+        },
+        student: {
+          select: {
+            id: true,
+            studentId: true
+          }
+        },
+        snapshots: true
       }
     });
     return submission;

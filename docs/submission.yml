@@ -3,14 +3,74 @@ tags:
     description: Submission Management
 
 paths:
+  /api/submission/{assignmentCode}:  
+    get:
+      summary: Get submission on assignment with assignmentCode
+      tags:
+        - Submission
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: assignmentCode
+          schema:
+            type: string
+          required: true
+          description: Assignment Code
+      responses:
+        '200': 
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Submission'
+        '400':
+          $ref: '#/components/responses/ValidationError'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
   /api/submission:
-    summary: Create Submission
-    description: Create Submission as a student from CLI
-    tags: 
-    - Submission
-    security:
-      - bearerAuth: []
-    parameters:
+    post:
+      summary: Create Submission
+      tags: 
+      - Submission
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                assignmentCode:
+                  type: string
+                  description: Assignment Code
+      responses:
+        '201':
+          description: Created
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Submission created successfully 
+                  data:
+                    $ref: '#/components/schemas/Submission'    
+        '400':
+          $ref: '#/components/responses/ValidationError'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+
+
   /api/submission/snapshot:
     post:
       summary: Create snapshot
