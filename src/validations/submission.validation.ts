@@ -14,7 +14,6 @@ const submit = {
 
 const uploadSnapshot = {
   query: Joi.object().keys({
-    assignmentCode: assignmentCodeSchema,
     submissionCode: Joi.string()
       .regex(/^(SUB)\d{6}$/)
       .required()
@@ -23,8 +22,12 @@ const uploadSnapshot = {
       })
   }),
   body: {
-    snapshotName: Joi.string().required(),
-    snapshotFile: Joi.binary().required()
+    snapshots: Joi.array().items(
+      Joi.object().keys({
+        snapshotName: Joi.string().required(),
+        snapshotFiles: Joi.string().required()
+      })
+    )
   }
 };
 
@@ -33,6 +36,7 @@ const getSubmission = {
     assignmentCode: assignmentCodeSchema
   }
 };
+
 export default {
   submit,
   getSubmission,

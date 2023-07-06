@@ -1,6 +1,8 @@
 import { Role, Submission } from '@prisma/client';
 import prisma from '../client';
 import { generateId } from '../utils/userHelper';
+import ApiError from '../utils/ApiError';
+import httpStatus from 'http-status';
 
 /**
  *
@@ -54,16 +56,49 @@ const getSubmissions = async (
       where: {
         studentId: student.id,
         assignmentId: assignment.id
+      },
+      include: {
+        assignment: {
+          select: {
+            id: true,
+            assignmentCode: true
+          }
+        }
       }
     });
     return submission;
   }
 };
 
+/**
+ *
+ * @param submissionCode The code for submission
+ * @param snapshotName The name for the snapshot
+ * @param snapshotFiles The files for the snapshot
+ * @returns
+ */
 const createSnapshot = async (
-  assignmentCode: string,
   submissionCode: string,
   snapshotName: string,
   snapshotFiles: string
-) => {};
+) => {
+  const submission = await prisma.submission.findFirst({
+    where: {
+      submissionCode
+    }
+  });
+  if (!submission) {
+    throw new ApiError(httpStatus.BAD_REQUEST, 'Submission not found');
+  }
+  const snapshot = await prisma.snapshot.create({
+    data: {
+      submissionId: submission.id,
+      snapshotName,
+      snapShotFiles: snapshotFiles
+    }
+  });
+
+  return snapshot;
+};
+
 export default { makeSubmission, getSubmissions, createSnapshot };

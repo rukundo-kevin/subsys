@@ -1,0 +1,58 @@
+tags:
+  - name: Submission
+    description: Submission Management
+
+paths:
+  /api/submission:
+    summary: Create Submission
+    description: Create Submission as a student from CLI
+    tags: 
+    - Submission
+    security:
+      - bearerAuth: []
+    parameters:
+  /api/submission/snapshot:
+    post:
+      summary: Create snapshot
+      tags:
+        - Submission
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: query
+          name: submissionCode
+          schema:
+            type: string
+          required: true
+          description: Submission Code
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                snapshots:
+                  type: array
+                  items:
+                    type: string
+                    format: binary
+      responses:
+        '201':
+          description: Created
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Snapshot created successfully
+        '400':
+          $ref: '#/components/responses/ValidationError'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'

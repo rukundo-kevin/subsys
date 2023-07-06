@@ -141,6 +141,18 @@ components:
           type: string
           format: date-time
           example: '2021-01-01T00:00:00Z'
+    Snapshot: 
+      type: array
+      items:
+        type: object
+        properties:
+          snapshotName: 
+            type: string
+            example: 'snapshot1'
+          snapshotFile:
+            type: string
+            format: binary
+            
     StudentId:
       type: object
       properties:
