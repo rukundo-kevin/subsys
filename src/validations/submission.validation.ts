@@ -24,7 +24,6 @@ const uploadSnapshot = {
   body: {
     snapshots: Joi.array().items(
       Joi.object().keys({
-        snapshotName: Joi.string().required(),
         snapshotFiles: Joi.string().required()
       })
     )

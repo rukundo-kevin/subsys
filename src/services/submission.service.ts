@@ -1,4 +1,4 @@
-import { Role, Submission } from '@prisma/client';
+import { Prisma, Role, Submission } from '@prisma/client';
 import prisma from '../client';
 import { generateId } from '../utils/userHelper';
 import ApiError from '../utils/ApiError';
@@ -109,28 +109,29 @@ const getSubmissions = async (
  * @param snapshotFiles The files for the snapshot
  * @returns
  */
-const createSnapshot = async (
-  submissionCode: string,
-  snapshotName: string,
-  snapshotFiles: string
-) => {
-  const submission = await prisma.submission.findFirst({
-    where: {
-      submissionCode
+const createSnapshot = async (submissionCode: string, snapshotName: string) => {
+  try {
+    const submission = await prisma.submission.findFirst({
+      where: {
+        submissionCode
+      }
+    });
+    if (!submission) {
+      throw new ApiError(httpStatus.BAD_REQUEST, 'Submission not found');
     }
-  });
-  if (!submission) {
-    throw new ApiError(httpStatus.BAD_REQUEST, 'Submission not found');
-  }
-  const snapshot = await prisma.snapshot.create({
-    data: {
-      submissionId: submission.id,
-      snapshotName,
-      snapShotFiles: snapshotFiles
-    }
-  });
+    const snapshot = await prisma.snapshot.create({
+      data: {
+        submissionId: submission.id,
+        snapshotName
+      }
+    });
 
-  return snapshot;
+    return snapshot;
+  } catch (error) {
+    if ((error as Prisma.PrismaClientKnownRequestError).code === 'P2002') {
+      throw new ApiError(httpStatus.BAD_REQUEST, `Snapshot already exists`);
+    }
+  }
 };
 
 export default { makeSubmission, getSubmissions, createSnapshot };

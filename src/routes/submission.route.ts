@@ -4,10 +4,23 @@ import validate from '../middlewares/validate';
 import submissionValidation from '../validations/submission.validation';
 import { submissionController } from '../controllers';
 import multer from 'multer';
+import fs from 'fs';
 
 const router = Router();
 
-const storage = multer.memoryStorage();
+const destinationDirectory = './submissions';
+
+if (!fs.existsSync(destinationDirectory)) {
+  fs.mkdirSync(destinationDirectory, { recursive: true });
+}
+
+const storage = multer.diskStorage({
+  destination: './submissions',
+  filename: function (req, file, cb) {
+    cb(null, file.originalname);
+  }
+});
+
 const upload = multer({ storage: storage });
 
 router.post(

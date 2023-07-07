@@ -1,16 +1,22 @@
 import httpStatus from 'http-status';
-import { v2 as cloudinaryV2 } from 'cloudinary';
 
 import { User } from '@prisma/client';
 import { submissionService } from '../services';
 import catchAsync from '../utils/catchAsync';
 import ApiError from '../utils/ApiError';
 
-cloudinaryV2.config({
-  cloud_name: 'dpymyyo7h',
-  api_key: '973141747481133',
-  api_secret: 'jV-WPakByB3P_ztMyLQ8Ga8LshM'
-});
+interface File {
+  fieldname: string;
+  originalname: string;
+  encoding: string;
+  mimetype: string;
+  buffer: Buffer;
+  size: number;
+  destination?: string;
+  filename?: string;
+  path?: string;
+  contentType?: string;
+}
 
 const makeSubmission = catchAsync(async (req, res) => {
   const { id: userId } = req.user as User;
@@ -42,31 +48,10 @@ const createSnapshot = catchAsync(async (req, res) => {
     throw new ApiError(httpStatus.BAD_REQUEST, 'No files were uploaded');
   }
 
-  const uploadfilePromise = (req.files as unknown as File[]).map((file: any) => {
-    return new Promise((resolve, reject) => {
-      cloudinaryV2.uploader
-        .upload_stream(
-          { resource_type: 'auto', folder: 'submissions', public_id: file.originalname },
-          (error, result) => {
-            if (error) {
-              reject(error);
-            } else {
-              resolve(result);
-            }
-          }
-        )
-        .end(file.buffer);
-    });
-  });
+  const files = req.files as unknown as File[];
 
-  const uploadedFiles = await Promise.all(uploadfilePromise);
-
-  for (let i = 0; i < uploadedFiles.length; i++) {
-    await submissionService.createSnapshot(
-      submissionCode,
-      (uploadedFiles[0] as any).public_id.split('/')[1],
-      (uploadedFiles[i] as any).secure_url
-    );
+  for (const file of files) {
+    await submissionService.createSnapshot(submissionCode, file.originalname);
   }
 
   res.status(httpStatus.CREATED).send({ message: 'Snapshot created successfully' });
