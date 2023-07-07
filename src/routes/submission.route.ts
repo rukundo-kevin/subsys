@@ -29,6 +29,7 @@ router.post(
   validate(submissionValidation.submit),
   submissionController.makeSubmission
 );
+router.patch('/:submissionCode', auth('createSubmission'), submissionController.createSnapshot);
 router.post(
   '/snapshot',
   auth('createSubmission'),

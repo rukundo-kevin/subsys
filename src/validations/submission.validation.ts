@@ -7,7 +7,7 @@ const assignmentCodeSchema = Joi.string()
   });
 
 const submit = {
-  body: Joi.object().keys({
+  query: Joi.object().keys({
     assignmentCode: assignmentCodeSchema
   })
 };

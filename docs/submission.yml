@@ -37,16 +37,28 @@ paths:
       - Submission
       security:
         - bearerAuth: []
+      parameters:
+        - in: query
+          name: assignmentCode
+          schema:
+            type: string
+          required: true
+          description: Assignment Code
       requestBody:
         required: true
         content:
-          application/json:
+          multipart/form-data:
             schema:
               type: object
               properties:
                 assignmentCode:
                   type: string
                   description: Assignment Code
+                head:
+                  type: string
+                  format: binary
+                  description: Head of Submission
+                
       responses:
         '201':
           description: Created
@@ -68,8 +80,6 @@ paths:
           $ref: '#/components/responses/Forbidden'
         '404':
           $ref: '#/components/responses/NotFound'
-
-
 
   /api/submission/snapshot:
     post:

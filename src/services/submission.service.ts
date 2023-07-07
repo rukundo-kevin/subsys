@@ -10,7 +10,11 @@ import httpStatus from 'http-status';
  * @param {string} assignmentCode
  * @returns {Promise<Submission>}
  */
-const makeSubmission = async (userId: number, assignmentCode: string): Promise<Submission> => {
+const makeSubmission = async (
+  userId: number,
+  assignmentCode: string,
+  head: string
+): Promise<Submission> => {
   const student = await prisma.student.findUnique({
     where: { userId },
     include: {
@@ -35,7 +39,8 @@ const makeSubmission = async (userId: number, assignmentCode: string): Promise<S
     data: {
       assignmentId: student.assignment[0].id,
       studentId: student.id,
-      submissionCode
+      submissionCode,
+      head
     },
     include: {
       assignment: {
@@ -104,6 +109,35 @@ const getSubmissions = async (
 
 /**
  *
+ * @param userId The user Id
+ * @param submissionCode The code for submission
+ * @param head The head for the submission
+ * @returns {Promise<Submission>}d
+ */
+const updateSubmission = async (
+  userId: number,
+  submissionCode: string,
+  head: string
+): Promise<Submission> => {
+  const student = await prisma.student.findUnique({ where: { userId } });
+  if (!student) {
+    throw new ApiError(httpStatus.NOT_FOUND, 'Student does not exist');
+  }
+
+  const submission = await prisma.submission.update({
+    where: {
+      submissionCode
+    },
+    data: {
+      head
+    }
+  });
+
+  return submission;
+};
+
+/**
+ *
  * @param submissionCode The code for submission
  * @param snapshotName The name for the snapshot
  * @param snapshotFiles The files for the snapshot
@@ -134,4 +168,4 @@ const createSnapshot = async (submissionCode: string, snapshotName: string) => {
   }
 };
 
-export default { makeSubmission, getSubmissions, createSnapshot };
+export default { makeSubmission, getSubmissions, updateSubmission, createSnapshot };
