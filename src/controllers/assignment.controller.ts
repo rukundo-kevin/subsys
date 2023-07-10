@@ -45,8 +45,10 @@ const getAssignments = catchAsync(async (req, res) => {
 
 const getAssignmentById = catchAsync(async (req, res) => {
   const { assignmentId } = req.params;
-  const assignment = await assignmentService.getAssignmentById(assignmentId);
-  res.send(assignment);
+  const { id: userId, role } = req.user as User;
+  const filter = { id: Number(assignmentId) };
+  const assignment = await assignmentService.getAssignments(userId, role, filter, {});
+  res.status(httpStatus.OK).send(assignment);
 });
 
 const inviteToAssignment = catchAsync(async (req, res) => {

@@ -3,6 +3,11 @@ import prisma from '../client';
 import ApiError from '../utils/ApiError';
 import httpStatus from 'http-status';
 
+interface Filter {
+  isDraft?: boolean;
+  id?: number;
+}
+
 /**
  * @description Create an assignment draft
  * @param {string} title - Title of the assignment
@@ -110,21 +115,21 @@ const updateAssignment = async (
  *
  * @param userId - Id of the user
  * @param role - Role of the user
- * @param {Object} filter - Mongo filter
+ * @param {Object} filter - filter
  * @param {Object} options - Query options
  * @param {string} [options.sortBy] - Sort option
  * @param {string} [options.sortOrder] - Sort order
- * @returns {Promise<Assignment[] | void>} List of Assignments
+ * @returns {Promise<Assignment[] | void>} List of Assignments or single Assignment
  */
 const getAssignments = async (
   userId: number,
   role: Role,
-  filter: object,
+  filter: Filter,
   options: {
     sortBy?: string;
     sortOrder?: 'asc' | 'desc';
   }
-): Promise<Assignment[] | void> => {
+): Promise<Assignment[] | Assignment | void> => {
   const sortBy = options.sortBy;
   const sortOrder = options.sortOrder ?? 'desc';
   if (role === 'ADMIN') {
@@ -146,6 +151,13 @@ const getAssignments = async (
       },
       orderBy: sortBy ? { [sortBy]: sortOrder } : undefined
     });
+
+    if (filter.id && assignments.length === 0) {
+      throw new ApiError(httpStatus.BAD_REQUEST, 'Assignment does not exist');
+    }
+    if (filter.id && assignments.length === 1) {
+      return assignments[0];
+    }
     return assignments;
   }
   if (role === 'LECTURER') {
@@ -189,6 +201,14 @@ const getAssignments = async (
       orderBy: sortBy ? { [sortBy]: sortOrder } : undefined
     });
 
+    if (filter.id && assignments.length === 0) {
+      throw new ApiError(httpStatus.BAD_REQUEST, 'Assignment does not exist');
+    }
+
+    if (filter.id && assignments.length === 1) {
+      return assignments[0];
+    }
+
     return assignments;
   }
   if (role === 'STUDENT') {
@@ -208,35 +228,16 @@ const getAssignments = async (
     if (!student) {
       throw new ApiError(httpStatus.BAD_REQUEST, 'Student does not exist');
     }
+
+    if (filter.id) {
+      const assignment = student.assignment.filter((assignment) => assignment.id === filter.id);
+      if (assignment.length === 0) {
+        throw new ApiError(httpStatus.BAD_REQUEST, 'Assignment does not exist ');
+      }
+      return assignment[0];
+    }
     return student.assignment;
   }
-};
-
-const getAssignmentById = async (assignmentId: number): Promise<Assignment | null> => {
-  const assignment = await prisma.assignment.findUnique({
-    where: {
-      id: parseInt(assignmentId.toString())
-    },
-    include: {
-      lecturer: {
-        select: {
-          id: true,
-          staffId: true,
-          user: {
-            select: {
-              firstname: true,
-              lastname: true
-            }
-          }
-        }
-      }
-    }
-  });
-  if (!assignment) {
-    throw new ApiError(httpStatus.BAD_REQUEST, 'Assignment does not exist');
-  }
-
-  return assignment;
 };
 
 const getOneAssignment = async (id: number): Promise<Assignment | null> => {
@@ -287,7 +288,6 @@ export default {
   createAssignmentDraft,
   getAssignments,
   updateAssignment,
-  getAssignmentById,
   getOneAssignment,
   assignStudentToAssignment
 };
