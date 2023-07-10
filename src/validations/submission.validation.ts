@@ -1,9 +1,17 @@
 import Joi from 'joi';
+
 const assignmentCodeSchema = Joi.string()
   .regex(/^(ASS)\d{6}$/)
   .required()
   .messages({
     'string.pattern.base': 'Invalid assignment code'
+  });
+
+const submissionCodeSchema = Joi.string()
+  .regex(/^(SUB)\d{6}$/)
+  .required()
+  .messages({
+    'string.pattern.base': 'Invalid submission code'
   });
 
 const submit = {
@@ -14,12 +22,7 @@ const submit = {
 
 const uploadSnapshot = {
   query: Joi.object().keys({
-    submissionCode: Joi.string()
-      .regex(/^(SUB)\d{6}$/)
-      .required()
-      .messages({
-        'string.pattern.base': 'Invalid assignment code'
-      })
+    submissionCode: submissionCodeSchema
   }),
   body: {
     snapshots: Joi.array().items(
@@ -27,6 +30,12 @@ const uploadSnapshot = {
         snapshotFiles: Joi.string().required()
       })
     )
+  }
+};
+
+const updateSubmission = {
+  params: {
+    submissionCode: submissionCodeSchema
   }
 };
 
@@ -39,5 +48,6 @@ const getSubmission = {
 export default {
   submit,
   getSubmission,
-  uploadSnapshot
+  uploadSnapshot,
+  updateSubmission
 };

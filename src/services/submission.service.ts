@@ -4,6 +4,11 @@ import { generateId } from '../utils/userHelper';
 import ApiError from '../utils/ApiError';
 import httpStatus from 'http-status';
 
+interface Filter {
+  assignmentId?: number;
+  studentId?: number;
+  submissionCode?: string;
+}
 /**
  *
  * @param {number} userId
@@ -62,30 +67,15 @@ const makeSubmission = async (
 
 /**
  *
- * @param userId The id of the user
- * @param role Role of the user
- * @param assignmentCode Code of the assignment to get submissions for
+ * @param role - Role of the user
+ * @param  {Filter} filter - for the submission
  */
 
-const getSubmissions = async (
-  userId: number,
-  role: Role,
-  assignmentCode: string
-): Promise<void | Submission[]> => {
+const getSubmissions = async (role: Role, filter: Filter): Promise<void | Submission[]> => {
   if (role === Role.STUDENT) {
-    const student = await prisma.student.findUnique({ where: { userId } });
-    if (!student) {
-      throw new ApiError(httpStatus.NOT_FOUND, 'Student does not exist');
-    }
-    const assignment = await prisma.assignment.findUnique({ where: { assignmentCode } });
-    if (!assignment) {
-      throw new ApiError(httpStatus.NOT_FOUND, "Assignment doesn't exist ");
-    }
-
     const submission = await prisma.submission.findMany({
       where: {
-        studentId: student.id,
-        assignmentId: assignment.id
+        ...filter
       },
       include: {
         assignment: {
@@ -112,7 +102,7 @@ const getSubmissions = async (
  * @param userId The user Id
  * @param submissionCode The code for submission
  * @param head The head for the submission
- * @returns {Promise<Submission>}d
+ * @returns {Promise<Submission>}
  */
 const updateSubmission = async (
   userId: number,
@@ -141,7 +131,6 @@ const updateSubmission = async (
  * @param submissionCode The code for submission
  * @param snapshotName The name for the snapshot
  * @param snapshotFiles The files for the snapshot
- * @returns
  */
 const createSnapshot = async (submissionCode: string, snapshotName: string) => {
   try {

@@ -75,10 +75,12 @@ model Submission {
   student         Student @relation(fields: [studentId], references: [id])
   studentId       Int  
   submissionCode String @unique
-  head           String
+  head           String @unique
   snapshots   Snapshot[]
   createdAt       DateTime @default(now())
   updatedAt       DateTime @updatedAt
+
+ @@unique([studentId, assignmentId])
 }
 
 model Snapshot{
