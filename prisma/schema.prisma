@@ -70,9 +70,9 @@ model Assignment{
 
 model Submission {
   id   String @id @default(uuid())
-  assignment      Assignment @relation(fields: [assignmentId], references: [id])
+  assignment      Assignment @relation(fields: [assignmentId], references: [id], onDelete: Cascade)
   assignmentId    Int
-  student         Student @relation(fields: [studentId], references: [id])
+  student         Student @relation(fields: [studentId], references: [id], onDelete: Cascade)
   studentId       Int  
   submissionCode String @unique
   head           String @unique
@@ -85,7 +85,7 @@ model Submission {
 
 model Snapshot{
   id             Int      @id @default(autoincrement())
-  submission      Submission @relation(fields: [submissionId], references: [id])
+  submission      Submission @relation(fields: [submissionId], references: [id], onDelete: Cascade)
   submissionId    String
   snapshotName    String @unique
   createdAt       DateTime @default(now())
