@@ -80,11 +80,20 @@ const editAssignment = catchAsync(async (req, res) => {
   );
   res.status(httpStatus.OK).send({ message: 'Assignment updated successfully', updatedAssignment });
 });
+
+const deleteAssignment = catchAsync(async (req, res) => {
+  const user = req.user as User;
+  const { assignmentId } = req.params;
+  await assignmentService.deleteAssignment(assignmentId, user);
+  res.status(httpStatus.NO_CONTENT).send({ message: 'Assignment deleted successfully' });
+});
+
 export default {
   createAssignmentDraft,
   getAssignments,
   publishAssignment,
   getAssignmentById,
   inviteToAssignment,
-  editAssignment
+  editAssignment,
+  deleteAssignment
 };

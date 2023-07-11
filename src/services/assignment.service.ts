@@ -287,10 +287,52 @@ const assignStudentToAssignment = async (
   }
 };
 
+const deleteAssignment = async (id: number, user: User): Promise<Assignment> => {
+  try {
+    if (user.role !== 'LECTURER') {
+      throw new ApiError(httpStatus.UNAUTHORIZED, 'Only lecturer can delete assignment');
+    }
+    const lecturer = await prisma.lecturer.findUnique({
+      where: {
+        userId: user.id
+      }
+    });
+    if (!lecturer) {
+      throw new ApiError(httpStatus.BAD_REQUEST, 'Lecturer does not exist');
+    }
+    const assignment = await prisma.assignment.findUnique({
+      where: {
+        id: Number(id)
+      }
+    });
+
+    if (!assignment || assignment.lecturerId !== lecturer.id) {
+      throw new ApiError(httpStatus.UNAUTHORIZED, 'You are not allowed to delete this assignment');
+    }
+    if (!assignment.isDraft) {
+      throw new ApiError(httpStatus.BAD_REQUEST, 'Only draft assignment can be deleted');
+    }
+    const deletedAssignment = await prisma.assignment.delete({
+      where: {
+        id: Number(id)
+      }
+    });
+    return deletedAssignment;
+  } catch (e: any) {
+    if (e instanceof Prisma.PrismaClientKnownRequestError) {
+      if (e.code === 'P2025') {
+        throw new ApiError(httpStatus.BAD_REQUEST, 'Assignment does not exist');
+      }
+    }
+    throw new ApiError(httpStatus.BAD_REQUEST, `${(e as Error).message}`);
+  }
+};
+
 export default {
   createAssignmentDraft,
   getAssignments,
   updateAssignment,
   getOneAssignment,
-  assignStudentToAssignment
+  assignStudentToAssignment,
+  deleteAssignment
 };

@@ -43,5 +43,10 @@ router.patch(
   assignmentController.publishAssignment
 );
 router.post('/invite/:id', auth('manageAssignments'), assignmentController.inviteToAssignment);
-
+router.delete(
+  '/:assignmentId',
+  auth('manageAssignments'),
+  validate(assignmentValidation.deleteAssignment),
+  assignmentController.deleteAssignment
+);
 export default router;
