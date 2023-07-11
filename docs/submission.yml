@@ -2,30 +2,30 @@ tags:
   - name: Submission
     description: Submission Management
 
-paths:
-  /api/submission/{assignmentCode}:  
- 
-  /api/submission/{submissionCode}:
+paths: 
+  /api/submission/{assignmentCode}:
     get:
-      summary: Get submission with submissionCode
+      summary: Get submission for assignment with assignmentCode
       tags:
         - Submission
       security:
         - bearerAuth: []
       parameters:
         - in: path
-          name: submissionCode
+          name: assignmentCode
           schema:
             type: string
           required: true
-          description: Submission Code
+          description: Assignment Code
       responses:
         '200': 
           description: OK
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Submission'
+                type: array
+                items:
+                  $ref: '#/components/schemas/Submission'
         '400':
           $ref: '#/components/responses/ValidationError'
         '401':

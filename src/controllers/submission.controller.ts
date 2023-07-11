@@ -6,14 +6,16 @@ import { studentService, submissionService } from '../services';
 import catchAsync from '../utils/catchAsync';
 import ApiError from '../utils/ApiError';
 import assignmentService from '../services/assignment.service';
+import { generateId } from '../utils/userHelper';
 
 const makeSubmission = catchAsync(async (req, res) => {
   const { id: userId } = req.user as User;
-  const { assignmentCode } = req.params;
+  const { assignmentCode } = req.query;
   if (!req.file) {
     throw new ApiError(httpStatus.BAD_REQUEST, 'The head file was not uploaded');
   }
 
+  console.log('assignment');
   const assignment = await assignmentService.getAssignments(
     userId,
     Role.STUDENT,
@@ -27,6 +29,7 @@ const makeSubmission = catchAsync(async (req, res) => {
   const submissionExist = await submissionService.getSubmissions(Role.STUDENT, {
     assignmentId: assignment[0].id
   });
+
   if (submissionExist && submissionExist.length > 0) {
     await fs.remove(req.file.path);
     throw new ApiError(
@@ -34,8 +37,8 @@ const makeSubmission = catchAsync(async (req, res) => {
       'You have already made a submission for this assignment'
     );
   }
-
-  const userFolder = `submissions/${userId}`;
+  const submissionCode = generateId('SUB');
+  const userFolder = `submissions/${userId}/${submissionCode}`;
   await fs.ensureDir(userFolder); // Creates the folder if it doesn't exist
   const newPath = `${userFolder}/${req.file.originalname}`;
 
@@ -44,7 +47,8 @@ const makeSubmission = catchAsync(async (req, res) => {
   const submission = await submissionService.makeSubmission(
     userId,
     assignmentCode as string,
-    newPath
+    newPath,
+    submissionCode
   );
 
   res.status(httpStatus.CREATED).send({
@@ -111,9 +115,9 @@ const getSubmissions = catchAsync(async (req, res) => {
   }
   const filter = { assignmentId: assignment[0].id, studentId: student[0].id };
 
-  const submission = await submissionService.getSubmissions(role, filter);
+  const submissions = await submissionService.getSubmissions(role, filter);
 
-  return res.status(httpStatus.OK).send({ submission });
+  return res.status(httpStatus.OK).send({ submissions });
 });
 
 const createSnapshot = catchAsync(async (req, res) => {
@@ -125,12 +129,12 @@ const createSnapshot = catchAsync(async (req, res) => {
   }
 
   const files = req.files as Express.Multer.File[];
-
   const destinationFolder = `submissions/${userId}/${submissionCode}`;
   fs.ensureDirSync(destinationFolder);
 
   for (const file of files) {
     const newPath = `${destinationFolder}/${file.originalname}`;
+    // console.log(file);
     await fs.move(file.path, newPath, { overwrite: true });
     await submissionService.createSnapshot(submissionCode, newPath);
   }

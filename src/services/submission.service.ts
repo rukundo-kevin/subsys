@@ -18,7 +18,8 @@ interface Filter {
 const makeSubmission = async (
   userId: number,
   assignmentCode: string,
-  head: string
+  head: string,
+  submissionCode: string
 ): Promise<Submission> => {
   const student = await prisma.student.findUnique({
     where: { userId },
@@ -39,7 +40,6 @@ const makeSubmission = async (
     throw new ApiError(httpStatus.BAD_REQUEST, 'Assignment does not exist ');
   }
 
-  const submissionCode = generateId('SUB');
   const submission = await prisma.submission.create({
     data: {
       assignmentId: student.assignment[0].id,

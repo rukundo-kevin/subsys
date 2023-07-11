@@ -4,13 +4,14 @@ import validate from '../middlewares/validate';
 import submissionValidation from '../validations/submission.validation';
 import { submissionController } from '../controllers';
 import { upload } from '../config/multer';
+import handleFileUpload from '../middlewares/uploadFile';
 
 const router = Router();
 
 router.post(
   '/',
   auth('createSubmission'),
-  upload.single('head'),
+  handleFileUpload('head', false),
   validate(submissionValidation.submit),
   submissionController.makeSubmission
 );
@@ -18,7 +19,7 @@ router.post(
 router.patch(
   '/:submissionCode',
   auth('createSubmission'),
-  upload.single('head'),
+  handleFileUpload('head', false),
   validate(submissionValidation.updateSubmission),
   submissionController.updateSubmission
 );
@@ -27,7 +28,7 @@ router.post(
   '/snapshot',
   auth('createSubmission'),
   validate(submissionValidation.uploadSnapshot),
-  upload.array('snapshots'),
+  handleFileUpload('snapshots', true),
   submissionController.createSnapshot
 );
 router.get(
