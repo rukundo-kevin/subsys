@@ -219,7 +219,8 @@ const getAssignments = async (
       include: {
         assignment: {
           where: {
-            ...filter
+            ...filter,
+            isDraft: false
           },
           orderBy: {
             deadline: sortOrder
@@ -235,7 +236,7 @@ const getAssignments = async (
     if (filter.id) {
       const assignment = student.assignment.filter((assignment) => assignment.id === filter.id);
       if (assignment.length === 0) {
-        throw new ApiError(httpStatus.BAD_REQUEST, 'Assignment does not exist ');
+        throw new ApiError(httpStatus.NOT_FOUND, 'Assignment not found');
       }
       return assignment[0];
     }
