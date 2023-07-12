@@ -27,7 +27,7 @@ const createLecturer = async (
   let lecturerIdExists;
 
   do {
-    staffId = generateId('lecturer');
+    staffId = generateId('LC');
     lecturerIdExists = await prisma.lecturer.findUnique({
       where: {
         staffId

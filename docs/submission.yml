@@ -1,0 +1,168 @@
+tags:
+  - name: Submission
+    description: Submission Management
+
+paths: 
+  /api/submission/{assignmentCode}:
+    get:
+      summary: Get submission for assignment with assignmentCode
+      tags:
+        - Submission
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: assignmentCode
+          schema:
+            type: string
+          required: true
+          description: Assignment Code
+      responses:
+        '200': 
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Submission'
+        '400':
+          $ref: '#/components/responses/ValidationError'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+    patch:
+      summary: Update submission with submissionCode
+      tags:
+        - Submission
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: submissionCode
+          schema:
+            type: string
+          required: true
+          description: Submission Code
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                head:
+                  type: string
+                  format: binary
+                  description: Head of Submission              
+      responses:
+        '200': 
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Submission'
+        '400':
+          $ref: '#/components/responses/ValidationError'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+  /api/submission:
+    post:
+      summary: Create Submission
+      tags: 
+      - Submission
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: query
+          name: assignmentCode
+          schema:
+            type: string
+          required: true
+          description: Assignment Code
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                head:
+                  type: string
+                  format: binary
+                  description: Head of Submission
+                
+      responses:
+        '201':
+          description: Created
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Submission created successfully 
+                  data:
+                    $ref: '#/components/schemas/Submission'    
+        '400':
+          $ref: '#/components/responses/ValidationError'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+  /api/submission/snapshot:
+    post:
+      summary: Create snapshot
+      tags:
+        - Submission
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: query
+          name: submissionCode
+          schema:
+            type: string
+          required: true
+          description: Submission Code
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                snapshots:
+                  type: array
+                  items:
+                    type: string
+                    format: binary
+      responses:
+        '201':
+          description: Created
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Snapshot created successfully
+        '400':
+          $ref: '#/components/responses/ValidationError'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'

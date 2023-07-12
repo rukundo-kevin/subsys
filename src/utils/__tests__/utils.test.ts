@@ -101,7 +101,7 @@ describe('Utils', () => {
 
   describe('generateStudentId', () => {
     it('should generate a random studentId', () => {
-      const studentId = generateId('student');
+      const studentId = generateId('ST');
 
       expect(studentId).toHaveLength(8);
       expect(studentId).toContain('ST');

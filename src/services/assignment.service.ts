@@ -218,6 +218,9 @@ const getAssignments = async (
       },
       include: {
         assignment: {
+          where: {
+            ...filter
+          },
           orderBy: {
             deadline: sortOrder
           }

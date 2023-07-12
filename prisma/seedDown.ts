@@ -8,7 +8,12 @@ export async function seedDown() {
   await prisma.user.deleteMany({
     where: {
       email: {
-        in: ['admin@amalitech.com', 'student@amalitech.org', 'lecturer@amalitech.org']
+        in: [
+          'admin@amalitech.com',
+          'admintest@amalitech.org',
+          'student@amalitech.org',
+          'lecturer@amalitech.org'
+        ]
       }
     }
   });

@@ -41,6 +41,7 @@ model Student {
   user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
   userId          Int @unique
   studentId       String   @unique
+  submission       Submission[]
   assignment      Assignment[]  @relation("AssignmentStudents")
 }
 
@@ -61,7 +62,32 @@ model Assignment{
   assignmentCode  String? @unique 
   lecturer        Lecturer? @relation(fields: [lecturerId], references: [id])
   students        Student[] @relation("AssignmentStudents")
+  submissions     Submission[]
   lecturerId      Int?
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+}
+
+model Submission {
+  id   String @id @default(uuid())
+  assignment      Assignment @relation(fields: [assignmentId], references: [id], onDelete: Cascade)
+  assignmentId    Int
+  student         Student @relation(fields: [studentId], references: [id], onDelete: Cascade)
+  studentId       Int  
+  submissionCode String @unique
+  head           String @unique
+  snapshots   Snapshot[]
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+ @@unique([studentId, assignmentId])
+}
+
+model Snapshot{
+  id             Int      @id @default(autoincrement())
+  submission      Submission @relation(fields: [submissionId], references: [id], onDelete: Cascade)
+  submissionId    String
+  snapshotName    String @unique
   createdAt       DateTime @default(now())
   updatedAt       DateTime @updatedAt
 }
@@ -77,4 +103,3 @@ enum TokenType {
   REFRESH
   ACTIVATION
 }
-
