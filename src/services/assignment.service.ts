@@ -6,6 +6,7 @@ import httpStatus from 'http-status';
 interface Filter {
   isDraft?: boolean;
   id?: number;
+  assignmentCode?: string;
 }
 
 /**

@@ -1,7 +1,7 @@
 import httpStatus from 'http-status';
 import fs from 'fs-extra';
 
-import { Role, User } from '@prisma/client';
+import { Assignment, Role, User } from '@prisma/client';
 import { studentService, submissionService } from '../services';
 import catchAsync from '../utils/catchAsync';
 import ApiError from '../utils/ApiError';
@@ -10,18 +10,18 @@ import { generateId } from '../utils/userHelper';
 
 const makeSubmission = catchAsync(async (req, res) => {
   const { id: userId } = req.user as User;
-  const { assignmentCode } = req.query;
+  const assignmentCode = req.query!.assignmentCode as string;
   if (!req.file) {
     throw new ApiError(httpStatus.BAD_REQUEST, 'The head file was not uploaded');
   }
 
-  console.log('assignment');
-  const assignment = await assignmentService.getAssignments(
+  const assignment = (await assignmentService.getAssignments(
     userId,
     Role.STUDENT,
     { assignmentCode },
     {}
-  );
+  )) as Assignment[];
+
   if (!assignment) {
     throw new ApiError(httpStatus.BAD_REQUEST, 'Assignment does not exist');
   }
@@ -98,12 +98,12 @@ const getSubmissions = catchAsync(async (req, res) => {
   const { assignmentCode } = req.params;
   const { id: userId, role } = req.user as User;
 
-  const assignment = await assignmentService.getAssignments(
+  const assignment = (await assignmentService.getAssignments(
     userId,
     Role.STUDENT,
     { assignmentCode },
     {}
-  );
+  )) as Assignment[];
 
   if (!assignment) {
     throw new ApiError(httpStatus.BAD_REQUEST, 'Assignment does not exist');

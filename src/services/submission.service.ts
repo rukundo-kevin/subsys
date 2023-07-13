@@ -1,6 +1,5 @@
 import { Prisma, Role, Submission } from '@prisma/client';
 import prisma from '../client';
-import { generateId } from '../utils/userHelper';
 import ApiError from '../utils/ApiError';
 import httpStatus from 'http-status';
 
