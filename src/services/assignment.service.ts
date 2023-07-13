@@ -3,7 +3,6 @@ import prisma from '../client';
 import ApiError from '../utils/ApiError';
 import httpStatus from 'http-status';
 
-
 /**
  * @description Create an assignment draft
  * @param {string} title - Title of the assignment
