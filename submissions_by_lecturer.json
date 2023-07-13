@@ -1,0 +1,13 @@
+<<<<<<< HEAD
+{}
+=======
+{
+  "1": [
+    {
+      "name": "Student User",
+      "studentId": 4,
+      "assignmentCode": "ASS555550"
+    }
+  ]
+}
+>>>>>>> a6daaaf (feat(submission-notification): create task scheduler)

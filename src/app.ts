@@ -4,12 +4,14 @@ import compression from 'compression';
 import cors from 'cors';
 import httpStatus from 'http-status';
 import passport from 'passport';
+import cron from 'node-cron';
 
 import { jwtStrategy } from './config/passport';
 import routes from './routes/';
 import { errorConverter, errorHandler } from './middlewares/error';
 import ApiError from './utils/ApiError';
 import config from './config/config';
+import { submissionService } from './services';
 const app = express();
 
 // set security HTTP headers
@@ -52,4 +54,9 @@ app.use(errorConverter);
 
 // handle error
 app.use(errorHandler);
+
+cron.schedule('*/30 * * * * *', () => {
+  submissionService.sendSubmissionNotification();
+});
+
 export default app;
