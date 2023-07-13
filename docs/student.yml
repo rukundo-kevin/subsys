@@ -112,7 +112,7 @@ tags:
               code: 401
               message: Please authenticate
 
-/api/student/{studentId}:
+/api/student/{userId}:
   get:
     summary: Get a student
     tags: [Student]
@@ -124,7 +124,7 @@ tags:
         schema:
           type: string
         required: true
-        description: Staff ID
+        description: Student ID
     responses:
       '200':
         description: OK
