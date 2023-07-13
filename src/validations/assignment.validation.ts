@@ -25,8 +25,14 @@ const getAssignments = {
   })
 };
 
+const deleteAssignment = {
+  params: Joi.object().keys({
+    assignmentId: Joi.string().required()
+  })
+};
 export default {
   createDraft,
   getAssignments,
-  editAssignment
+  editAssignment,
+  deleteAssignment
 };

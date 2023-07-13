@@ -21,7 +21,8 @@ const envVarsSchema = Joi.object()
       .default(20)
       .description('minutes after which refresh tokens expire'),
     ADMIN_EMAIL: Joi.string().required().description('Admin email'),
-    ADMIN_EMAIL_TOKEN: Joi.string().required().description('Admin email token')
+    ADMIN_EMAIL_TOKEN: Joi.string().required().description('Admin email token'),
+    SEED_PASSWORD: Joi.string().required().description('Seed password')
   })
   .unknown();
 
@@ -47,5 +48,6 @@ export default {
     adminEmailToken: envVars.ADMIN_EMAIL_TOKEN
   },
   appUrl: envVars.APP_URL,
-  frontendUrl: envVars.FRONTEND_URL
+  frontendUrl: envVars.FRONTEND_URL,
+  seedPassword: envVars.SEED_PASSWORD
 };

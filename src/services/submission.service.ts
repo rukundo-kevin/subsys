@@ -1,14 +1,8 @@
 import { Prisma, Role, Submission } from '@prisma/client';
 import prisma from '../client';
-import { generateId } from '../utils/userHelper';
 import ApiError from '../utils/ApiError';
 import httpStatus from 'http-status';
 
-interface Filter {
-  assignmentId?: number;
-  studentId?: number;
-  submissionCode?: string;
-}
 /**
  *
  * @param {number} userId
@@ -68,10 +62,13 @@ const makeSubmission = async (
 /**
  *
  * @param role - Role of the user
- * @param  {Filter} filter - for the submission
+ * @param  {SubmissionWhereInput} filter - for the submission
  */
 
-const getSubmissions = async (role: Role, filter: Filter): Promise<void | Submission[]> => {
+const getSubmissions = async (
+  role: Role,
+  filter: Prisma.SubmissionWhereInput
+): Promise<void | Submission[]> => {
   if (role === Role.STUDENT) {
     const submission = await prisma.submission.findMany({
       where: {

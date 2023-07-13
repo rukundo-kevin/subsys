@@ -1,8 +1,11 @@
+/*eslint-disable*/
+
 import { PrismaClient } from '@prisma/client';
 import logger from '../src/config/logger';
-
+import config from '../src/config/config';
 import { encryptPassword } from '../src/utils/encryption';
 import { seedDown } from './seedDown';
+import { generateAssignmentCode } from '../src/utils/assignmentHelper';
 
 const prisma = new PrismaClient();
 
@@ -17,7 +20,7 @@ async function main() {
         lastname: 'User',
         role: 'ADMIN',
         isInviteAccepted: true,
-        password: await encryptPassword('Admin123')
+        password: await encryptPassword(config.seedPassword)
       },
       {
         email: 'admintest@amalitech.org',
@@ -33,7 +36,7 @@ async function main() {
         lastname: 'User',
         role: 'LECTURER',
         isInviteAccepted: true,
-        password: await encryptPassword('Lecturer123')
+        password: await encryptPassword(config.seedPassword)
       },
       {
         email: 'student@amalitech.org',
@@ -41,13 +44,13 @@ async function main() {
         lastname: 'User',
         role: 'STUDENT',
         isInviteAccepted: true,
-        password: await encryptPassword('Student123')
+        password: await encryptPassword(config.seedPassword)
       }
     ],
     skipDuplicates: true
   });
 
-  await prisma.lecturer.create({
+  const lecturer = await prisma.lecturer.create({
     data: {
       staffId: 'LC000112',
       user: {
@@ -58,12 +61,59 @@ async function main() {
     }
   });
 
-  await prisma.student.create({
+  const student = await prisma.student.create({
     data: {
       studentId: 'ST000112',
       user: {
         connect: {
           email: 'student@amalitech.org'
+        }
+      }
+    }
+  });
+
+  const currentDate = new Date();
+  const newDate = new Date(
+    currentDate.getFullYear(),
+    currentDate.getMonth() + 1,
+    currentDate.getDate()
+  );
+  const assignmentCode = generateAssignmentCode();
+  await prisma.assignment.createMany({
+    data: [
+      {
+        title: 'Test Assignment 1',
+        description: 'Test Assignment 1 description',
+        deadline: newDate,
+        isDraft: false,
+        assignmentCode: assignmentCode,
+        lecturerId: lecturer!.id
+      },
+      {
+        title: 'Test Assignment 2',
+        description: 'Test Assignment 2 description',
+        deadline: newDate,
+        isDraft: false,
+        assignmentCode: generateAssignmentCode(),
+        lecturerId: lecturer!.id
+      }
+    ]
+  });
+
+  const singleAssignment = await prisma.assignment.findUnique({
+    where: {
+      assignmentCode: assignmentCode
+    }
+  });
+
+  await prisma.assignment.update({
+    where: {
+      id: singleAssignment!.id
+    },
+    data: {
+      students: {
+        connect: {
+          id: student!.id
         }
       }
     }

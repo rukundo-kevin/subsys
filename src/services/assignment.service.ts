@@ -3,10 +3,6 @@ import prisma from '../client';
 import ApiError from '../utils/ApiError';
 import httpStatus from 'http-status';
 
-interface Filter {
-  isDraft?: boolean;
-  id?: number;
-}
 
 /**
  * @description Create an assignment draft
@@ -115,7 +111,7 @@ const updateAssignment = async (
  *
  * @param userId - Id of the user
  * @param role - Role of the user
- * @param {Object} filter - filter
+ * @param {AssignmentWhereInput} filter - filter
  * @param {Object} options - Query options
  * @param {string} [options.sortBy] - Sort option
  * @param {string} [options.sortOrder] - Sort order
@@ -124,7 +120,7 @@ const updateAssignment = async (
 const getAssignments = async (
   userId: number,
   role: Role,
-  filter: Filter,
+  filter: Prisma.AssignmentWhereInput,
   options: {
     sortBy?: string;
     sortOrder?: 'asc' | 'desc';
@@ -219,7 +215,8 @@ const getAssignments = async (
       include: {
         assignment: {
           where: {
-            ...filter
+            ...filter,
+            isDraft: false
           },
           orderBy: {
             deadline: sortOrder
@@ -235,7 +232,7 @@ const getAssignments = async (
     if (filter.id) {
       const assignment = student.assignment.filter((assignment) => assignment.id === filter.id);
       if (assignment.length === 0) {
-        throw new ApiError(httpStatus.BAD_REQUEST, 'Assignment does not exist ');
+        throw new ApiError(httpStatus.NOT_FOUND, 'Assignment not found');
       }
       return assignment[0];
     }
@@ -287,10 +284,30 @@ const assignStudentToAssignment = async (
   }
 };
 
+/**
+ *  Delete assignment
+ * @param id
+ * @param user
+ * @returns count of deleted assignments
+ */
+const deleteAssignment = async (id: number, user: User) => {
+  const { count } = await prisma.assignment.deleteMany({
+    where: {
+      id: Number(id),
+      isDraft: true,
+      lecturer: {
+        user: { id: user.id }
+      }
+    }
+  });
+  return count;
+};
+
 export default {
   createAssignmentDraft,
   getAssignments,
   updateAssignment,
   getOneAssignment,
-  assignStudentToAssignment
+  assignStudentToAssignment,
+  deleteAssignment
 };

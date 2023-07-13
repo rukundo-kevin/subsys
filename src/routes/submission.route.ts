@@ -3,7 +3,6 @@ import auth from '../middlewares/auth';
 import validate from '../middlewares/validate';
 import submissionValidation from '../validations/submission.validation';
 import { submissionController } from '../controllers';
-import { upload } from '../config/multer';
 import handleFileUpload from '../middlewares/uploadFile';
 
 const router = Router();

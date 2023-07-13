@@ -165,6 +165,29 @@ paths:
                   staffId: LEC00123
                 created_at: 2021-01-01T00:00:00Z
                 updated_at: 2021-01-01T00:00:00Z
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+    
+    delete:
+      summary: Delete assignment by id
+      tags:
+        - Assignment
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: assignmentId
+          schema:
+            type: number
+          required: true
+          description: Assignment id
+      responses:
+        '204':
+          description: No Content
         '401':
           $ref: '#/components/responses/Unauthorized'
         '403':
@@ -209,7 +232,7 @@ paths:
           $ref: '#/components/responses/Forbidden'
         '404':
           $ref: '#/components/responses/NotFound'
-
+    
   /api/assignment/publish/{id}:
     patch:
       summary: Publish assignment

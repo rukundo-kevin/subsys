@@ -6,6 +6,7 @@ import { generateAssignmentCode } from '../utils/assignmentHelper';
 import { studentService } from '../services';
 import { sendAssignmentInvitation } from '../utils/assignmentInvitation';
 import pick from '../utils/pick';
+import ApiError from '../utils/ApiError';
 
 const createAssignmentDraft = catchAsync(async (req, res) => {
   const { title, description, deadline } = req.body;
@@ -80,11 +81,26 @@ const editAssignment = catchAsync(async (req, res) => {
   );
   res.status(httpStatus.OK).send({ message: 'Assignment updated successfully', updatedAssignment });
 });
+
+const deleteAssignment = catchAsync(async (req, res) => {
+  const user = req.user as User;
+  const { assignmentId } = req.params;
+  const deletedAssignment = await assignmentService.deleteAssignment(assignmentId, user);
+  if (!deletedAssignment) {
+    throw new ApiError(
+      httpStatus.UNAUTHORIZED,
+      'You are not authorized to delete this assignment or the assignment is not a draft'
+    );
+  }
+  res.status(httpStatus.NO_CONTENT).send({ message: 'Assignment deleted successfully' });
+});
+
 export default {
   createAssignmentDraft,
   getAssignments,
   publishAssignment,
   getAssignmentById,
   inviteToAssignment,
-  editAssignment
+  editAssignment,
+  deleteAssignment
 };
