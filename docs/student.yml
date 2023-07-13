@@ -196,8 +196,6 @@ tags:
             example:
               code: 401
               message: Please authenticate
-
-/api/student/{userId}: 
   delete:
     summary: Delete a student
     tags: [Student]

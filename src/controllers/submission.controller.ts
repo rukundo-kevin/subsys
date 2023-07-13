@@ -134,7 +134,6 @@ const createSnapshot = catchAsync(async (req, res) => {
 
   for (const file of files) {
     const newPath = `${destinationFolder}/${file.originalname}`;
-    // console.log(file);
     await fs.move(file.path, newPath, { overwrite: true });
     await submissionService.createSnapshot(submissionCode, newPath);
   }
