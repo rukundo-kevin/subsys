@@ -1,4 +1,4 @@
-import { Prisma, Role, Submission } from '@prisma/client';
+import { Prisma, Submission } from '@prisma/client';
 import prisma from '../client';
 import ApiError from '../utils/ApiError';
 import httpStatus from 'http-status';
@@ -31,7 +31,7 @@ const makeSubmission = async (
   });
 
   if (!student) {
-    throw new ApiError(httpStatus.BAD_REQUEST, 'Assignment does not exist ');
+    throw new ApiError(httpStatus.NOT_FOUND, 'Assignment does not exist ');
   }
 
   const submission = await prisma.submission.create({
@@ -66,8 +66,11 @@ const makeSubmission = async (
  */
 
 const getSubmissions = async (
-  role: Role,
-  filter: Prisma.SubmissionWhereInput
+  filter: Prisma.SubmissionWhereInput,
+  options: {
+    sortBy?: string;
+    sortOrder?: 'asc' | 'desc';
+  }
 ): Promise<
   | void
   | Prisma.SubmissionGetPayload<{
@@ -79,19 +82,20 @@ const getSubmissions = async (
     }>[]
   | void
 > => {
-  if (role === Role.STUDENT) {
-    const submission = await prisma.submission.findMany({
-      where: {
-        ...filter
-      },
-      include: {
-        assignment: true,
-        student: true,
-        snapshots: true
-      }
-    });
-    return submission;
-  }
+  const sortBy = options.sortBy;
+  const sortOrder = options.sortOrder ?? 'desc';
+  const submission = await prisma.submission.findMany({
+    where: {
+      ...filter
+    },
+    orderBy: sortBy ? { [sortBy]: sortOrder } : undefined,
+    include: {
+      assignment: true,
+      student: true,
+      snapshots: true
+    }
+  });
+  return submission;
 };
 
 /**
@@ -137,7 +141,7 @@ const createSnapshot = async (submissionCode: string, snapshotName: string) => {
       }
     });
     if (!submission) {
-      throw new ApiError(httpStatus.BAD_REQUEST, 'Submission not found');
+      throw new ApiError(httpStatus.NOT_FOUND, 'Submission not found');
     }
     const snapshot = await prisma.snapshot.create({
       data: {

@@ -1,12 +1,13 @@
 import httpStatus from 'http-status';
 import fs from 'fs-extra';
 
-import { Assignment, Role, User } from '@prisma/client';
-import { studentService, submissionService } from '../services';
+import { Assignment, Prisma, Role, User } from '@prisma/client';
+import { submissionService } from '../services';
 import catchAsync from '../utils/catchAsync';
 import ApiError from '../utils/ApiError';
 import assignmentService from '../services/assignment.service';
 import { generateId } from '../utils/userHelper';
+import pick from '../utils/pick';
 
 const makeSubmission = catchAsync(async (req, res) => {
   const { id: userId } = req.user as User;
@@ -23,14 +24,17 @@ const makeSubmission = catchAsync(async (req, res) => {
   )) as Assignment[];
 
   if (!assignment) {
-    throw new ApiError(httpStatus.BAD_REQUEST, 'Assignment does not exist');
+    throw new ApiError(httpStatus.NOT_FOUND, 'Assignment does not exist');
   }
   if (assignment[0].deadline < new Date())
     throw new ApiError(httpStatus.BAD_REQUEST, 'Can no longer submit after deadline');
 
-  const submissionExist = await submissionService.getSubmissions(Role.STUDENT, {
-    assignmentId: assignment[0].id
-  });
+  const submissionExist = await submissionService.getSubmissions(
+    {
+      assignmentId: assignment[0].id
+    },
+    {}
+  );
 
   if (submissionExist && submissionExist.length > 0) {
     await fs.remove(req.file.path);
@@ -68,16 +72,15 @@ const updateSubmission = catchAsync(async (req, res) => {
     throw new ApiError(httpStatus.BAD_REQUEST, 'The head file was not uploaded');
   }
 
-  const submission = await submissionService.getSubmissions(Role.STUDENT, {
-    submissionCode
-  });
+  const submission = await submissionService.getSubmissions(
+    {
+      submissionCode
+    },
+    {}
+  );
 
   if (!submission || submission.length === 0) {
-    throw new ApiError(httpStatus.BAD_REQUEST, 'Submission does not exist');
-  }
-
-  if (submission[0].assignment.deadline < new Date()) {
-    throw new ApiError(httpStatus.BAD_REQUEST, 'Can no longer submit after deadline');
+    throw new ApiError(httpStatus.NOT_FOUND, 'Submission does not exist');
   }
 
   const head = req.file as Express.Multer.File;
@@ -102,28 +105,25 @@ const updateSubmission = catchAsync(async (req, res) => {
 
 const getSubmissions = catchAsync(async (req, res) => {
   const { assignmentCode } = req.params;
-  const { id: userId, role } = req.user as User;
+  const user = req.user as User;
 
-  const assignment = (await assignmentService.getAssignments(
-    userId,
-    Role.STUDENT,
-    { assignmentCode },
-    {}
-  )) as Assignment[];
+  if (user.role == 'STUDENT') {
+    const student = req.user as User & { studentId: string };
+    const filter: Prisma.SubmissionWhereInput = {
+      assignment: {
+        assignmentCode
+      },
+      student: {
+        studentId: student.studentId
+      }
+    };
+    const options = pick(req.query, ['sortBy', 'sortOrder']);
 
-  if (!assignment) {
-    throw new ApiError(httpStatus.BAD_REQUEST, 'Assignment does not exist');
+    const submissions = await submissionService.getSubmissions(filter, options);
+    return res
+      .status(httpStatus.OK)
+      .send({ message: 'submissions fetched successfully', submissions });
   }
-
-  const student = await studentService.searchStudents({ id: userId });
-  if (!student || student.length === 0) {
-    throw new ApiError(httpStatus.BAD_REQUEST, 'Student does not exist');
-  }
-  const filter = { assignmentId: assignment[0].id, studentId: student[0].id };
-
-  const submissions = await submissionService.getSubmissions(role, filter);
-
-  return res.status(httpStatus.OK).send({ submissions });
 });
 
 const createSnapshot = catchAsync(async (req, res) => {

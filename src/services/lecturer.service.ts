@@ -61,7 +61,7 @@ const createLecturer = async (
   });
 
   if (!lecturer) {
-    throw new ApiError(httpStatus.BAD_REQUEST, 'Lecturer could not be created');
+    throw new ApiError(httpStatus.INTERNAL_SERVER_ERROR, 'Lecturer could not be created');
   }
   return lecturer;
 };

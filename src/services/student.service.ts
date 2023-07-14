@@ -189,7 +189,7 @@ const getManyStudents = async (ids: number[]): Promise<Student[]> => {
     }
   });
   if (students.length == 0) {
-    throw new ApiError(httpStatus.BAD_REQUEST, 'Students does not exist');
+    throw new ApiError(httpStatus.NOT_FOUND, 'Students not found');
   }
   return students;
 };

@@ -21,7 +21,8 @@ const getAssignments = {
   query: Joi.object({
     sortBy: Joi.string().valid('deadline', 'title', 'createdAt').optional(),
     sortOrder: Joi.string().valid('asc', 'desc').optional(),
-    isDraft: Joi.boolean().optional()
+    isDraft: Joi.boolean().optional(),
+    assignmentCode: Joi.string().optional()
   })
 };
 

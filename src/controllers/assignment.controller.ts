@@ -38,17 +38,23 @@ const publishAssignment = catchAsync(async (req, res) => {
 
 const getAssignments = catchAsync(async (req, res) => {
   const { id: userId, role } = req.user as User;
-  const filter = pick(req.query, ['isDraft']);
+  const filter = pick(req.query, ['isDraft', 'assignmentCode']);
   const options = pick(req.query, ['sortBy', 'sortOrder']);
   const assignments = await assignmentService.getAssignments(userId, role, filter, options);
+
+  if (assignments && filter.assignmentCode) {
+    return res.status(httpStatus.OK).send(assignments[0]);
+  }
   res.status(httpStatus.OK).send(assignments);
 });
 
 const getAssignmentById = catchAsync(async (req, res) => {
   const { assignmentId } = req.params;
-  const { id: userId, role } = req.user as User;
-  const filter = { id: Number(assignmentId) };
-  const assignment = await assignmentService.getAssignments(userId, role, filter, {});
+
+  const assignment = await assignmentService.getSingleAssignment(assignmentId);
+  if (!assignment) {
+    throw new ApiError(httpStatus.NOT_FOUND, 'Assignment not found');
+  }
   res.status(httpStatus.OK).send(assignment);
 });
 
@@ -56,7 +62,7 @@ const inviteToAssignment = catchAsync(async (req, res) => {
   let assignedAssignemnt;
   const studentIds: number[] = req.body.studentIds;
   const students = await studentService.getManyStudents(studentIds);
-  const assignment = await assignmentService.getOneAssignment(req.params.id);
+  const assignment = await assignmentService.getSingleAssignment(req.params.id);
   if (assignment !== null) {
     const studentIDs = students.map((student) => student.id);
     assignedAssignemnt = await assignmentService.assignStudentToAssignment(
@@ -67,6 +73,7 @@ const inviteToAssignment = catchAsync(async (req, res) => {
   await sendAssignmentInvitation(students, assignment);
   res.status(httpStatus.OK).send(assignedAssignemnt);
 });
+
 const editAssignment = catchAsync(async (req, res) => {
   const user = req.user as User;
   const { title, description, deadline } = req.body;

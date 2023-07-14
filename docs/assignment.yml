@@ -10,6 +10,12 @@ paths:
         - Assignment
       parameters:
         - in: query
+          name: assignmentCode
+          schema:
+            type: string
+            description: Assignment Code
+
+        - in: query
           name: isDraft
           schema:
             type: boolean
