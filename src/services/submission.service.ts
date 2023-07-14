@@ -68,25 +68,25 @@ const makeSubmission = async (
 const getSubmissions = async (
   role: Role,
   filter: Prisma.SubmissionWhereInput
-): Promise<void | Submission[]> => {
+): Promise<
+  | void
+  | Prisma.SubmissionGetPayload<{
+      include: {
+        assignment: true;
+        student: true;
+        snapshots: true;
+      };
+    }>[]
+  | void
+> => {
   if (role === Role.STUDENT) {
     const submission = await prisma.submission.findMany({
       where: {
         ...filter
       },
       include: {
-        assignment: {
-          select: {
-            id: true,
-            assignmentCode: true
-          }
-        },
-        student: {
-          select: {
-            id: true,
-            studentId: true
-          }
-        },
+        assignment: true,
+        student: true,
         snapshots: true
       }
     });

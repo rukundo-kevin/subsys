@@ -25,6 +25,8 @@ const makeSubmission = catchAsync(async (req, res) => {
   if (!assignment) {
     throw new ApiError(httpStatus.BAD_REQUEST, 'Assignment does not exist');
   }
+  if (assignment[0].deadline < new Date())
+    throw new ApiError(httpStatus.BAD_REQUEST, 'Can no longer submit after deadline');
 
   const submissionExist = await submissionService.getSubmissions(Role.STUDENT, {
     assignmentId: assignment[0].id
@@ -72,6 +74,10 @@ const updateSubmission = catchAsync(async (req, res) => {
 
   if (!submission || submission.length === 0) {
     throw new ApiError(httpStatus.BAD_REQUEST, 'Submission does not exist');
+  }
+
+  if (submission[0].assignment.deadline < new Date()) {
+    throw new ApiError(httpStatus.BAD_REQUEST, 'Can no longer submit after deadline');
   }
 
   const head = req.file as Express.Multer.File;
