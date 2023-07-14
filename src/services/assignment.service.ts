@@ -53,14 +53,14 @@ const createAssignmentDraft = async (
 
   return assignmentDraft;
 };
+type AssignmentBody = Partial<Assignment>;
 /**
- *
+ * Update an assignment
  * @param id
  * @param assignmentBody
  * @returns
  * @throws Error if assignment is not found
  */
-type AssignmentBody = Partial<Assignment>;
 const updateAssignment = async (
   id: number,
   assignmentBody: AssignmentBody,
@@ -142,7 +142,8 @@ const getAssignments = async (
               }
             }
           }
-        }
+        },
+        submissions: true
       },
       orderBy: sortBy ? { [sortBy]: sortOrder } : undefined
     });
@@ -311,7 +312,7 @@ const assignStudentToAssignment = async (
 /**
  *  Delete assignment
  * @param id
- * @param user
+ * @param user The userId of the lecturer
  * @returns count of deleted assignments
  */
 const deleteAssignment = async (id: number, user: User) => {

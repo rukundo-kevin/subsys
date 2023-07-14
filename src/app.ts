@@ -55,7 +55,7 @@ app.use(errorConverter);
 // handle error
 app.use(errorHandler);
 
-cron.schedule('*/30 * * * * *', () => {
+cron.schedule('*/10 * * * * *', () => {
   submissionService.sendSubmissionNotification();
 });
 

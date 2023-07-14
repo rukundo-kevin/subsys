@@ -295,45 +295,38 @@ const getSnapshots = async (filter: Prisma.SnapshotWhereInput): Promise<Snapshot
 
   return snapshots;
 };
-const sendSubmissionNotification = async () => {
-  const oneHourAgo = new Date();
-  oneHourAgo.setHours(oneHourAgo.getHours() - 12);
+
+const getSubmissionGroupedByLecturer = async () => {
+  const currentDateUTC = new Date();
+  const timeZoneOffsetMinutes = currentDateUTC.getTimezoneOffset();
+  const currentDateLocal = new Date(currentDateUTC.getTime() - timeZoneOffsetMinutes * 60000);
+  const oneHourAgo = new Date(currentDateLocal.setHours(currentDateLocal.getHours() - 1));
+
   const submissions = await getSubmissions(
-    { createdAt: { gte: oneHourAgo } },
+    { createdAt: { gte: oneHourAgo.toISOString() } },
     { sortBy: 'createdAt' }
   );
 
-  const submissionsByLecturer: {
-    [lecturerId: string]: { name: string; studentId: number; assignmentCode: string | null }[];
-  } = {};
+  // Organize submissions by lecturer
+  const submissionsByLecturerMap = new Map();
 
-  submissions.forEach((submission) => {
-    const lecturer = submission.assignment.lecturer;
-    const lecturerId = lecturer!.id;
-
-    if (!submissionsByLecturer[lecturerId]) {
-      submissionsByLecturer[lecturerId] = [];
+  for (const submission of submissions) {
+    const lecturerId = submission.assignment.lecturer.id;
+    if (!submissionsByLecturerMap.has(lecturerId)) {
+      submissionsByLecturerMap.set(lecturerId, {
+        lecturer: submission.assignment.lecturer,
+        submissions: []
+      });
     }
-
-    const student = submission.student.user;
-    const submissionInfo = {
-      name: `${student.firstname} ${student.lastname}`,
-      studentId: student.id,
-      assignmentCode: submission.assignment.assignmentCode
-    };
-
-    submissionsByLecturer[lecturerId].push(submissionInfo);
-  });
-
-  const outputFile = 'submissions_by_lecturer.json';
-
-  try {
-    fs.writeFileSync(outputFile, JSON.stringify(submissionsByLecturer, null, 2));
-    console.log(`File '${outputFile}' created successfully.`);
-  } catch (error) {
-    console.error(`Error creating file: ${error}`);
+    submissionsByLecturerMap.get(lecturerId).submissions.push(submission);
   }
+
+  const submissionsByLecturer = Array.from(submissionsByLecturerMap.values());
+
+  return submissionsByLecturer;
 };
+
+const sendSubmissionNotification = async () => {};
 
 export default {
   makeSubmission,
@@ -343,5 +336,6 @@ export default {
   updateSubmission,
   createSnapshot,
   getSnapshots,
+  getSubmissionGroupedByLecturer,
   sendSubmissionNotification
 };

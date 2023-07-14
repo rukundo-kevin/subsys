@@ -53,7 +53,6 @@ model Lecturer {
   assignments Assignment[]
 }
 
-<<<<<<< HEAD
 model Assignment {
   id             Int          @id @default(autoincrement())
   title          String
@@ -67,21 +66,6 @@ model Assignment {
   lecturerId     Int
   createdAt      DateTime     @default(now())
   updatedAt      DateTime     @updatedAt
-=======
-model Assignment{
-  id              Int      @id @default(autoincrement())
-  title           String
-  description  String  @db.Text 
-  deadline         DateTime
-  isDraft         Boolean @default(true)
-  assignmentCode  String? @unique 
-  lecturer        Lecturer @relation(fields: [lecturerId], references: [id] ,onDelete: Cascade)
-  students        Student[] @relation("AssignmentStudents")
-  submissions     Submission[]
-  lecturerId      Int
-  createdAt       DateTime @default(now())
-  updatedAt       DateTime @updatedAt
->>>>>>> a6daaaf (feat(submission-notification): create task scheduler)
 }
 
 model Submission {

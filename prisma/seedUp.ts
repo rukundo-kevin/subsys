@@ -20,11 +20,7 @@ async function main() {
         lastname: 'User',
         role: 'ADMIN',
         isInviteAccepted: true,
-<<<<<<< HEAD
         password: await encryptPassword(config.seedPassword)
-=======
-        password: await encryptPassword('Password@123')
->>>>>>> a6daaaf (feat(submission-notification): create task scheduler)
       },
       {
         email: 'admintest@amalitech.org',
@@ -40,11 +36,7 @@ async function main() {
         lastname: 'User',
         role: 'LECTURER',
         isInviteAccepted: true,
-<<<<<<< HEAD
         password: await encryptPassword(config.seedPassword)
-=======
-        password: await encryptPassword('Password')
->>>>>>> a6daaaf (feat(submission-notification): create task scheduler)
       },
       {
         email: 'student@amalitech.org',
@@ -52,11 +44,7 @@ async function main() {
         lastname: 'User',
         role: 'STUDENT',
         isInviteAccepted: true,
-<<<<<<< HEAD
         password: await encryptPassword(config.seedPassword)
-=======
-        password: await encryptPassword('Password')
->>>>>>> a6daaaf (feat(submission-notification): create task scheduler)
       }
     ],
     skipDuplicates: true

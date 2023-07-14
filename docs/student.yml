@@ -124,11 +124,7 @@ tags:
         schema:
           type: string
         required: true
-<<<<<<< HEAD
         description: Student ID
-=======
-        description: User Id
->>>>>>> a6daaaf (feat(submission-notification): create task scheduler)
     responses:
       '200':
         description: OK

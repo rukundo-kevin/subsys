@@ -141,12 +141,12 @@ components:
           type: string
           format: date-time
           example: '2021-01-01T00:00:00Z'
-    Snapshot: 
+    Snapshot:
       type: array
       items:
         type: object
         properties:
-          snapshotName: 
+          snapshotName:
             type: string
             example: 'snapshot1'
     Submission:
@@ -164,19 +164,19 @@ components:
         student:
           type: object
           properties:
-            id: 
+            id:
               type: integer
               example: 1
-            studentCode: 
+            studentCode:
               type: string
-              example: ST123030          
+              example: ST123030
         assignment:
           type: object
           properties:
-            id: 
+            id:
               type: integer
               example: 3
-            assignmentCode: 
+            assignmentCode:
               type: string
               example: ASS123030
         snapshots:
@@ -191,6 +191,7 @@ components:
           type: string
           format: date-time
           example: '2021-01-01T00:00:00Z'
+<<<<<<< HEAD
         latestSnapshot:
           $ref: '#/components/schemas/LatestSnaphot'
               
@@ -216,6 +217,8 @@ components:
                 type:
                   type: string
                   example: 'folder'           
+=======
+>>>>>>> 5ce56e3 (feat(submission-notification): fix response)
     StudentId:
       type: object
       properties:
@@ -276,7 +279,10 @@ components:
           example:
             code: 400
             message: Bad request
+<<<<<<< HEAD
             
+=======
+>>>>>>> 5ce56e3 (feat(submission-notification): fix response)
   securitySchemes:
     bearerAuth:
       type: http
