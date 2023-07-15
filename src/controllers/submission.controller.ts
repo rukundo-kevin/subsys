@@ -1,7 +1,7 @@
 import httpStatus from 'http-status';
 import fs from 'fs-extra';
 
-import { Assignment, Prisma, Role, User } from '@prisma/client';
+import { Assignment, Role, User } from '@prisma/client';
 import { submissionService } from '../services';
 import catchAsync from '../utils/catchAsync';
 import ApiError from '../utils/ApiError';
@@ -106,24 +106,26 @@ const updateSubmission = catchAsync(async (req, res) => {
 const getSubmissions = catchAsync(async (req, res) => {
   const { assignmentCode } = req.params;
   const user = req.user as User;
+  let submissions;
+  const options = pick(req.query, ['sortBy', 'sortOrder']);
 
-  if (user.role == 'STUDENT') {
-    const student = req.user as User & { studentId: string };
-    const filter: Prisma.SubmissionWhereInput = {
-      assignment: {
-        assignmentCode
-      },
-      student: {
-        studentId: student.studentId
-      }
-    };
-    const options = pick(req.query, ['sortBy', 'sortOrder']);
-
-    const submissions = await submissionService.getSubmissions(filter, options);
-    return res
-      .status(httpStatus.OK)
-      .send({ message: 'submissions fetched successfully', submissions });
+  if (user.role == Role.STUDENT) {
+    const { studentId } = req.user as User & { studentId: string };
+    submissions = assignmentCode
+      ? await submissionService.getStudentSubmission(studentId, options, assignmentCode)
+      : await submissionService.getStudentSubmission(studentId, options);
+  } else if (user.role == Role.LECTURER) {
+    const { staffId } = req.user as User & { staffId: string };
+    submissions = assignmentCode
+      ? await submissionService.getSubmissionLecturer(staffId, options, assignmentCode)
+      : await submissionService.getSubmissionLecturer(staffId, options);
+  } else {
+    submissions = await submissionService.getSubmissions({}, options);
   }
+
+  return res
+    .status(httpStatus.OK)
+    .send({ message: 'submissions fetched successfully', submissions });
 });
 
 const createSnapshot = catchAsync(async (req, res) => {

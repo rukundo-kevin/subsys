@@ -1,7 +1,7 @@
 import prisma from '../client';
 import { Strategy as JwtStrategy, ExtractJwt, VerifyCallback } from 'passport-jwt';
 import config from './config';
-import { TokenType } from '@prisma/client';
+import { Role, TokenType } from '@prisma/client';
 
 const jwtOptions = {
   secretOrKey: config.jwt.secret,
@@ -26,7 +26,7 @@ const jwtVerify: VerifyCallback = async (payload, done) => {
     if (!user) {
       return done(null, false);
     }
-    if (user.role === 'STUDENT') {
+    if (user.role === Role.STUDENT) {
       const student = await prisma.student.findUnique({
         where: {
           userId: user.id

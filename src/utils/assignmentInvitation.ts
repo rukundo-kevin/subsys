@@ -2,12 +2,12 @@ import nodemailer from 'nodemailer';
 import dotenv from 'dotenv';
 import ApiError from './ApiError';
 import httpStatus from 'http-status';
-import { Student } from '@prisma/client';
+import { Assignment, Student } from '@prisma/client';
 import prisma from '../client';
 import config from '../config/config';
 dotenv.config();
 
-export const sendAssignmentInvitation = async (students: Student[], assignment: any) => {
+export const sendAssignmentInvitation = async (students: Student[], assignment: Assignment) => {
   try {
     const transporter = nodemailer.createTransport({
       service: 'gmail',
