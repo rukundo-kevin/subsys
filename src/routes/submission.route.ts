@@ -14,7 +14,12 @@ router.post(
   validate(submissionValidation.submit),
   submissionController.makeSubmission
 );
-
+router.get(
+  '/:submissionCode',
+  auth(),
+  validate(submissionValidation.updateSubmission),
+  submissionController.getSingleSubmission
+);
 router.patch(
   '/:submissionCode',
   auth('createSubmission'),
@@ -30,10 +35,11 @@ router.post(
   handleFileUpload('snapshots', true),
   submissionController.createSnapshot
 );
+
 router.get(
-  '/:assignmentCode',
+  '/snapshot/:snapshotId',
   auth(),
-  validate(submissionValidation.getSubmission),
-  submissionController.getSubmissions
+  validate(submissionValidation.snapshot),
+  submissionController.getSingleSnapshot
 );
 export default router;

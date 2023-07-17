@@ -106,7 +106,11 @@ const getSubmissions = async (
           user: true
         }
       },
-      snapshots: true
+      snapshots: {
+        orderBy: {
+          createdAt: 'desc'
+        }
+      }
     }
   });
   return submission;
@@ -228,11 +232,21 @@ const createSnapshot = async (
   }
 };
 
+const getSingleSnapshot = async (snapshotId: string) => {
+  const snapshot = await prisma.snapshot.findUnique({
+    where: {
+      id: snapshotId
+    }
+  });
+  return snapshot;
+};
+
 export default {
   makeSubmission,
   getSubmissions,
   getStudentSubmission,
   getSubmissionLecturer,
   updateSubmission,
-  createSnapshot
+  createSnapshot,
+  getSingleSnapshot
 };

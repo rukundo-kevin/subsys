@@ -128,6 +128,23 @@ const getSubmissions = catchAsync(async (req, res) => {
     .send({ message: 'submissions fetched successfully', submissions });
 });
 
+const getSingleSubmission = catchAsync(async (req, res) => {
+  const filter = {
+    submissionCode: req.params.submissionCode
+  };
+
+  const submission = await submissionService.getSubmissions(filter, {});
+  if (submission.length == 0) throw new ApiError(httpStatus.NOT_FOUND, 'Submission does not exist');
+
+  return res.status(httpStatus.OK).send({ message: 'Submission fetched successfully', submission });
+});
+
+const getSingleSnapshot = catchAsync(async (req, res) => {
+  const snapshot = await submissionService.getSingleSnapshot(req.params.snapshotId);
+  if (!snapshot) throw new ApiError(httpStatus.NOT_FOUND, 'Snapshot not found');
+  return res.status(httpStatus.OK).send({ message: 'Snapshot fetched successfully', snapshot });
+});
+
 const createSnapshot = catchAsync(async (req, res) => {
   const { id: userId } = req.user as User;
   const { submissionCode } = req.query as { submissionCode: string };
@@ -152,6 +169,8 @@ const createSnapshot = catchAsync(async (req, res) => {
 export default {
   makeSubmission,
   getSubmissions,
+  getSingleSubmission,
   createSnapshot,
-  updateSubmission
+  updateSubmission,
+  getSingleSnapshot
 };

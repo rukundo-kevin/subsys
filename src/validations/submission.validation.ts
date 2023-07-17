@@ -45,9 +45,16 @@ const getSubmission = {
   }
 };
 
+const snapshot = {
+  params: Joi.object().keys({
+    snapshotId: Joi.string().required()
+  })
+};
+
 export default {
   submit,
   getSubmission,
   uploadSnapshot,
-  updateSubmission
+  updateSubmission,
+  snapshot
 };
