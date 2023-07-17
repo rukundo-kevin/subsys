@@ -1,4 +1,4 @@
-import { Prisma, Submission } from '@prisma/client';
+import { Prisma, Snapshot, Submission } from '@prisma/client';
 import prisma from '../client';
 import ApiError from '../utils/ApiError';
 import httpStatus from 'http-status';
@@ -6,16 +6,41 @@ import httpStatus from 'http-status';
 type GetSubmission = Prisma.SubmissionGetPayload<{
   include: {
     assignment: {
-      include: {
-        lecturer: true;
+      select: {
+        id: true;
+        assignmentCode: true;
+        lecturer: {
+          select: {
+            id: true;
+            staffId: true;
+            user: {
+              select: {
+                id: true;
+                email: true;
+              };
+            };
+          };
+        };
       };
     };
     student: {
       include: {
-        user: true;
+        user: {
+          select: {
+            id: true;
+            email: true;
+          };
+        };
       };
     };
-    snapshots: true;
+    snapshots: {
+      select: {
+        id: true;
+        snapshotName: true;
+        snapshotPath: true;
+        createdAt: true;
+      };
+    };
   };
 }>;
 
@@ -97,13 +122,31 @@ const getSubmissions = async (
     orderBy: sortBy ? { [sortBy]: sortOrder } : undefined,
     include: {
       assignment: {
-        include: {
-          lecturer: true
+        select: {
+          id: true,
+          assignmentCode: true,
+          lecturer: {
+            select: {
+              id: true,
+              staffId: true,
+              user: {
+                select: {
+                  id: true,
+                  email: true
+                }
+              }
+            }
+          }
         }
       },
       student: {
         include: {
-          user: true
+          user: {
+            select: {
+              id: true,
+              email: true
+            }
+          }
         }
       },
       snapshots: {
@@ -206,6 +249,7 @@ const updateSubmission = async (
  */
 const createSnapshot = async (
   submissionCode: string,
+  snapshotPath: string,
   snapshotName: string
 ): Promise<Prisma.SnapshotCreateWithoutSubmissionInput | void> => {
   try {
@@ -220,7 +264,8 @@ const createSnapshot = async (
     const snapshot = await prisma.snapshot.create({
       data: {
         submissionId: submission.id,
-        snapshotName
+        snapshotName,
+        snapshotPath
       }
     });
 
@@ -232,13 +277,19 @@ const createSnapshot = async (
   }
 };
 
-const getSingleSnapshot = async (snapshotId: string) => {
-  const snapshot = await prisma.snapshot.findUnique({
+/**
+ * Get all snapshots for a submission
+ * @param submissionCode
+ * @returns {Promise<Snapshot[]>}
+ */
+const getSnapshots = async (filter: Prisma.SnapshotWhereInput): Promise<Snapshot[]> => {
+  const snapshots = await prisma.snapshot.findMany({
     where: {
-      id: snapshotId
+      ...filter
     }
   });
-  return snapshot;
+
+  return snapshots;
 };
 
 export default {
@@ -248,5 +299,5 @@ export default {
   getSubmissionLecturer,
   updateSubmission,
   createSnapshot,
-  getSingleSnapshot
+  getSnapshots
 };

@@ -149,9 +149,6 @@ components:
           snapshotName: 
             type: string
             example: 'snapshot1'
-          snapshotFile:
-            type: string
-            format: binary
     Submission:
       type: object
       properties:
@@ -193,7 +190,32 @@ components:
         updated_at:
           type: string
           format: date-time
-          example: '2021-01-01T00:00:00Z'       
+          example: '2021-01-01T00:00:00Z'
+        latestSnapshot:
+          $ref: '#/components/schemas/LatestSnaphot'
+              
+    LatestSnaphot:
+      type: array
+      items:
+        type: object
+        properties:
+          name:
+            type: string
+            example: 'index.js'
+          type:
+            type: string
+            example: 'file'
+          contents?: 
+            type: array
+            items:
+              type: object
+              properties:
+                name:
+                  type: string
+                  example: 'src'
+                type:
+                  type: string
+                  example: 'folder'           
     StudentId:
       type: object
       properties:
@@ -254,7 +276,10 @@ components:
           example:
             code: 400
             message: Bad request
+<<<<<<< HEAD
 
+=======
+>>>>>>> 2daf38f (feat(lecturer-view-submission): add view file contents)
   securitySchemes:
     bearerAuth:
       type: http
