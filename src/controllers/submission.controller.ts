@@ -23,7 +23,7 @@ const makeSubmission = catchAsync(async (req, res) => {
     {}
   )) as Assignment[];
 
-  if (!assignment) {
+  if (!assignment || assignment.length === 0) {
     throw new ApiError(httpStatus.NOT_FOUND, 'Assignment does not exist');
   }
   if (assignment[0].deadline < new Date())
