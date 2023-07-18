@@ -59,7 +59,7 @@ const makeSubmission = catchAsync(async (req, res) => {
   );
 
   res.status(httpStatus.CREATED).send({
-    message: 'Submission created successfully',
+    message: 'Submission made successfully',
     data: {
       submission
     }
@@ -85,7 +85,7 @@ const updateSubmission = catchAsync(async (req, res) => {
   }
 
   const head = req.file as Express.Multer.File;
-  const newPath = `submissions/${userId}/${head.originalname}`;
+  const newPath = `submissions/${userId}/${submissionCode}/${head.originalname}`;
 
   await fs.remove(submission[0].head);
   await fs.move(head.path, newPath, { overwrite: true });
@@ -136,9 +136,16 @@ const getSingleSubmission = catchAsync(async (req, res) => {
 
   const submission = await submissionService.getSubmissions(filter, {});
   if (submission.length == 0) throw new ApiError(httpStatus.NOT_FOUND, 'Submission does not exist');
-  const latestSnapshotContents = await extractFolderContents(
-    submission[0].snapshots[0].snapshotPath
+  const head: { snapshot_name: string } = JSON.parse(await fs.readFile(submission[0].head, 'utf8'));
+
+  const latestSnapshot = submission[0].snapshots.filter(
+    (snapshot) => snapshot.snapshotName == head.snapshot_name
   );
+
+  if (!latestSnapshot || latestSnapshot.length == 0)
+    throw new ApiError(httpStatus.NOT_FOUND, 'Snapshot does not exist');
+
+  const latestSnapshotContents = await extractFolderContents(latestSnapshot[0].snapshotPath);
 
   return res.status(httpStatus.OK).send({
     message: 'Submission fetched successfully',
@@ -188,7 +195,11 @@ const createSnapshot = catchAsync(async (req, res) => {
   for (const file of files) {
     const newPath = `${destinationFolder}/${file.originalname}`;
     await fs.move(file.path, newPath, { overwrite: true });
-    await submissionService.createSnapshot(submissionCode, newPath, file.originalname);
+    await submissionService.createSnapshot(
+      submissionCode,
+      newPath,
+      file.originalname.split('.')[0]
+    );
   }
 
   res.status(httpStatus.CREATED).send({ message: 'Snapshot created successfully' });
