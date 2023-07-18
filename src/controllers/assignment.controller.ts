@@ -1,7 +1,7 @@
 import httpStatus from 'http-status';
 import catchAsync from '../utils/catchAsync';
 import assignmentService from '../services/assignment.service';
-import { User } from '@prisma/client';
+import { Assignment, Role, User } from '@prisma/client';
 import { generateAssignmentCode } from '../utils/assignmentHelper';
 import { studentService } from '../services';
 import { sendAssignmentInvitation } from '../utils/assignmentInvitation';
@@ -41,7 +41,9 @@ const getAssignments = catchAsync(async (req, res) => {
   const filter = pick(req.query, ['isDraft', 'assignmentCode']);
   const options = pick(req.query, ['sortBy', 'sortOrder']);
   const assignments = await assignmentService.getAssignments(userId, role, filter, options);
-
+  if (!assignments || (assignments.length == 0 && filter.assignmentCode)) {
+    throw new ApiError(httpStatus.NOT_FOUND, 'Assignment not found');
+  }
   if (assignments && filter.assignmentCode) {
     return res.status(httpStatus.OK).send(assignments[0]);
   }
@@ -50,19 +52,24 @@ const getAssignments = catchAsync(async (req, res) => {
 
 const getAssignmentById = catchAsync(async (req, res) => {
   const { assignmentId } = req.params;
-
-  const assignment = await assignmentService.getSingleAssignment(assignmentId);
+  const user = req.user as User;
+  const assignment = await assignmentService.getSingleAssignment(user, assignmentId);
   if (!assignment) {
     throw new ApiError(httpStatus.NOT_FOUND, 'Assignment not found');
   }
-  res.status(httpStatus.OK).send(assignment);
+  res.status(httpStatus.OK).send({ assignment: { ...assignment } });
 });
 
 const inviteToAssignment = catchAsync(async (req, res) => {
   let assignedAssignemnt;
+  const user = req.user as User;
   const studentIds: number[] = req.body.studentIds;
   const students = await studentService.getManyStudents(studentIds);
-  const assignment = await assignmentService.getSingleAssignment(req.params.id);
+  const assignment = (await assignmentService.getSingleAssignment(
+    user,
+    req.params.id
+  )) as Assignment | null;
+
   if (assignment !== null) {
     const studentIDs = students.map((student) => student.id);
     assignedAssignemnt = await assignmentService.assignStudentToAssignment(

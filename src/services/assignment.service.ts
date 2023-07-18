@@ -212,13 +212,66 @@ const getAssignments = async (
  * @param id: Id of the assignment
  * @returns {Promise<Assignment | null>}
  */
-const getSingleAssignment = async (id: number): Promise<Assignment | null> => {
-  const assignment = await prisma.assignment.findUnique({
-    where: {
-      id: Number(id)
+const getSingleAssignment = async (user: User, id: number) => {
+  if (user.role === Role.LECTURER) {
+    const assignment = await prisma.assignment.findUnique({
+      where: {
+        id: Number(id)
+      },
+      include: {
+        submissions: true,
+        students: {
+          include: {
+            user: {
+              select: {
+                id: true,
+                email: true
+              }
+            }
+          }
+        }
+      }
+    });
+    if (!assignment) {
+      throw new ApiError(httpStatus.NOT_FOUND, 'Assignment not found');
     }
-  });
-  return assignment;
+    return assignment;
+  }
+  if (user.role === Role.STUDENT) {
+    const student = await prisma.student.findFirst({
+      where: {
+        user: {
+          id: user.id
+        }
+      },
+      include: {
+        assignment: {
+          where: {
+            id: Number(id)
+          },
+          include: {
+            submissions: {
+              where: {
+                student: {
+                  user: {
+                    id: user.id
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    });
+
+    if (!student || !student.assignment || student.assignment.length === 0) {
+      throw new ApiError(httpStatus.NOT_FOUND, 'Assignment not found');
+    }
+    const submission = student.assignment[0].submissions;
+    return { ...student.assignment[0], submitted: submission.length > 0 };
+  }
+
+  return null;
 };
 
 const assignStudentToAssignment = async (
