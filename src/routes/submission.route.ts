@@ -4,6 +4,7 @@ import validate from '../middlewares/validate';
 import submissionValidation from '../validations/submission.validation';
 import { submissionController } from '../controllers';
 import handleFileUpload from '../middlewares/uploadFile';
+import snapshotController from '../controllers/snapshot.controller';
 
 const router = Router();
 
@@ -34,26 +35,41 @@ router.post(
   auth('createSubmission'),
   validate(submissionValidation.uploadSnapshot),
   handleFileUpload('snapshots', true),
-  submissionController.createSnapshot
+  snapshotController.createSnapshot
 );
 router.get(
   '/:submissionCode/snapshots',
   auth(),
   validate(submissionValidation.updateSubmission),
-  submissionController.getSnapshots
+  snapshotController.getSnapshots
+);
+
+router.get(
+  '/:submissionCode/snapshots/download',
+  auth(),
+  validate(submissionValidation.updateSubmission),
+  snapshotController.downloadSnapshot
 );
 
 router.get(
   '/snapshot/:snapshotId',
   auth(),
   validate(submissionValidation.snapshot),
-  submissionController.getSingleSnapshot
+  snapshotController.getSingleSnapshot
 );
 
 router.get(
-  '/snapshot/:snapshotId/:filepath',
+  '/snapshot/:snapshotId/download',
   auth(),
   validate(submissionValidation.getSnapshotFile),
-  submissionController.getSnapshotFile
+  snapshotController.getSnapshotFile
 );
+router.get(
+  '/snapshot/:snapshotId/:filepath',
+  auth(),
+  validate(submissionValidation.snapshot),
+  snapshotController.downloadSnapshot
+);
+
+
 export default router;

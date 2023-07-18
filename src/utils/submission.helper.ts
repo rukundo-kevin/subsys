@@ -4,6 +4,7 @@ import tmp from 'tmp-promise';
 import fs from 'fs-extra';
 import ApiError from './ApiError';
 import httpStatus from 'http-status';
+import { promisify } from 'util';
 
 interface Item {
   name: string;
@@ -11,7 +12,11 @@ interface Item {
   path?: string;
   contents?: Item[];
 }
-
+/**
+ *  Construct a tree of the contents of a folder in a snapshot
+ * @param gzipFilePath
+ * @returns
+ */
 export async function extractFolderContents(gzipFilePath: string): Promise<Item[]> {
   const rootItem: Item = {
     name: 'contents',
@@ -136,3 +141,34 @@ export async function extractFileContents(
     return { error: error as unknown as string };
   }
 }
+
+const pipeline = promisify(require('stream').pipeline);
+
+// Function to compress files
+async function compressFile(inputFilePath: string, outputFilePath: string): Promise<void> {
+  try {
+    const readStream = fs.createReadStream(inputFilePath);
+    const gzipStream = zlib.createGzip();
+    const writeStream = fs.createWriteStream(outputFilePath);
+
+    readStream.pipe(gzipStream).pipe(writeStream);
+
+    await new Promise<void>((resolve, reject) => {
+      writeStream.on('finish', () => {
+        console.log('File compression completed.');
+        resolve();
+      });
+
+      writeStream.on('error', (err) => {
+        reject(err);
+      });
+    });
+  } catch (err) {
+    console.error('Error compressing file:', err);
+  }
+}
+
+(async () => {
+  const cwd = process.cwd();
+  await compressFile(`${cwd}/submissions/4/SUB709454/first-snapshot.tar.z`, 'test.tar');
+})();

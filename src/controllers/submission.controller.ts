@@ -153,82 +153,11 @@ const getSingleSubmission = catchAsync(async (req, res) => {
   });
 });
 
-const getSnapshots = catchAsync(async (req, res) => {
-  const { submissionCode } = req.params;
-  const filter: Prisma.SnapshotWhereInput = {
-    submission: {
-      submissionCode
-    }
-  };
-  const snapshots = await submissionService.getSnapshots(filter);
 
-  return res.status(httpStatus.OK).send({
-    message: 'Snapshots fetched successfully',
-    snapshots
-  });
-});
-
-const getSingleSnapshot = catchAsync(async (req, res) => {
-  const snapshot = await submissionService.getSnapshots({ id: req.params.snapshotId });
-  if (!snapshot || snapshot.length == 0)
-    throw new ApiError(httpStatus.NOT_FOUND, 'Snapshot not found');
-
-  const snapshotContents = await extractFolderContents(snapshot[0].snapshotPath);
-  return res.status(httpStatus.OK).send({
-    message: 'Snapshot fetched successfully',
-    snapshot: { ...snapshot[0], snapshotContents: snapshotContents }
-  });
-});
-
-const createSnapshot = catchAsync(async (req, res) => {
-  const { id: userId } = req.user as User;
-  const { submissionCode } = req.query as { submissionCode: string };
-
-  if (!req.files || !req.files.length) {
-    throw new ApiError(httpStatus.BAD_REQUEST, 'No files were uploaded');
-  }
-
-  const files = req.files as Express.Multer.File[];
-  const destinationFolder = `submissions/${userId}/${submissionCode}`;
-  fs.ensureDirSync(destinationFolder);
-
-  for (const file of files) {
-    const newPath = `${destinationFolder}/${file.originalname}`;
-    await fs.move(file.path, newPath, { overwrite: true });
-    await submissionService.createSnapshot(
-      submissionCode,
-      newPath,
-      file.originalname.split('.')[0]
-    );
-  }
-
-  res.status(httpStatus.CREATED).send({ message: 'Snapshot created successfully' });
-});
-
-const getSnapshotFile = catchAsync(async (req, res) => {
-  const { snapshotId, filepath } = req.params;
-  const snapshot = await submissionService.getSnapshots({ id: snapshotId });
-  if (!snapshot || snapshot.length == 0)
-    throw new ApiError(httpStatus.NOT_FOUND, 'Snapshot not found');
-
-  const filecontents = await extractFileContents(
-    snapshot[0].snapshotPath,
-    snapshot[0].snapshotName,
-    filepath
-  );
-
-  return res
-    .status(httpStatus.OK)
-    .send({ message: 'snapshot file contents fetched successfully', filecontents });
-});
 
 export default {
   makeSubmission,
   getSubmissions,
   getSingleSubmission,
-  createSnapshot,
-  updateSubmission,
-  getSingleSnapshot,
-  getSnapshots,
-  getSnapshotFile
+  updateSubmission
 };
