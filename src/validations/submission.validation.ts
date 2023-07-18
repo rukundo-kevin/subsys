@@ -54,7 +54,7 @@ const snapshot = {
 const getSnapshotFile = {
   params: Joi.object().keys({
     snapshotId: Joi.string().required(),
-    filename: Joi.string().required()
+    filepath: Joi.string().required()
   })
 };
 

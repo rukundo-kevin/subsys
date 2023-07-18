@@ -51,7 +51,7 @@ router.get(
 );
 
 router.get(
-  '/snapshot/:snapshotId/:filename',
+  '/snapshot/:snapshotId/:filepath',
   auth(),
   validate(submissionValidation.getSnapshotFile),
   submissionController.getSnapshotFile

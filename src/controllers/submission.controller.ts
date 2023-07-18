@@ -27,7 +27,7 @@ const makeSubmission = catchAsync(async (req, res) => {
   if (!assignment || assignment.length === 0) {
     throw new ApiError(httpStatus.NOT_FOUND, 'Assignment does not exist');
   }
-  if (assignment[0].deadline < new Date())
+  if (assignment[0]?.deadline < new Date())
     throw new ApiError(httpStatus.BAD_REQUEST, 'Can no longer submit after deadline');
 
   const submissionExist = await submissionService.getSubmissions(
@@ -136,11 +136,13 @@ const getSingleSubmission = catchAsync(async (req, res) => {
 
   const submission = await submissionService.getSubmissions(filter, {});
   if (submission.length == 0) throw new ApiError(httpStatus.NOT_FOUND, 'Submission does not exist');
-  const latestSnapshotContents = extractFolderContents(submission[0].snapshots[0].snapshotPath);
+  const latestSnapshotContents = await extractFolderContents(
+    submission[0].snapshots[0].snapshotPath
+  );
 
   return res.status(httpStatus.OK).send({
     message: 'Submission fetched successfully',
-    submission: { ...submission, latestSnapshot: latestSnapshotContents }
+    submission: { ...submission, currentSnapshot: latestSnapshotContents }
   });
 });
 
@@ -164,10 +166,10 @@ const getSingleSnapshot = catchAsync(async (req, res) => {
   if (!snapshot || snapshot.length == 0)
     throw new ApiError(httpStatus.NOT_FOUND, 'Snapshot not found');
 
-  const snapshotContents = extractFolderContents(snapshot[0].snapshotPath);
+  const snapshotContents = await extractFolderContents(snapshot[0].snapshotPath);
   return res.status(httpStatus.OK).send({
     message: 'Snapshot fetched successfully',
-    snapshot: { ...snapshot, snapshotContents: snapshotContents }
+    snapshot: { ...snapshot[0], snapshotContents: snapshotContents }
   });
 });
 

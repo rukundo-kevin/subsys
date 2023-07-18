@@ -276,10 +276,7 @@ components:
           example:
             code: 400
             message: Bad request
-<<<<<<< HEAD
-
-=======
->>>>>>> 2daf38f (feat(lecturer-view-submission): add view file contents)
+            
   securitySchemes:
     bearerAuth:
       type: http
