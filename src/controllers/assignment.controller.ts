@@ -61,7 +61,6 @@ const getAssignmentById = catchAsync(async (req, res) => {
 });
 
 const inviteToAssignment = catchAsync(async (req, res) => {
-  let assignedAssignemnt;
   const user = req.user as User;
   const studentIds: number[] = req.body.studentIds;
   const students = await studentService.getManyStudents(studentIds);
@@ -73,10 +72,13 @@ const inviteToAssignment = catchAsync(async (req, res) => {
     throw new ApiError(httpStatus.BAD_REQUEST, 'Assignment does not exist or is a draft');
   }
   const studentIDs = students.map((student) => student.id);
-  assignedAssignemnt = await assignmentService.assignStudentToAssignment(assignment.id, studentIDs);
+  const assignedAssignment = await assignmentService.assignStudentToAssignment(
+    assignment.id,
+    studentIDs
+  );
   await sendAssignmentInvitation(students, assignment);
 
-  return res.status(httpStatus.OK).send(assignedAssignemnt);
+  return res.status(httpStatus.OK).send(assignedAssignment);
 });
 
 const editAssignment = catchAsync(async (req, res) => {

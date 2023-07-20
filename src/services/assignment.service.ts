@@ -225,7 +225,9 @@ const getSingleAssignment = async (user: User, id: number) => {
             user: {
               select: {
                 id: true,
-                email: true
+                email: true,
+                firstname: true,
+                lastname: true
               }
             }
           }
