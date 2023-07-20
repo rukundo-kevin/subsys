@@ -9,10 +9,10 @@ import snapshotController from '../controllers/snapshot.controller';
 const router = Router();
 
 router.post(
-  '/',
+  '/:assignmentCode',
   auth('createSubmission'),
+  validate(submissionValidation.getSubmission),
   handleFileUpload('head', false),
-  validate(submissionValidation.submit),
   submissionController.makeSubmission
 );
 router.get('/', auth(), submissionController.getSubmissions);
@@ -25,8 +25,8 @@ router.get(
 router.patch(
   '/:submissionCode',
   auth('createSubmission'),
-  handleFileUpload('head', false),
   validate(submissionValidation.updateSubmission),
+  handleFileUpload('head', false),
   submissionController.updateSubmission
 );
 
@@ -68,9 +68,8 @@ router.get(
 router.get(
   '/snapshot/:snapshotId/:filepath',
   auth(),
-  validate(submissionValidation.snapshot),
+  validate(submissionValidation.getSnapshotFile),
   snapshotController.getSnapshotFile
 );
-
 
 export default router;

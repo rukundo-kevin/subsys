@@ -132,7 +132,9 @@ const getSubmissions = async (
               user: {
                 select: {
                   id: true,
-                  email: true
+                  email: true,
+                  firstname: true,
+                  lastname: true
                 }
               }
             }
@@ -144,7 +146,9 @@ const getSubmissions = async (
           user: {
             select: {
               id: true,
-              email: true
+              email: true,
+              firstname: true,
+              lastname: true
             }
           }
         }
@@ -240,7 +244,6 @@ const updateSubmission = async (
 
   return submission;
 };
-
 
 export default {
   makeSubmission,

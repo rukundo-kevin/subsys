@@ -185,6 +185,13 @@ paths:
           required: true
           description: Snapshot Id
       responses:
+        '200':
+          description: OK. 
+          content:
+            application/octet-stream:
+              schema:
+                type: string
+                format: binary
         '400':
           $ref: '#/components/responses/ValidationError'
         '401':

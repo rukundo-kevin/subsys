@@ -118,7 +118,7 @@ paths:
         '404':
           $ref: '#/components/responses/NotFound'
 
-  /api/assignment/{assignmentCode}:
+  /api/assignment/{assignmentId}:
     patch:
       requestBody:
         required: true
@@ -134,8 +134,9 @@ paths:
       parameters:
         - in: path
           name: assignmentId
+          required: true
           schema:
-            type: string
+            type: number
             description: Assignment Id
 
       responses:
