@@ -1,13 +1,13 @@
 tags:
-  - name: Submission
-    description: Submission Management
+  - name: Snapshot
+    description: Snapshot Management
 
 paths: 
   /api/submission/snapshot:
     post:
       summary: Create snapshot
       tags:
-        - Submission
+        - Snapshot
       security:
         - bearerAuth: []
       parameters:
@@ -53,7 +53,7 @@ paths:
     get:
       summary: Get snapshots of submission with submissionCode
       tags:
-        - Submission
+        - Snapshot
       security:
         - bearerAuth: []
       parameters:
@@ -85,7 +85,7 @@ paths:
     get:
       summary: Get contents of snapshot with snapshotId
       tags:
-        - Submission
+        - Snapshot
       security:
         - bearerAuth: []
       parameters:
@@ -136,7 +136,7 @@ paths:
     get:
       summary: Get contents of a file within a snapshot with snapshotId
       tags:
-        - Submission
+        - Snapshot
       security:
         - bearerAuth: []
       parameters:

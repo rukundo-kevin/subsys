@@ -1,10 +1,51 @@
-import { Prisma, Submission } from '@prisma/client';
+import { Prisma, Snapshot, Submission } from '@prisma/client';
 import prisma from '../client';
 import ApiError from '../utils/ApiError';
 import httpStatus from 'http-status';
 
+type GetSubmission = Prisma.SubmissionGetPayload<{
+  include: {
+    assignment: {
+      select: {
+        id: true;
+        assignmentCode: true;
+        lecturer: {
+          select: {
+            id: true;
+            staffId: true;
+            user: {
+              select: {
+                id: true;
+                email: true;
+              };
+            };
+          };
+        };
+      };
+    };
+    student: {
+      include: {
+        user: {
+          select: {
+            id: true;
+            email: true;
+          };
+        };
+      };
+    };
+    snapshots: {
+      select: {
+        id: true;
+        snapshotName: true;
+        snapshotPath: true;
+        createdAt: true;
+      };
+    };
+  };
+}>;
+
 /**
- *
+ * Create a submission for an assignment
  * @param {number} userId
  * @param {string} assignmentCode
  * @returns {Promise<Submission>}
@@ -71,17 +112,7 @@ const getSubmissions = async (
     sortBy?: string;
     sortOrder?: 'asc' | 'desc';
   }
-): Promise<
-  | void
-  | Prisma.SubmissionGetPayload<{
-      include: {
-        assignment: true;
-        student: true;
-        snapshots: true;
-      };
-    }>[]
-  | void
-> => {
+): Promise<GetSubmission[]> => {
   const sortBy = options.sortBy;
   const sortOrder = options.sortOrder ?? 'desc';
   const submission = await prisma.submission.findMany({
@@ -90,12 +121,95 @@ const getSubmissions = async (
     },
     orderBy: sortBy ? { [sortBy]: sortOrder } : undefined,
     include: {
-      assignment: true,
-      student: true,
-      snapshots: true
+      assignment: {
+        select: {
+          id: true,
+          assignmentCode: true,
+          lecturer: {
+            select: {
+              id: true,
+              staffId: true,
+              user: {
+                select: {
+                  id: true,
+                  email: true
+                }
+              }
+            }
+          }
+        }
+      },
+      student: {
+        include: {
+          user: {
+            select: {
+              id: true,
+              email: true
+            }
+          }
+        }
+      },
+      snapshots: {
+        orderBy: {
+          createdAt: 'desc'
+        }
+      }
     }
   });
   return submission;
+};
+/**
+ * Get Submission for the student
+ * @param studentId - Student Id
+ * @param options - Sorting options
+ * @param assignmentCode -Submission for assignment with assignmentCode
+ * @returns
+ */
+const getStudentSubmission = async (
+  studentId: string,
+  options: {
+    sortBy?: string;
+    sortOrder?: 'asc' | 'desc';
+  },
+  assignmentCode?: string
+): Promise<GetSubmission[]> => {
+  const filter = {
+    assignment: {
+      assignmentCode
+    },
+    student: {
+      studentId
+    }
+  };
+  const submissions = await getSubmissions(filter, options);
+  return submissions;
+};
+
+/**
+ * Get Submission for lecturer assignments
+ * @param staffId - Stadd Id of the lecturer
+ * @param options - Sorting options
+ * @param assignmentCode -Submission for assignment with assignmentCode
+ * @returns
+ */
+const getSubmissionLecturer = async (
+  staffId: string,
+  options: {
+    sortBy?: string;
+    sortOrder?: 'asc' | 'desc';
+  },
+  assignmentCode?: string
+): Promise<GetSubmission[]> => {
+  const filter: Prisma.SubmissionWhereInput = {
+    assignment: {
+      assignmentCode,
+      lecturer: {
+        staffId
+      }
+    }
+  };
+  const submissions = await getSubmissions(filter, options);
+  return submissions;
 };
 
 /**
@@ -109,7 +223,7 @@ const updateSubmission = async (
   userId: number,
   submissionCode: string,
   head: string
-): Promise<Submission> => {
+): Promise<Prisma.SubmissionUpdateInput> => {
   const student = await prisma.student.findUnique({ where: { userId } });
   if (!student) {
     throw new ApiError(httpStatus.NOT_FOUND, 'Student does not exist');
@@ -128,12 +242,16 @@ const updateSubmission = async (
 };
 
 /**
- *
+ * Create a snapshot for a submission
  * @param submissionCode The code for submission
  * @param snapshotName The name for the snapshot
  * @param snapshotFiles The files for the snapshot
  */
-const createSnapshot = async (submissionCode: string, snapshotName: string) => {
+const createSnapshot = async (
+  submissionCode: string,
+  snapshotPath: string,
+  snapshotName: string
+): Promise<Prisma.SnapshotCreateWithoutSubmissionInput | void> => {
   try {
     const submission = await prisma.submission.findFirst({
       where: {
@@ -146,7 +264,8 @@ const createSnapshot = async (submissionCode: string, snapshotName: string) => {
     const snapshot = await prisma.snapshot.create({
       data: {
         submissionId: submission.id,
-        snapshotName
+        snapshotName,
+        snapshotPath
       }
     });
 
@@ -158,4 +277,27 @@ const createSnapshot = async (submissionCode: string, snapshotName: string) => {
   }
 };
 
-export default { makeSubmission, getSubmissions, updateSubmission, createSnapshot };
+/**
+ * Get all snapshots for a submission
+ * @param submissionCode
+ * @returns {Promise<Snapshot[]>}
+ */
+const getSnapshots = async (filter: Prisma.SnapshotWhereInput): Promise<Snapshot[]> => {
+  const snapshots = await prisma.snapshot.findMany({
+    where: {
+      ...filter
+    }
+  });
+
+  return snapshots;
+};
+
+export default {
+  makeSubmission,
+  getSubmissions,
+  getStudentSubmission,
+  getSubmissionLecturer,
+  updateSubmission,
+  createSnapshot,
+  getSnapshots
+};

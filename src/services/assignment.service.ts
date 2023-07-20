@@ -114,7 +114,7 @@ const updateAssignment = async (
  * @param {Object} options - Query options
  * @param {string} [options.sortBy] - Sort option
  * @param {string} [options.sortOrder] - Sort order
- * @returns {Promise<Assignment[] | void>} List of Assignments or single Assignment
+ * @returns {Promise<Prisma.AssignmentGetPayload>} List of Assignments or single Assignment
  */
 const getAssignments = async (
   userId: number,
@@ -179,7 +179,7 @@ const getAssignments = async (
 
     return assignments;
   }
-  if (role === 'STUDENT') {
+  if (role === Role.STUDENT) {
     const student = await prisma.student.findMany({
       where: {
         user: {
@@ -225,7 +225,9 @@ const getSingleAssignment = async (user: User, id: number) => {
             user: {
               select: {
                 id: true,
-                email: true
+                email: true,
+                firstname: true,
+                lastname: true
               }
             }
           }

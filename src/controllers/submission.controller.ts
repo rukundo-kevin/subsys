@@ -8,6 +8,7 @@ import ApiError from '../utils/ApiError';
 import assignmentService from '../services/assignment.service';
 import { generateId } from '../utils/userHelper';
 import pick from '../utils/pick';
+import { extractFileContents, extractFolderContents } from '../utils/submission.helper';
 
 const makeSubmission = catchAsync(async (req, res) => {
   const { id: userId } = req.user as User;
@@ -26,7 +27,7 @@ const makeSubmission = catchAsync(async (req, res) => {
   if (!assignment || assignment.length === 0) {
     throw new ApiError(httpStatus.NOT_FOUND, 'Assignment does not exist');
   }
-  if (assignment[0].deadline < new Date())
+  if (assignment[0]?.deadline < new Date())
     throw new ApiError(httpStatus.BAD_REQUEST, 'Can no longer submit after deadline');
 
   const submissionExist = await submissionService.getSubmissions(
@@ -58,7 +59,7 @@ const makeSubmission = catchAsync(async (req, res) => {
   );
 
   res.status(httpStatus.CREATED).send({
-    message: 'Submission created successfully',
+    message: 'Submission made successfully',
     data: {
       submission
     }
@@ -84,7 +85,7 @@ const updateSubmission = catchAsync(async (req, res) => {
   }
 
   const head = req.file as Express.Multer.File;
-  const newPath = `submissions/${userId}/${head.originalname}`;
+  const newPath = `submissions/${userId}/${submissionCode}/${head.originalname}`;
 
   await fs.remove(submission[0].head);
   await fs.move(head.path, newPath, { overwrite: true });
@@ -106,24 +107,77 @@ const updateSubmission = catchAsync(async (req, res) => {
 const getSubmissions = catchAsync(async (req, res) => {
   const { assignmentCode } = req.params;
   const user = req.user as User;
+  let submissions;
+  const options = pick(req.query, ['sortBy', 'sortOrder']);
 
-  if (user.role == 'STUDENT') {
-    const student = req.user as User & { studentId: string };
-    const filter: Prisma.SubmissionWhereInput = {
-      assignment: {
-        assignmentCode
-      },
-      student: {
-        studentId: student.studentId
-      }
-    };
-    const options = pick(req.query, ['sortBy', 'sortOrder']);
-
-    const submissions = await submissionService.getSubmissions(filter, options);
-    return res
-      .status(httpStatus.OK)
-      .send({ message: 'submissions fetched successfully', submissions });
+  if (user.role == Role.STUDENT) {
+    const { studentId } = req.user as User & { studentId: string };
+    submissions = assignmentCode
+      ? await submissionService.getStudentSubmission(studentId, options, assignmentCode)
+      : await submissionService.getStudentSubmission(studentId, options);
+  } else if (user.role == Role.LECTURER) {
+    const { staffId } = req.user as User & { staffId: string };
+    submissions = assignmentCode
+      ? await submissionService.getSubmissionLecturer(staffId, options, assignmentCode)
+      : await submissionService.getSubmissionLecturer(staffId, options);
+  } else {
+    submissions = await submissionService.getSubmissions({}, options);
   }
+
+  return res
+    .status(httpStatus.OK)
+    .send({ message: 'submissions fetched successfully', submissions });
+});
+
+const getSingleSubmission = catchAsync(async (req, res) => {
+  const filter = {
+    submissionCode: req.params.submissionCode
+  };
+
+  const submission = await submissionService.getSubmissions(filter, {});
+  if (submission.length == 0) throw new ApiError(httpStatus.NOT_FOUND, 'Submission does not exist');
+  const head: { snapshot_name: string } = JSON.parse(await fs.readFile(submission[0].head, 'utf8'));
+
+  const latestSnapshot = submission[0].snapshots.filter(
+    (snapshot) => snapshot.snapshotName == head.snapshot_name
+  );
+
+  if (!latestSnapshot || latestSnapshot.length == 0)
+    throw new ApiError(httpStatus.NOT_FOUND, 'Snapshot does not exist');
+
+  const latestSnapshotContents = await extractFolderContents(latestSnapshot[0].snapshotPath);
+
+  return res.status(httpStatus.OK).send({
+    message: 'Submission fetched successfully',
+    submission: { ...submission, currentSnapshot: latestSnapshotContents }
+  });
+});
+
+const getSnapshots = catchAsync(async (req, res) => {
+  const { submissionCode } = req.params;
+  const filter: Prisma.SnapshotWhereInput = {
+    submission: {
+      submissionCode
+    }
+  };
+  const snapshots = await submissionService.getSnapshots(filter);
+
+  return res.status(httpStatus.OK).send({
+    message: 'Snapshots fetched successfully',
+    snapshots
+  });
+});
+
+const getSingleSnapshot = catchAsync(async (req, res) => {
+  const snapshot = await submissionService.getSnapshots({ id: req.params.snapshotId });
+  if (!snapshot || snapshot.length == 0)
+    throw new ApiError(httpStatus.NOT_FOUND, 'Snapshot not found');
+
+  const snapshotContents = await extractFolderContents(snapshot[0].snapshotPath);
+  return res.status(httpStatus.OK).send({
+    message: 'Snapshot fetched successfully',
+    snapshot: { ...snapshot[0], snapshotContents: snapshotContents }
+  });
 });
 
 const createSnapshot = catchAsync(async (req, res) => {
@@ -141,15 +195,40 @@ const createSnapshot = catchAsync(async (req, res) => {
   for (const file of files) {
     const newPath = `${destinationFolder}/${file.originalname}`;
     await fs.move(file.path, newPath, { overwrite: true });
-    await submissionService.createSnapshot(submissionCode, newPath);
+    await submissionService.createSnapshot(
+      submissionCode,
+      newPath,
+      file.originalname.split('.')[0]
+    );
   }
 
   res.status(httpStatus.CREATED).send({ message: 'Snapshot created successfully' });
 });
 
+const getSnapshotFile = catchAsync(async (req, res) => {
+  const { snapshotId, filepath } = req.params;
+  const snapshot = await submissionService.getSnapshots({ id: snapshotId });
+  if (!snapshot || snapshot.length == 0)
+    throw new ApiError(httpStatus.NOT_FOUND, 'Snapshot not found');
+
+  const filecontents = await extractFileContents(
+    snapshot[0].snapshotPath,
+    snapshot[0].snapshotName,
+    filepath
+  );
+
+  return res
+    .status(httpStatus.OK)
+    .send({ message: 'snapshot file contents fetched successfully', filecontents });
+});
+
 export default {
   makeSubmission,
   getSubmissions,
+  getSingleSubmission,
   createSnapshot,
-  updateSubmission
+  updateSubmission,
+  getSingleSnapshot,
+  getSnapshots,
+  getSnapshotFile
 };

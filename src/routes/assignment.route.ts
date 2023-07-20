@@ -2,9 +2,10 @@ import { Router } from 'express';
 
 import assignmentValidation from '../validations/assignment.validation';
 import validate, { validateMarkdown } from '../middlewares/validate';
-import { assignmentController } from '../controllers';
+import { assignmentController, submissionController } from '../controllers';
 import sanitizeMarkdown from '../middlewares/sanitize';
 import auth from '../middlewares/auth';
+import submissionValidation from '../validations/submission.validation';
 
 const router = Router();
 
@@ -15,6 +16,12 @@ router.get(
   assignmentController.getAssignments
 );
 router.get('/:assignmentId', auth(), assignmentController.getAssignmentById);
+router.get(
+  '/:assignmentCode/submissions',
+  auth(),
+  validate(submissionValidation.getSubmission),
+  submissionController.getSubmissions
+);
 router.patch(
   '/:assignmentId',
   auth('manageAssignments'),
