@@ -61,14 +61,15 @@ router.get(
 router.get(
   '/snapshot/:snapshotId/download',
   auth(),
-  validate(submissionValidation.getSnapshotFile),
-  snapshotController.getSnapshotFile
+  validate(submissionValidation.snapshot),
+  snapshotController.downloadSnapshot
 );
+
 router.get(
   '/snapshot/:snapshotId/:filepath',
   auth(),
   validate(submissionValidation.snapshot),
-  snapshotController.downloadSnapshot
+  snapshotController.getSnapshotFile
 );
 
 

@@ -4,7 +4,7 @@ import tmp from 'tmp-promise';
 import fs from 'fs-extra';
 import ApiError from './ApiError';
 import httpStatus from 'http-status';
-import { promisify } from 'util';
+import archiver from 'archiver';
 
 interface Item {
   name: string;
@@ -12,6 +12,7 @@ interface Item {
   path?: string;
   contents?: Item[];
 }
+
 /**
  *  Construct a tree of the contents of a folder in a snapshot
  * @param gzipFilePath
@@ -142,33 +143,42 @@ export async function extractFileContents(
   }
 }
 
-const pipeline = promisify(require('stream').pipeline);
+/**
+ * Function to create a zipped file
+ * @param inputFilePaths
+ * @param outputFilePath
+ * @returns A promise that resolves to the Location of the zipped file
+ */
 
-// Function to compress files
-async function compressFile(inputFilePath: string, outputFilePath: string): Promise<void> {
-  try {
-    const readStream = fs.createReadStream(inputFilePath);
-    const gzipStream = zlib.createGzip();
-    const writeStream = fs.createWriteStream(outputFilePath);
+export async function createZippedFile(
+  inputFilePaths: string[],
+  outputFilePath: string
+): Promise<string> {
+  return new Promise<string>((resolve, reject) => {
+    const output = fs.createWriteStream(outputFilePath);
+    const archive = archiver('zip');
 
-    readStream.pipe(gzipStream).pipe(writeStream);
-
-    await new Promise<void>((resolve, reject) => {
-      writeStream.on('finish', () => {
-        console.log('File compression completed.');
-        resolve();
-      });
-
-      writeStream.on('error', (err) => {
-        reject(err);
-      });
+    output.on('close', () => {
+      resolve(outputFilePath);
     });
-  } catch (err) {
-    console.error('Error compressing file:', err);
-  }
-}
 
-(async () => {
-  const cwd = process.cwd();
-  await compressFile(`${cwd}/submissions/4/SUB709454/first-snapshot.tar.z`, 'test.tar');
-})();
+    output.on('error', (err) => {
+      reject(err);
+    });
+
+    archive.on('error', (err) => {
+      reject(err);
+    });
+
+    archive.pipe(output);
+
+    for (const inputFilePath of inputFilePaths) {
+      const fileStream = fs.createReadStream(inputFilePath);
+
+      const filenames = inputFilePath.split('/');
+      archive.append(fileStream, { name: filenames[filenames.length - 1] });
+    }
+
+    archive.finalize();
+  });
+}

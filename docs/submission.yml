@@ -146,3 +146,27 @@ paths:
         '404':
           $ref: '#/components/responses/NotFound'
 
+  /api/submission/{submissionCode}/snapshots/download:
+    get:
+      summary: Download snapshots of submission with submissionCode
+      tags:
+        - Submission
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: submissionCode
+          schema:
+            type: string
+          required: true
+          description: Submission Code
+      responses:
+        '400':
+          $ref: '#/components/responses/ValidationError'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
