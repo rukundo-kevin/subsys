@@ -326,7 +326,10 @@ const getSubmissionGroupedByLecturer = async () => {
   return submissionsByLecturer;
 };
 
-const sendSubmissionNotification = async () => {};
+const sendSubmissionNotification = async () => {
+  const submissionsByLecturer = await getSubmissionGroupedByLecturer();
+  console.log(submissionsByLecturer);
+};
 
 export default {
   makeSubmission,
