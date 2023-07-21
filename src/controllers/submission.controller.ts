@@ -8,11 +8,11 @@ import ApiError from '../utils/ApiError';
 import assignmentService from '../services/assignment.service';
 import { generateId } from '../utils/userHelper';
 import pick from '../utils/pick';
-import { extractFileContents, extractFolderContents } from '../utils/submission.helper';
+import { extractFolderContents } from '../utils/submission.helper';
 
 const makeSubmission = catchAsync(async (req, res) => {
   const { id: userId } = req.user as User;
-  const assignmentCode = req.query!.assignmentCode as string;
+  const assignmentCode = req.params!.assignmentCode as string;
   if (!req.file) {
     throw new ApiError(httpStatus.BAD_REQUEST, 'The head file was not uploaded');
   }
@@ -28,7 +28,7 @@ const makeSubmission = catchAsync(async (req, res) => {
     throw new ApiError(httpStatus.NOT_FOUND, 'Assignment does not exist');
   }
   if (assignment[0]?.deadline < new Date())
-    throw new ApiError(httpStatus.BAD_REQUEST, 'Can no longer submit after deadline');
+    throw new ApiError(httpStatus.BAD_REQUEST, 'Can not submit after deadline');
 
   const submissionExist = await submissionService.getSubmissions(
     {
@@ -115,6 +115,8 @@ const getSubmissions = catchAsync(async (req, res) => {
     submissions = assignmentCode
       ? await submissionService.getStudentSubmission(studentId, options, assignmentCode)
       : await submissionService.getStudentSubmission(studentId, options);
+    if (submissions.length == 0) throw new ApiError(httpStatus.NOT_FOUND, 'No submissions found');
+    if (assignmentCode) submissions = submissions[0];
   } else if (user.role == Role.LECTURER) {
     const { staffId } = req.user as User & { staffId: string };
     submissions = assignmentCode
@@ -153,82 +155,9 @@ const getSingleSubmission = catchAsync(async (req, res) => {
   });
 });
 
-const getSnapshots = catchAsync(async (req, res) => {
-  const { submissionCode } = req.params;
-  const filter: Prisma.SnapshotWhereInput = {
-    submission: {
-      submissionCode
-    }
-  };
-  const snapshots = await submissionService.getSnapshots(filter);
-
-  return res.status(httpStatus.OK).send({
-    message: 'Snapshots fetched successfully',
-    snapshots
-  });
-});
-
-const getSingleSnapshot = catchAsync(async (req, res) => {
-  const snapshot = await submissionService.getSnapshots({ id: req.params.snapshotId });
-  if (!snapshot || snapshot.length == 0)
-    throw new ApiError(httpStatus.NOT_FOUND, 'Snapshot not found');
-
-  const snapshotContents = await extractFolderContents(snapshot[0].snapshotPath);
-  return res.status(httpStatus.OK).send({
-    message: 'Snapshot fetched successfully',
-    snapshot: { ...snapshot[0], snapshotContents: snapshotContents }
-  });
-});
-
-const createSnapshot = catchAsync(async (req, res) => {
-  const { id: userId } = req.user as User;
-  const { submissionCode } = req.query as { submissionCode: string };
-
-  if (!req.files || !req.files.length) {
-    throw new ApiError(httpStatus.BAD_REQUEST, 'No files were uploaded');
-  }
-
-  const files = req.files as Express.Multer.File[];
-  const destinationFolder = `submissions/${userId}/${submissionCode}`;
-  fs.ensureDirSync(destinationFolder);
-
-  for (const file of files) {
-    const newPath = `${destinationFolder}/${file.originalname}`;
-    await fs.move(file.path, newPath, { overwrite: true });
-    await submissionService.createSnapshot(
-      submissionCode,
-      newPath,
-      file.originalname.split('.')[0]
-    );
-  }
-
-  res.status(httpStatus.CREATED).send({ message: 'Snapshot created successfully' });
-});
-
-const getSnapshotFile = catchAsync(async (req, res) => {
-  const { snapshotId, filepath } = req.params;
-  const snapshot = await submissionService.getSnapshots({ id: snapshotId });
-  if (!snapshot || snapshot.length == 0)
-    throw new ApiError(httpStatus.NOT_FOUND, 'Snapshot not found');
-
-  const filecontents = await extractFileContents(
-    snapshot[0].snapshotPath,
-    snapshot[0].snapshotName,
-    filepath
-  );
-
-  return res
-    .status(httpStatus.OK)
-    .send({ message: 'snapshot file contents fetched successfully', filecontents });
-});
-
 export default {
   makeSubmission,
   getSubmissions,
   getSingleSubmission,
-  createSnapshot,
-  updateSubmission,
-  getSingleSnapshot,
-  getSnapshots,
-  getSnapshotFile
+  updateSubmission
 };

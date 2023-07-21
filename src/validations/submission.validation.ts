@@ -15,7 +15,7 @@ const submissionCodeSchema = Joi.string()
   });
 
 const submit = {
-  query: Joi.object().keys({
+  params: Joi.object().keys({
     assignmentCode: assignmentCodeSchema
   })
 };

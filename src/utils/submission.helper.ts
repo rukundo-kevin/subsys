@@ -4,6 +4,7 @@ import tmp from 'tmp-promise';
 import fs from 'fs-extra';
 import ApiError from './ApiError';
 import httpStatus from 'http-status';
+import archiver from 'archiver';
 
 interface Item {
   name: string;
@@ -12,6 +13,11 @@ interface Item {
   contents?: Item[];
 }
 
+/**
+ *  Construct a tree of the contents of a folder in a snapshot
+ * @param gzipFilePath
+ * @returns
+ */
 export async function extractFolderContents(gzipFilePath: string): Promise<Item[]> {
   const rootItem: Item = {
     name: 'contents',
@@ -135,4 +141,44 @@ export async function extractFileContents(
   } catch (error) {
     return { error: error as unknown as string };
   }
+}
+
+/**
+ * Function to create a zipped file
+ * @param inputFilePaths
+ * @param outputFilePath
+ * @returns A promise that resolves to the Location of the zipped file
+ */
+
+export async function createZippedFile(
+  inputFilePaths: string[],
+  outputFilePath: string
+): Promise<string> {
+  return new Promise<string>((resolve, reject) => {
+    const output = fs.createWriteStream(outputFilePath);
+    const archive = archiver('zip');
+
+    output.on('close', () => {
+      resolve(outputFilePath);
+    });
+
+    output.on('error', (err) => {
+      reject(err);
+    });
+
+    archive.on('error', (err) => {
+      reject(err);
+    });
+
+    archive.pipe(output);
+
+    for (const inputFilePath of inputFilePaths) {
+      const fileStream = fs.createReadStream(inputFilePath);
+
+      const filenames = inputFilePath.split('/');
+      archive.append(fileStream, { name: filenames[filenames.length - 1] });
+    }
+
+    archive.finalize();
+  });
 }

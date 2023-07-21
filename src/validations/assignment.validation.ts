@@ -13,7 +13,7 @@ const editAssignment = {
     deadline: Joi.date().optional()
   }),
   params: Joi.object().keys({
-    assignmentId: Joi.string().required()
+    assignmentId: Joi.number().required()
   })
 };
 

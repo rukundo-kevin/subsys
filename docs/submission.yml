@@ -27,7 +27,8 @@ paths:
           $ref: '#/components/responses/Forbidden'
         '404':
           $ref: '#/components/responses/NotFound'
-
+  
+  /api/submission/{assignmentCode}:
     post:
       summary: Create Submission
       tags: 
@@ -35,7 +36,7 @@ paths:
       security:
         - bearerAuth: []
       parameters:
-        - in: query
+        - in: path
           name: assignmentCode
           schema:
             type: string
@@ -72,9 +73,9 @@ paths:
           $ref: '#/components/responses/Unauthorized'
         '403':
           $ref: '#/components/responses/Forbidden'
-        '404':
+        '404':          
           $ref: '#/components/responses/NotFound'
-
+ 
   /api/submission/{submissionCode}:
     get:
       summary: Get submission with submissionCode
@@ -137,6 +138,37 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Submission'
+        '400':
+          $ref: '#/components/responses/ValidationError'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+  /api/submission/{submissionCode}/snapshots/download:
+    get:
+      summary: Download snapshots of submission with submissionCode
+      tags:
+        - Submission
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: submissionCode
+          schema:
+            type: string
+          required: true
+          description: Submission Code
+      responses:
+        '200':
+          description: OK. 
+          content:
+            application/octet-stream:
+              schema:
+                type: string
+                format: binary
         '400':
           $ref: '#/components/responses/ValidationError'
         '401':
