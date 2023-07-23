@@ -7,17 +7,17 @@ tags:
     summary: Get all students
     parameters:
       - in: query
-        name: id
+        name: id 
         description: search by student id
         schema:
           type: integer
       - in: query
-        name: firstname
+        name: firstname 
         description: search by firstname
         schema:
           type: string
       - in: query
-        name: lastname
+        name: lastname  
         description: search by lastname
         schema:
           type: string
@@ -25,7 +25,7 @@ tags:
         name: email
         description: search by email
         schema:
-          type: string
+          type: string            
     tags: [Student]
     security:
       - bearerAuth: []
@@ -112,7 +112,7 @@ tags:
               code: 401
               message: Please authenticate
 
-/api/student/{userId}:
+/api/student/{studentId}:
   get:
     summary: Get a student
     tags: [Student]
@@ -120,7 +120,7 @@ tags:
       - bearerAuth: []
     parameters:
       - in: path
-        name: userId
+        name: studentId
         schema:
           type: string
         required: true
@@ -197,6 +197,7 @@ tags:
               code: 401
               message: Please authenticate
 
+/api/student/{userId}: 
   delete:
     summary: Delete a student
     tags: [Student]
@@ -267,3 +268,5 @@ tags:
             example:
               code: 401
               message: Please authenticate
+
+

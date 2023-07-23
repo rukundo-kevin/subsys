@@ -55,7 +55,8 @@ app.use(errorConverter);
 // handle error
 app.use(errorHandler);
 
-cron.schedule('*/10 * * * * *', () => {
+// Send submission notification every 1 hour
+cron.schedule('0 * * * *', () => {
   submissionService.sendSubmissionNotification();
 });
 

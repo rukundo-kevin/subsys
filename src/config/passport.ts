@@ -39,7 +39,7 @@ const jwtVerify: VerifyCallback = async (payload, done) => {
 
       return done(null, studentUser);
     }
-    if (user.role === 'LECTURER') {
+    if (user.role === Role.LECTURER) {
       const lecturer = await prisma.lecturer.findUnique({
         where: {
           userId: user.id

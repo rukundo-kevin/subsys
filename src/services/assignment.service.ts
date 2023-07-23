@@ -150,7 +150,7 @@ const getAssignments = async (
 
     return assignments;
   }
-  if (role === 'LECTURER') {
+  if (role === Role.LECTURER) {
     const assignments = await prisma.assignment.findMany({
       where: {
         lecturer: {

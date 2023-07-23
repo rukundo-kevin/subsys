@@ -1,14 +1,16 @@
-import { Prisma, Snapshot, Submission } from '@prisma/client';
+import { Prisma, Snapshot, Submission, User } from '@prisma/client';
 import prisma from '../client';
 import ApiError from '../utils/ApiError';
 import httpStatus from 'http-status';
+import { submissionNotification } from '../utils/assignmentInvitation';
 
-type GetSubmission = Prisma.SubmissionGetPayload<{
+export type GetSubmission = Prisma.SubmissionGetPayload<{
   include: {
     assignment: {
       select: {
         id: true;
         assignmentCode: true;
+        title: true;
         lecturer: {
           select: {
             id: true;
@@ -29,6 +31,8 @@ type GetSubmission = Prisma.SubmissionGetPayload<{
           select: {
             id: true;
             email: true;
+            firstname: true;
+            lastname: true;
           };
         };
       };
@@ -43,6 +47,15 @@ type GetSubmission = Prisma.SubmissionGetPayload<{
     };
   };
 }>;
+
+interface LecturerSubmission {
+  lecturer: {
+    id: number;
+    staffId: string;
+    user: User;
+  };
+  submissions: GetSubmission;
+}
 
 /**
  * Create a submission for an assignment
@@ -125,6 +138,7 @@ const getSubmissions = async (
         select: {
           id: true,
           assignmentCode: true,
+          title: true,
           lecturer: {
             select: {
               id: true,
@@ -245,58 +259,9 @@ const updateSubmission = async (
   return submission;
 };
 
-/**
- * Create a snapshot for a submission
- * @param submissionCode The code for submission
- * @param snapshotName The name for the snapshot
- * @param snapshotFiles The files for the snapshot
- */
-const createSnapshot = async (
-  submissionCode: string,
-  snapshotPath: string,
-  snapshotName: string
-): Promise<Prisma.SnapshotCreateWithoutSubmissionInput | void> => {
-  try {
-    const submission = await prisma.submission.findFirst({
-      where: {
-        submissionCode
-      }
-    });
-    if (!submission) {
-      throw new ApiError(httpStatus.NOT_FOUND, 'Submission not found');
-    }
-    const snapshot = await prisma.snapshot.create({
-      data: {
-        submissionId: submission.id,
-        snapshotName,
-        snapshotPath
-      }
-    });
 
-    return snapshot;
-  } catch (error) {
-    if ((error as Prisma.PrismaClientKnownRequestError).code === 'P2002') {
-      throw new ApiError(httpStatus.BAD_REQUEST, `Snapshot already exists`);
-    }
-  }
-};
 
-/**
- * Get all snapshots for a submission
- * @param submissionCode
- * @returns {Promise<Snapshot[]>}
- */
-const getSnapshots = async (filter: Prisma.SnapshotWhereInput): Promise<Snapshot[]> => {
-  const snapshots = await prisma.snapshot.findMany({
-    where: {
-      ...filter
-    }
-  });
-
-  return snapshots;
-};
-
-const getSubmissionGroupedByLecturer = async () => {
+const getSubmissionGroupedByLecturer = async (): Promise<LecturerSubmission[]> => {
   const currentDateUTC = new Date();
   const timeZoneOffsetMinutes = currentDateUTC.getTimezoneOffset();
   const currentDateLocal = new Date(currentDateUTC.getTime() - timeZoneOffsetMinutes * 60000);
@@ -327,8 +292,19 @@ const getSubmissionGroupedByLecturer = async () => {
 };
 
 const sendSubmissionNotification = async () => {
-  const submissionsByLecturer = await getSubmissionGroupedByLecturer();
-  console.log(submissionsByLecturer);
+  try {
+    const submissionsByLecturer = await getSubmissionGroupedByLecturer();
+    for (let i = 0; i < submissionsByLecturer.length; i++) {
+      const user = submissionsByLecturer[i].lecturer.user;
+      const submissions = submissionsByLecturer[i].submissions;
+      await submissionNotification(user, submissions as unknown as GetSubmission[]);
+    }
+  } catch (error) {
+    throw new ApiError(
+      httpStatus.INTERNAL_SERVER_ERROR,
+      'Error while sending email, contact admin for support'
+    );
+  }
 };
 
 export default {
@@ -337,8 +313,6 @@ export default {
   getStudentSubmission,
   getSubmissionLecturer,
   updateSubmission,
-  createSnapshot,
-  getSnapshots,
   getSubmissionGroupedByLecturer,
   sendSubmissionNotification
 };

@@ -170,6 +170,18 @@ components:
             studentCode:
               type: string
               example: ST123030
+            user:
+              type: object
+              properties:
+                id:
+                  type: number
+                email:
+                  type: string
+                  format: email
+                firstname:
+                  type: string
+                lastname:
+                  type: string
         assignment:
           type: object
           properties:
@@ -191,7 +203,6 @@ components:
           type: string
           format: date-time
           example: '2021-01-01T00:00:00Z'
-<<<<<<< HEAD
         latestSnapshot:
           $ref: '#/components/schemas/LatestSnaphot'
               
@@ -217,8 +228,6 @@ components:
                 type:
                   type: string
                   example: 'folder'           
-=======
->>>>>>> 5ce56e3 (feat(submission-notification): fix response)
     StudentId:
       type: object
       properties:
@@ -279,10 +288,7 @@ components:
           example:
             code: 400
             message: Bad request
-<<<<<<< HEAD
             
-=======
->>>>>>> 5ce56e3 (feat(submission-notification): fix response)
   securitySchemes:
     bearerAuth:
       type: http
