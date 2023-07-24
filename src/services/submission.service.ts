@@ -1,14 +1,16 @@
-import { Prisma, Snapshot, Submission } from '@prisma/client';
+import { Prisma, Snapshot, Submission, User } from '@prisma/client';
 import prisma from '../client';
 import ApiError from '../utils/ApiError';
 import httpStatus from 'http-status';
+import { submissionNotification } from '../utils/assignmentInvitation';
 
-type GetSubmission = Prisma.SubmissionGetPayload<{
+export type GetSubmission = Prisma.SubmissionGetPayload<{
   include: {
     assignment: {
       select: {
         id: true;
         assignmentCode: true;
+        title: true;
         lecturer: {
           select: {
             id: true;
@@ -29,6 +31,8 @@ type GetSubmission = Prisma.SubmissionGetPayload<{
           select: {
             id: true;
             email: true;
+            firstname: true;
+            lastname: true;
           };
         };
       };
@@ -43,6 +47,15 @@ type GetSubmission = Prisma.SubmissionGetPayload<{
     };
   };
 }>;
+
+interface LecturerSubmission {
+  lecturer: {
+    id: number;
+    staffId: string;
+    user: User;
+  };
+  submissions: GetSubmission;
+}
 
 /**
  * Create a submission for an assignment
@@ -125,6 +138,7 @@ const getSubmissions = async (
         select: {
           id: true,
           assignmentCode: true,
+          title: true,
           lecturer: {
             select: {
               id: true,
@@ -245,10 +259,60 @@ const updateSubmission = async (
   return submission;
 };
 
+
+
+const getSubmissionGroupedByLecturer = async (): Promise<LecturerSubmission[]> => {
+  const currentDateUTC = new Date();
+  const timeZoneOffsetMinutes = currentDateUTC.getTimezoneOffset();
+  const currentDateLocal = new Date(currentDateUTC.getTime() - timeZoneOffsetMinutes * 60000);
+  const oneHourAgo = new Date(currentDateLocal.setHours(currentDateLocal.getHours() - 1));
+
+  const submissions = await getSubmissions(
+    { createdAt: { gte: oneHourAgo.toISOString() } },
+    { sortBy: 'createdAt' }
+  );
+
+  // Organize submissions by lecturer
+  const submissionsByLecturerMap = new Map();
+
+  for (const submission of submissions) {
+    const lecturerId = submission.assignment.lecturer.id;
+    if (!submissionsByLecturerMap.has(lecturerId)) {
+      submissionsByLecturerMap.set(lecturerId, {
+        lecturer: submission.assignment.lecturer,
+        submissions: []
+      });
+    }
+    submissionsByLecturerMap.get(lecturerId).submissions.push(submission);
+  }
+
+  const submissionsByLecturer = Array.from(submissionsByLecturerMap.values());
+
+  return submissionsByLecturer;
+};
+
+const sendSubmissionNotification = async () => {
+  try {
+    const submissionsByLecturer = await getSubmissionGroupedByLecturer();
+    for (let i = 0; i < submissionsByLecturer.length; i++) {
+      const user = submissionsByLecturer[i].lecturer.user;
+      const submissions = submissionsByLecturer[i].submissions;
+      await submissionNotification(user, submissions as unknown as GetSubmission[]);
+    }
+  } catch (error) {
+    throw new ApiError(
+      httpStatus.INTERNAL_SERVER_ERROR,
+      'Error while sending email, contact admin for support'
+    );
+  }
+};
+
 export default {
   makeSubmission,
   getSubmissions,
   getStudentSubmission,
   getSubmissionLecturer,
-  updateSubmission
+  updateSubmission,
+  getSubmissionGroupedByLecturer,
+  sendSubmissionNotification
 };

@@ -1,7 +1,7 @@
 import httpStatus from 'http-status';
 import fs from 'fs-extra';
 
-import { Assignment, Prisma, Role, User } from '@prisma/client';
+import { Assignment, Role, User } from '@prisma/client';
 import { submissionService } from '../services';
 import catchAsync from '../utils/catchAsync';
 import ApiError from '../utils/ApiError';
@@ -9,9 +9,11 @@ import assignmentService from '../services/assignment.service';
 import { generateId } from '../utils/userHelper';
 import pick from '../utils/pick';
 import { extractFolderContents } from '../utils/submission.helper';
+import { sendSubmissionConfirmation } from '../utils/assignmentInvitation';
 
 const makeSubmission = catchAsync(async (req, res) => {
-  const { id: userId } = req.user as User;
+  const user = req.user as User;
+  const userId = user.id;
   const assignmentCode = req.params!.assignmentCode as string;
   if (!req.file) {
     throw new ApiError(httpStatus.BAD_REQUEST, 'The head file was not uploaded');
@@ -56,6 +58,12 @@ const makeSubmission = catchAsync(async (req, res) => {
     assignmentCode as string,
     newPath,
     submissionCode
+  );
+
+  await sendSubmissionConfirmation(
+    `${user.firstname} ${user.lastname}`,
+    user.email,
+    assignment[0].title
   );
 
   res.status(httpStatus.CREATED).send({
