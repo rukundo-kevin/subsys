@@ -8,7 +8,7 @@ import ApiError from '../utils/ApiError';
 import assignmentService from '../services/assignment.service';
 import { generateId } from '../utils/userHelper';
 import pick from '../utils/pick';
-import { extractFolderContents } from '../utils/submission.helper';
+import { extractFolderContents, validateHead } from '../utils/submission.helper';
 import { sendSubmissionConfirmation } from '../utils/assignmentInvitation';
 
 const makeSubmission = catchAsync(async (req, res) => {
@@ -18,7 +18,11 @@ const makeSubmission = catchAsync(async (req, res) => {
   if (!req.file) {
     throw new ApiError(httpStatus.BAD_REQUEST, 'The head file was not uploaded');
   }
-
+  // Validate head file format
+  const { error } = await validateHead(JSON.parse(await fs.readFile(req.file.path, 'utf8')));
+  if (error) {
+    throw new ApiError(httpStatus.BAD_REQUEST, 'Invalid head file format');
+  }
   const assignment = (await assignmentService.getAssignments(
     userId,
     Role.STUDENT,
