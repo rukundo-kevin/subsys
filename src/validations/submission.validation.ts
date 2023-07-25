@@ -58,11 +58,17 @@ const getSnapshotFile = {
   })
 };
 
+const headSchema = Joi.object().keys({
+  snapshot_key: Joi.string().required(),
+  snapshot_name: Joi.string().required()
+});
+
 export default {
   submit,
   getSubmission,
   uploadSnapshot,
   updateSubmission,
   snapshot,
-  getSnapshotFile
+  getSnapshotFile,
+  headSchema
 };

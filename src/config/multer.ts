@@ -23,6 +23,12 @@ export const upload = multer({
       } else {
         cb(new Error('Only compressed files are allowed'));
       }
+    } else if (fieldname == 'head') {
+      if (originalname.endsWith('.json') || originalname.split('.').length == 1) {
+        cb(null, true)
+      } else {
+        cb(new Error('Only json files are allowed'));
+      }
     } else {
       cb(null, true);
     }

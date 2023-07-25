@@ -161,6 +161,11 @@ const getAssignments = async (
         ...filter
       },
       include: {
+        _count: {
+          select: {
+            submissions: true
+          }
+        },
         lecturer: true,
         students: {
           select: {

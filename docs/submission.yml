@@ -51,6 +51,7 @@ paths:
               properties:
                 head:
                   type: string
+                  required: true
                   format: binary
                   description: Head of Submission
                 

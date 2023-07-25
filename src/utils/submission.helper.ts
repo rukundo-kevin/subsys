@@ -5,6 +5,8 @@ import fs from 'fs-extra';
 import ApiError from './ApiError';
 import httpStatus from 'http-status';
 import archiver from 'archiver';
+import submissionValidation from '../validations/submission.validation';
+import Joi from 'joi';
 
 interface Item {
   name: string;
@@ -182,3 +184,20 @@ export async function createZippedFile(
     archive.finalize();
   });
 }
+
+interface Head {
+  snapshot_key: string;
+  snapshot_name: string;
+}
+export const validateHead = async (head: Head): Promise<{ error: string | null }> => {
+  const { error } = Joi.compile(submissionValidation.headSchema)
+    .prefs({ errors: { label: 'key' }, abortEarly: false })
+    .validate(head);
+  if (error) {
+    const errorMessage = error.details.map((details) => details.message).join(', ');
+    return { error: errorMessage };
+  }
+  return {
+    error: null
+  };
+};

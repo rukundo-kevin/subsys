@@ -7,7 +7,13 @@ import handleFileUpload from '../middlewares/uploadFile';
 import snapshotController from '../controllers/snapshot.controller';
 
 const router = Router();
-
+router.post(
+  '/snapshot',
+  auth('createSubmission'),
+  validate(submissionValidation.uploadSnapshot),
+  handleFileUpload('snapshots', true),
+  snapshotController.createSnapshot
+);
 router.post(
   '/:assignmentCode',
   auth('createSubmission'),
@@ -15,6 +21,7 @@ router.post(
   handleFileUpload('head', false),
   submissionController.makeSubmission
 );
+
 router.get('/', auth(), submissionController.getSubmissions);
 router.get(
   '/:submissionCode',
@@ -30,13 +37,6 @@ router.patch(
   submissionController.updateSubmission
 );
 
-router.post(
-  '/snapshot',
-  auth('createSubmission'),
-  validate(submissionValidation.uploadSnapshot),
-  handleFileUpload('snapshots', true),
-  snapshotController.createSnapshot
-);
 router.get(
   '/:submissionCode/snapshots',
   auth(),
