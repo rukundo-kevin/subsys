@@ -80,6 +80,7 @@ export const submissionNotification = async (user: User, submission: GetSubmissi
       <div style="margin-left:3rem;margin-bottom:2rem">
       <p style="margin-bottom:8px;color:#000000;">
        Student Name:  ${submission[i].student.user.firstname} <br>
+       Student ID: ${submission[i].student.studentId} <br>
        Assignment Title:  ${submission[i].assignment.title}
       </p>
       `;
