@@ -11,7 +11,7 @@ router.post(
   '/snapshot',
   auth('createSubmission'),
   validate(submissionValidation.uploadSnapshot),
-  handleFileUpload('snapshots', true),
+  handleFileUpload('snapshot', false),
   snapshotController.createSnapshot
 );
 router.post(

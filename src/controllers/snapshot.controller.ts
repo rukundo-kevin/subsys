@@ -42,21 +42,19 @@ const createSnapshot = catchAsync(async (req, res) => {
   const { id: userId } = req.user as User;
   const { submissionCode } = req.query as { submissionCode: string };
 
-  if (!req.files || !req.files.length) {
-    throw new ApiError(httpStatus.BAD_REQUEST, 'No files were uploaded');
+  if (!req.file) {
+    throw new ApiError(httpStatus.BAD_REQUEST, 'No snapshot file was uploaded');
   }
 
-  const files = req.files as Express.Multer.File[];
+  const file = req.file as Express.Multer.File;
   const destinationFolder = `submissions/${userId}/${submissionCode}`;
   fs.ensureDirSync(destinationFolder);
 
-  for (const file of files) {
-    const newPath = `${destinationFolder}/${file.originalname}`;
-    await fs.move(file.path, newPath, { overwrite: true });
-    await snapshotService.createSnapshot(submissionCode, newPath, file.originalname.split('.')[0]);
-  }
+  const newPath = `${destinationFolder}/${file.originalname}`;
+  await fs.move(file.path, newPath, { overwrite: true });
+  await snapshotService.createSnapshot(submissionCode, newPath, file.originalname.split('.')[0]);
 
-  res.status(httpStatus.CREATED).send({ message: 'Snapshot created successfully' });
+  return res.status(httpStatus.CREATED).send({ message: 'Snapshot created successfully' });
 });
 
 const getSnapshotFile = catchAsync(async (req, res) => {

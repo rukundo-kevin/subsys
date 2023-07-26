@@ -24,13 +24,7 @@ const uploadSnapshot = {
   query: Joi.object().keys({
     submissionCode: submissionCodeSchema
   }),
-  body: {
-    snapshots: Joi.array().items(
-      Joi.object().keys({
-        snapshotFiles: Joi.string().required()
-      })
-    )
-  }
+
 };
 
 const updateSubmission = {

@@ -78,10 +78,11 @@ export const submissionNotification = async (user: User, submission: GetSubmissi
         html +
         `
       <div style="margin-left:3rem;margin-bottom:2rem">
-      <h4 style="margin-bottom:8px;color:#000000;">
+      <p style="margin-bottom:8px;color:#000000;">
        Student Name:  ${submission[i].student.user.firstname} <br>
+       Student ID: ${submission[i].student.studentId} <br>
        Assignment Title:  ${submission[i].assignment.title}
-      </h4>
+      </p>
       `;
     }
 
@@ -108,7 +109,7 @@ export const submissionNotification = async (user: User, submission: GetSubmissi
           <tr>
           <td style="text-align:center; vertical-align: middle;">
           <div style="border-radius: 10px;width:200px;height:40px;background-color:#5D34EC; margin: auto;">
-              <a href='${config.frontendUrl}submissions/' style="color:#FFFFFF;text-decoration: none;font-size: 20px;display:block; text-align: center; line-height: 40px;">View submisssions</a>
+              <a href='${config.frontendUrl}lecturer/submissions/' style="color:#FFFFFF;text-decoration: none;font-size: 20px;display:block; text-align: center; line-height: 40px;">View submisssions</a>
            </div>
           </td>
           </tr>
@@ -148,12 +149,9 @@ export const sendSubmissionConfirmation = async (
           <div style="background-color:#363143;text-align:center;">
           <img slt="logo" src="https://res.cloudinary.com/dmxs2lcjz/image/upload/v1686732405/logo_aeer02.png"/>
           </div>
-          <div style="text-align:center;">
-              <img slt="logo" src="https://res.cloudinary.com/dmxs2lcjz/image/upload/v1686732387/cuate_jz9wxp.png"/>
-          </div>
           <div style="margin-left:5rem;margin-bottom:5rem">
           <h4 style="margin-bottom:8px;color:#000000;">Dear ${studentName} ,</h4>
-          <p style="color:#000000;">You have successfully submitted assignment ${assignmentTitle}.</p>
+          <p style="color:#000000;">You have successfully submitted assignment "${assignmentTitle}".</p>
           </div>
         </div>`
     };

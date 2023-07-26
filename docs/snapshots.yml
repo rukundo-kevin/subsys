@@ -24,9 +24,8 @@ paths:
             schema:
               type: object
               properties:
-                snapshots:
-                  type: array
-                  items:
+                snapshot:
+                    required: true
                     type: string
                     format: binary
       responses:
