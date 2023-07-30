@@ -7,6 +7,7 @@ import httpStatus from 'http-status';
 import archiver from 'archiver';
 import submissionValidation from '../validations/submission.validation';
 import Joi from 'joi';
+import { studentService, userService } from '../services';
 
 interface Item {
   name: string;
@@ -15,12 +16,19 @@ interface Item {
   contents?: Item[];
 }
 
+interface Head {
+  snapshot_key: string;
+  snapshot_name: string;
+}
+
 /**
  *  Construct a tree of the contents of a folder in a snapshot
  * @param gzipFilePath
  * @returns
  */
 export async function extractFolderContents(gzipFilePath: string): Promise<Item[]> {
+  if (!(await fs.exists(gzipFilePath)))
+    throw new ApiError(httpStatus.INTERNAL_SERVER_ERROR, 'Contents for the snapshot not found');
   const rootItem: Item = {
     name: 'contents',
     type: 'folder'
@@ -39,7 +47,6 @@ export async function extractFolderContents(gzipFilePath: string): Promise<Item[
         parts = parts.filter((part) => part !== '');
         if (parts.length >= 2 && parts[1] === 'content') {
           // Contents directory
-
           let currentFolder = rootItem;
           const folders = parts.slice(2, -1);
           for (const folderName of folders) {
@@ -91,6 +98,8 @@ export async function extractFileContents(
   fileName: string
 ): Promise<string | { error: string }> {
   try {
+    if (!(await fs.exists(gzipFilePath)))
+      throw new ApiError(httpStatus.INTERNAL_SERVER_ERROR, 'Contents for the snapshot not found');
     const zipStream = await zlib.createGunzip();
     const tarStream = tar.extract({ cwd: '/' });
 
@@ -185,10 +194,6 @@ export async function createZippedFile(
   });
 }
 
-interface Head {
-  snapshot_key: string;
-  snapshot_name: string;
-}
 export const validateHead = async (head: Head): Promise<{ error: string | null }> => {
   const { error } = Joi.compile(submissionValidation.headSchema)
     .prefs({ errors: { label: 'key' }, abortEarly: false })
@@ -201,3 +206,16 @@ export const validateHead = async (head: Head): Promise<{ error: string | null }
     error: null
   };
 };
+/**
+ * A function to remove submission files that are not associated to any student
+ */
+export const deleteSubmissionFiles = async () => {
+  const submissionEntries = await fs.readdir('submissions');
+  const students = (await studentService.getStudents()).map((s) => s.studentId);
+  const submissionsToDelete = submissionEntries.filter((s) => !students.includes(s));
+
+  for (let submission of submissionsToDelete) {
+    await fs.remove(`submissions/5`);
+  }
+};
+

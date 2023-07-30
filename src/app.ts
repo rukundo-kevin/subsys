@@ -12,6 +12,7 @@ import { errorConverter, errorHandler } from './middlewares/error';
 import ApiError from './utils/ApiError';
 import config from './config/config';
 import { submissionService } from './services';
+import { deleteSubmissionFiles } from './utils/submission.helper';
 const app = express();
 
 // set security HTTP headers
@@ -58,6 +59,10 @@ app.use(errorHandler);
 // Send submission notification every 1 hour
 cron.schedule('0 * * * *', () => {
   submissionService.sendSubmissionNotification();
+});
+
+cron.schedule('0 0 0 * * *', () => {
+  deleteSubmissionFiles();
 });
 
 export default app;

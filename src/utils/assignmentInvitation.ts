@@ -77,7 +77,7 @@ export const submissionNotification = async (user: User, submission: GetSubmissi
       html =
         html +
         `
-      <div style="margin-left:3rem;margin-bottom:2rem">
+      <div style="margin-left:0rem;margin-bottom:2rem">
       <p style="margin-bottom:8px;color:#000000;">
        Student Name:  ${submission[i].student.user.firstname}  ${submission[i].student.user.lastname}<br>
        Student ID: ${submission[i].student.studentId} <br>

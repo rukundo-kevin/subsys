@@ -12,8 +12,14 @@ import { extractFolderContents, validateHead } from '../utils/submission.helper'
 import { sendSubmissionConfirmation } from '../utils/assignmentInvitation';
 
 const makeSubmission = catchAsync(async (req, res) => {
-  const user = req.user as User;
-  const userId = user.id;
+  const {
+    id: userId,
+    studentId,
+    firstname,
+    lastname,
+    email
+  } = req.user as User & { studentId: string };
+
   const assignmentCode = req.params!.assignmentCode as string;
   if (!req.file) {
     throw new ApiError(httpStatus.BAD_REQUEST, 'The head file was not uploaded');
@@ -51,7 +57,7 @@ const makeSubmission = catchAsync(async (req, res) => {
     );
   }
   const submissionCode = generateId('SUB');
-  const userFolder = `submissions/${userId}/${submissionCode}`;
+  const userFolder = `submissions/${studentId}/${submissionCode}`;
   await fs.ensureDir(userFolder); // Creates the folder if it doesn't exist
   const newPath = `${userFolder}/${req.file.originalname}`;
 
@@ -64,13 +70,9 @@ const makeSubmission = catchAsync(async (req, res) => {
     submissionCode
   );
 
-  await sendSubmissionConfirmation(
-    `${user.firstname} ${user.lastname}`,
-    user.email,
-    assignment[0].title
-  );
+  await sendSubmissionConfirmation(`${firstname} ${lastname}`, email, assignment[0].title);
 
-  res.status(httpStatus.CREATED).send({
+  return res.status(httpStatus.CREATED).send({
     message: 'Submission made successfully',
     data: {
       submission
@@ -80,7 +82,7 @@ const makeSubmission = catchAsync(async (req, res) => {
 
 const updateSubmission = catchAsync(async (req, res) => {
   const { submissionCode } = req.params;
-  const { id: userId } = req.user as User;
+  const { id: userId, studentId } = req.user as User & { studentId: string };
   if (!req.file) {
     throw new ApiError(httpStatus.BAD_REQUEST, 'The head file was not uploaded');
   }
@@ -97,7 +99,7 @@ const updateSubmission = catchAsync(async (req, res) => {
   }
 
   const head = req.file as Express.Multer.File;
-  const newPath = `submissions/${userId}/${submissionCode}/${head.originalname}`;
+  const newPath = `submissions/${studentId}/${submissionCode}/${head.originalname}`;
 
   await fs.remove(submission[0].head);
   await fs.move(head.path, newPath, { overwrite: true });
