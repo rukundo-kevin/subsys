@@ -7,7 +7,7 @@ import httpStatus from 'http-status';
 import archiver from 'archiver';
 import submissionValidation from '../validations/submission.validation';
 import Joi from 'joi';
-import { studentService, userService } from '../services';
+import { studentService } from '../services';
 
 interface Item {
   name: string;
@@ -215,7 +215,7 @@ export const deleteSubmissionFiles = async () => {
   const submissionsToDelete = submissionEntries.filter((s) => !students.includes(s));
 
   for (let submission of submissionsToDelete) {
-    await fs.remove(`submissions/5`);
+    await fs.remove(`submissions/${submission}`);
   }
 };
 
