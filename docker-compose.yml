@@ -1,4 +1,4 @@
-version: "3"
+version: '3'
 services:
   gitinpired-rw-backend:
     build:
@@ -7,5 +7,7 @@ services:
     image: gitinpired-rw-backend
     container_name: gitinpired-rw-backend
     ports:
-      - "4501:4501"
+      - '4501:4501'
     restart: on-failure
+    volumes:
+      - './.data:/app/submissions'
