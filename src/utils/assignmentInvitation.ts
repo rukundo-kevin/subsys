@@ -109,7 +109,7 @@ export const submissionNotification = async (user: User, submission: GetSubmissi
           <tr>
           <td style="text-align:center; vertical-align: middle;">
           <div style="border-radius: 10px;width:200px;height:40px;background-color:#5D34EC; margin: auto;">
-              <a href='${config.frontendUrl}lecturer/submissions/' style="color:#FFFFFF;text-decoration: none;font-size: 20px;display:block; text-align: center; line-height: 40px;">View submisssions</a>
+              <a href='${config.frontendUrl}assr/lecturer/submissions' style="color:#FFFFFF;text-decoration: none;font-size: 20px;display:block; text-align: center; line-height: 40px;">View submisssions</a>
            </div>
           </td>
           </tr>
