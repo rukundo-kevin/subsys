@@ -75,7 +75,7 @@ model Submission {
   student        Student    @relation(fields: [studentId], references: [id], onDelete: Cascade)
   studentId      Int
   submissionCode String     @unique
-  head           String     @unique
+  head           String 
   snapshots      Snapshot[]
   createdAt      DateTime   @default(now())
   updatedAt      DateTime   @updatedAt
