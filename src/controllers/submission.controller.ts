@@ -44,7 +44,10 @@ const makeSubmission = catchAsync(async (req, res) => {
 
   const submissionExist = await submissionService.getSubmissions(
     {
-      assignmentId: assignment[0].id
+      assignmentId: assignment[0].id,
+      student: {
+        userId
+      }
     },
     {}
   );
