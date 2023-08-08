@@ -7,9 +7,21 @@ const sanitize = (req: Request, res: Response, next: NextFunction) => {
   const html = (marked as any).parse(description);
 
   const sanitizedHtml = sanitizeHtml(html, {
-    allowedTags: sanitizeHtml.defaults.allowedTags.concat(['img']),
+    allowedTags: sanitizeHtml.defaults.allowedTags.concat(['img', 'ins']),
     allowedAttributes: {
-      img: ['src', 'alt']
+      '*': ['href', 'align', 'alt', 'center', 'bgcolor', 'style', 'class']
+    },
+    allowedStyles: {
+      '*': {
+        // Match HEX and RGB
+        color: [/^#(0x)?[0-9a-f]+$/i, /^rgb\(\s*(\d{1,3})\s*,\s*(\d{1,3})\s*,\s*(\d{1,3})\s*\)$/],
+        'text-align': [/^left$/, /^right$/, /^center$/],
+        // Match any number with px, em, or %
+        'font-size': [/^\d+(?:px|em|%)$/],
+        'font-weight': [/^bold$/],
+        'text-decoration': [/^underline$/],
+        'background-color': [/^#(0x)?[0-9a-f]+$/i]
+      }
     }
   });
 

@@ -1,7 +1,7 @@
 import { Router } from 'express';
 
 import assignmentValidation from '../validations/assignment.validation';
-import validate, { validateMarkdown } from '../middlewares/validate';
+import validate from '../middlewares/validate';
 import { assignmentController, submissionController } from '../controllers';
 import sanitizeMarkdown from '../middlewares/sanitize';
 import auth from '../middlewares/auth';
@@ -26,13 +26,13 @@ router.patch(
   '/:assignmentId',
   auth('manageAssignments'),
   validate(assignmentValidation.editAssignment),
+  sanitizeMarkdown,
   assignmentController.editAssignment
 );
 router.post(
   '/draft',
   auth('manageAssignments'),
   validate(assignmentValidation.createDraft),
-  validateMarkdown,
   sanitizeMarkdown,
   assignmentController.createAssignmentDraft
 );
