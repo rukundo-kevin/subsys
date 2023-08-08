@@ -9,7 +9,7 @@ const sanitize = (req: Request, res: Response, next: NextFunction) => {
   const sanitizedHtml = sanitizeHtml(html, {
     allowedTags: sanitizeHtml.defaults.allowedTags.concat(['img', 'ins']),
     allowedAttributes: {
-      '*': ['href', 'align', 'alt', 'center', 'bgcolor', 'style', 'class']
+      '*': ['href', 'target', 'align', 'alt', 'center', 'bgcolor', 'style', 'class']
     },
     allowedStyles: {
       '*': {
