@@ -4,6 +4,7 @@ import { encryptPassword, isPasswordMatch } from '../encryption';
 import ApiError from '../ApiError';
 import exclude from '../exclude';
 import { generateId, generateRandomPassword } from '../userHelper';
+import { validateZipfile } from '../assignmentHelper';
 
 jest.mock('bcryptjs');
 describe('Utils', () => {
@@ -105,6 +106,25 @@ describe('Utils', () => {
 
       expect(studentId).toHaveLength(8);
       expect(studentId).toContain('ST');
+    });
+  });
+  describe('validateZipfile', () => {
+    it('should return true for valid zip file extensions', () => {
+      const validExtensions = ['zip', 'zipx', 'rar', '7z', 'gz', 'tar.gz', 'tar'];
+      validExtensions.forEach((extension) => {
+        const filename = `test.${extension}`;
+        const result = validateZipfile(filename);
+        expect(result).toBe(true);
+      });
+    });
+
+    it('should return false for invalid file extensions', () => {
+      const invalidExtensions = ['txt', 'pdf', 'docx', 'png', 'jpg'];
+      invalidExtensions.forEach((extension) => {
+        const filename = `test.${extension}`;
+        const result = validateZipfile(filename);
+        expect(result).toBe(false);
+      });
     });
   });
 });

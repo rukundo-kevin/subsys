@@ -6,6 +6,7 @@ module.exports = {
   },
   restoreMocks: true,
   testPathIgnorePatterns: ['/node_modules/', '/build/'],
+  collectCoverage: true,
   coveragePathIgnorePatterns: ['node_modules', 'src/config', 'src/app.ts'],
   coverageReporters: ['text', 'lcov', 'clover', 'html']
 };

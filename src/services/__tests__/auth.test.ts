@@ -29,7 +29,6 @@ jest.mock('@prisma/client', () => {
 
 describe('loginUserWithEmailAndPassword', () => {
   it('should return the user if the email and password are correct', async () => {
-    // Mock the dependencies
     const mockUser: User = {
       id: 1,
       email: 'test@example.com',
