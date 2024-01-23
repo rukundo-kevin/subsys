@@ -24,13 +24,7 @@ npm run format # To fix prettier errors
 
 You will also need to create a .env file with values from the .env.example file.
 
-## API Documentation
 
-API documentation is available at the following URL when the application is running:
-
-```
-https://gitinspired-rw-api.amalitech-dev.net/api/docs/
-```
 
 ## License
 
